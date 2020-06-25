@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>Vanilla</title>
+        <script src="/assets/dist/adapters.web.vanilla.bundle.js"></script>
+        <script src="/assets/dist/adapters.web.polymer.bundle.js"></script>
+        <script src="/assets/dist/mock.application.bundle.js"></script>
+        <script src="/assets/dist/real.bundle.js"></script>
+        <link rel="stylesheet" type="text/css" href="/assets/css/default.css" />
+    </head>
+    <body></body>
+    <script>
+        var toggles     = new real.QueryStringToggles(document.location.search);
+        var settings    = new real.QueryStringSettings(document.location.search);
+
+        if (settings.get('theme') == 'lux') {
+            // https://bootswatch.com/lux/
+            const linkTag = document.createElement('link');
+            linkTag.setAttribute('rel'   , 'stylesheet');
+            linkTag.setAttribute('href'  , '/assets/css/lux/bootstrap.min.css');
+            document.head.appendChild(linkTag);
+        } 
+
+        var view        = new real.UIEvents();
+        var application = toggles.get('unplug') ? new mock.Application(toggles) : real.application(toggles);
+        
+        application.pollEvery(parseInt(settings.get('polling-frequency','600000')));
+ 
+        view.onRender(e => console.log(`[render] ${JSON.stringify(e)}`));
+
+        const addScript = src => {
+            const scriptTag = document.createElement('script');
+            scriptTag.setAttribute('src'    , src);
+            document.body.appendChild(scriptTag);
+        }
+
+        var start = async () => {
+            const applicationNode = document.querySelector('#application');
+            
+            console.log(`[start] node => <${document.querySelector('#application')}>`);
+
+            if (applicationNode) {
+                console.log(`Removing application node`);
+                document.body.removeChild(applicationNode);
+            }
+
+            if (window.toggles.get('use-svelte')) {
+                addScript('/assets/dist/svelte.bundle.js');
+                document.title += " -- Svelte";
+            } 
+            else if (window.toggles.get('use-vue')) {
+                addScript('/assets/dist/adapters.web.vue.bundle.js');
+                document.title += " -- Vue.js";
+            }
+            else if (window.toggles.get('use-polymer')) {
+                await polymer.render(document, application);
+                document.title += " -- Polymer";
+            }
+            else if (window.toggles.get('use-angular')) {
+                addScript('/assets/dist/adapters.web.angular.bundle.js');
+                document.title += " -- Angular";
+            }
+            else if (window.toggles.get('use-react')) {
+                const div = document.createElement('div');
+                div.setAttribute('id', 'application');
+                document.body.appendChild(div);
+                addScript('/assets/dist/adapters.web.react.bundle.js');
+                document.title += " -- React";
+            }
+            else {
+                vanilla.render(document, application);
+            }
+        }
+
+        if (toggles.get('use-98-css')) {
+            const linkTag = document.createElement('link');
+            linkTag.setAttribute('rel'   , 'stylesheet');
+            linkTag.setAttribute('href'  , 'https://unpkg.com/98.css');
+            document.head.appendChild(linkTag);       
+        }
+
+        if (toggles.get('allow-sockets')) {
+            const url = `ws://${document.location.hostname}:1080`;
+            
+            console.log(`[socket] Starting to listen on url <${url}>`);
+            
+            const listener = new real.SocketListener(
+                url, 
+                { info: console.log, trace: console.log });
+
+            listener.onOpen(m => console.log(`[socket] ${JSON.stringify(m)}`));
+            listener.onMessage(m => console.log(`[socket] data:${m.data}`));
+        }
+    </script>
+    <script>
+        if (!toggles.get('disallow-autostart')) {
+            start();
+        }
+    </script>
+</html>

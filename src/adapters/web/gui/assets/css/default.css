@@ -1,0 +1,78 @@
+html { }
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    margin: 0 0 100px;
+    /* bottom = footer height */
+    padding: 0px;
+}
+#navigation { padding-bottom:10px }
+#navigation .items { 
+    overflow: auto;
+    list-style-type: none; 
+    padding:0
+}
+
+#navigation .items li {
+    text-align: left; 
+    height: 25px;
+    float: left;
+    margin-left: 0px;
+    margin-right: 0px;
+    border: 0px solid #aaa;
+    padding-right: 5px;
+}
+
+#navigation .items li.logo {
+    width:100px;
+}
+
+#marine-weather .body { margin: 20px }
+#marine-weather .body img { -webkit-filter: grayscale(50%); filter: grayscale(50%); clear:right; margin:2px; border: 1px dotted silver; }
+
+div#application {padding: 25px;}
+div#application div.title { text-transform: uppercase; vertical-align: top; }
+div#application div.title .loading { color: silver }
+div#application #news .items .item .item-body { display: flex; align-items: stretch; }
+div#application #news .items .item .lead { float:left; }
+div#application #news .items .item .controls { align:right; }
+div#application #news .items .item .controls a { margin-right: 2px; color: blue; }
+div#application #news .items .item .meta { font-size: small }
+div#application #news .items li span.age { width:100px; display:inline-block; padding:1px;}
+div#application #news .items li a.title { width:700px; text-overflow: ellipsis; display:inline-block; clear:right;  }
+div#application #news .items li { 
+    padding:5px;  
+    border-top: 1px dotted white;
+    border-bottom: 1px dotted white;}
+div#application #news .items li:hover { 
+    -webkit-filter: grayscale(50%); 
+    filter: grayscale(50%);
+    border-top: 1px dotted silver;
+    border-bottom: 1px dotted silver;
+    background-color: #ededea;
+}
+div#application #news .items li span.host { width:300px; display:inline-block; padding:1px; }
+div#application #news .items li.deleted { background-color: #f0f0f0; }
+div#deletedItems {
+    font-size: smaller; 
+    color:silver; 
+    padding: 10 10 10 25; 
+    border-top: 1px dotted silver; }
+
+#weather .metservice { background-color: #1d4b87; padding: 5px; vertical-align: top; }
+#weather .marine-weather { padding: 5px }
+#weather img { -webkit-filter: grayscale(50%); filter: grayscale(50%); clear:right; margin:2px; border: 1px solid silver; }
+
+div.title .lastUpdated { color: silver; text-transform: none; } 
+
+.fade-appear {
+    opacity: 0;
+}
+.fade-appear-active {
+    opacity: 1;
+    transition: opacity 2000ms;
+}
+.fade-appear-done {
+    opacity: 1;
+    transition: opacity 200ms;
+}

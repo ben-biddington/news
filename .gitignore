@@ -1,0 +1,5 @@
+node_modules
+**/dist/
+lobsters-deleted.sql
+*.db
+.saved.io.credential

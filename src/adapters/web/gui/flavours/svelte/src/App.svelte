@@ -113,13 +113,13 @@
                   <a
                     href="#"
                     class="bookmark-favourite-on btn btn-success">
-                    <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
+                    <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
                   </a>
                 {:else}
                   <a
                     href="#"
                     class="bookmark-favourite-off btn btn-success">
-                    <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
+                    <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
                   </a>
                 {/if}
               {/if}

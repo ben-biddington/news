@@ -100,39 +100,38 @@
         <NewsPanel id="rnzNews" useCase="rnzNews" title="RNZ news" bind:source={rnzNews} 
           allowSnooze={false} allowBookmark={false} showHost={false} showAge={true} />
       {/if}
-
-      <div id="bookmarks">
-        <div class="title">Bookmarks ({bookmarks.length})</div>
+    </div>
+    <div id="bookmarks">
+      <div class="title">Bookmarks ({bookmarks.length})</div>
         <ol class="items">
-        {#await loadBookmarks()}{/await}
-        {#each bookmarks as bookmark}
+          {#await loadBookmarks()}{/await}
+          {#each bookmarks as bookmark}
             <li class="item" id="bookmark-{bookmark.id}" transition:fade>
-                <a href={bookmark.url} class="title">{bookmark.title}</a>
-                {#if application.isToggledOn('allow-bookmark-favourites')}
-                  {#if bookmark.favourite == true}
-                        <a
-                            href="#"
-                            class="bookmark-favourite-on btn btn-success">
-                            <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
-                        </a>
-                  {:else}
-                        <a
-                            href="#"
-                            class="bookmark-favourite-off btn btn-success">
-                            <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
-                        </a>
-                  {/if}
+              <a href={bookmark.url} class="title">{bookmark.title}</a>
+              {#if application.isToggledOn('allow-bookmark-favourites')}
+                {#if bookmark.favourite == true}
+                  <a
+                    href="#"
+                    class="bookmark-favourite-on btn btn-success">
+                    <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
+                  </a>
+                {:else}
+                  <a
+                    href="#"
+                    class="bookmark-favourite-off btn btn-success">
+                    <img alt="Favourite bookmark" class="favourite" src="/icons/heart.svg" width="10" height="10" />
+                  </a>
                 {/if}
-                <a
-                  href="javascript:application.bookmarks.del('{bookmark.id}')"
-                  class="del"
-                  title="Delete item with id '{bookmark.id}'">
-                  delete
-                </a>
+              {/if}
+              <a
+                href="javascript:application.bookmarks.del('{bookmark.id}')"
+                class="del"
+                title="Delete item with id '{bookmark.id}'">
+                delete
+              </a>
             </li>
-        {/each}
+          {/each}
         </ol>
-      </div>
     </div>
     <div id="marine-weather">
       <div class="title">Marine weather</div>

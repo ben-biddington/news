@@ -76,3 +76,14 @@ div.title .lastUpdated { color: silver; text-transform: none; }
     opacity: 1;
     transition: opacity 200ms;
 }
+
+.new {
+    border-left: 1px solid gray;
+    animation: subtleFade 30s;
+    animation-fill-mode: both;
+} 
+
+@keyframes subtleFade {
+    0%   { background: cornsilk; }
+    100% { background: none; border-left: 1px solid white}
+  }

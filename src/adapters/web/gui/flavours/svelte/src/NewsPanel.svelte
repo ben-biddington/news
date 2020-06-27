@@ -21,7 +21,7 @@
     <div class="title">{title} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</div>
     <ol class="items list-group">
         {#each source as newsItem} <!-- https://svelte.dev/docs#class_name -->
-            <li class:deleted={newsItem.deleted} class='item list-group-item' id="news-{newsItem.id}" 
+            <li class:deleted={newsItem.deleted} class:new={newsItem.new} class='item list-group-item' id="news-{newsItem.id}" 
                 in:fade|local="{{duration:1000}}" out:fade|local="{{duration:0}}">
             <div class="item-body">
                 <div class="lead">

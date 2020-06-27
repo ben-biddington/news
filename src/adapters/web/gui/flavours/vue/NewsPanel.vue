@@ -46,7 +46,7 @@
         <div class="title">{{ title }}</div>
         <transition-group name="fade" tag="ol" class="items list-group">
         <!-- <ol class="items list-group"> -->
-            <li v-for="newsItem in source" :key="newsItem.id" class='item list-group-item' v-bind:class="{deleted: newsItem.deleted}" :id=newsItemId(newsItem)>
+            <li v-for="newsItem in source" :key="newsItem.id" class='item list-group-item' v-bind:class="{deleted: newsItem.deleted, new: newsItem.new}" :id=newsItemId(newsItem)>
                 <transition name="fade">
                     <div class="item-body">
                         <div class="lead">

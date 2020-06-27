@@ -100,8 +100,7 @@
         <NewsPanel id="rnzNews" useCase="rnzNews" title="RNZ news" bind:source={rnzNews} 
           allowSnooze={false} allowBookmark={false} showHost={false} showAge={true} />
       {/if}
-    </div>
-    <div id="bookmarks">
+      <div id="bookmarks">
       <div class="title">Bookmarks ({bookmarks.length})</div>
         <ol class="items">
           {#await loadBookmarks()}{/await}
@@ -132,6 +131,7 @@
             </li>
           {/each}
         </ol>
+      </div>
     </div>
     <div id="marine-weather">
       <div class="title">Marine weather</div>

@@ -38,6 +38,11 @@ class NewsItems {
     get(newsItemId) {
         return this._newsItems.find(it => it.id == newsItemId);
     }
+
+    missing(newsItems = []) {
+        const ids = this._newsItems.map(it => it.id);
+        return newsItems.filter(it => false == ids.includes(it.id));
+    }
 }
 
 class Application {
@@ -74,6 +79,8 @@ class Application {
             list: async () => {
                 const newsItems = await listNews(() => this._ports.lobsters.list(), this._ports.seive, this._toggles);
                 
+                this._newsItems.missing(newsItems).forEach(item => item.new = true);
+
                 this._save(newsItems);
 
                 return newsItems;

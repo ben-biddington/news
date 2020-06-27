@@ -1,8 +1,6 @@
 const { 
-    delay, Application, Ports,
+    delay, Application, Ports, NewsItem,
     mockLog: log, MockToggles, MockSeive, MockListener, MockLobsters } = require('../application-unit-test');
-
-    const { NewsItem } = require('../../../src/core/news-item');
 
 describe('Automatically refreshing lobsters news on a schedule', async () => {
     it("notifies with 'lobsters-items-loaded'", async () => {
@@ -27,7 +25,7 @@ describe('Automatically refreshing lobsters news on a schedule', async () => {
         notifications.mustHaveAtLeast({
             type: 'lobsters-items-loaded',
             items: [
-                new NewsItem('id-1', 'Title 1', 'http://xyz')
+                new NewsItem('id-1', 'Title 1', 'http://xyz').thatIsNew()
             ]
         }, 
             2

@@ -1,18 +1,17 @@
-const expect = require('chai').expect;
-
-const { list, del } = require('../../src/adapters/hn.js');
+const { expect }   = require('./integration-test');
+const { NewsItem } = require('../../src/core/news-item');
+const { list }     = require('../../src/adapters/hn.js');
 
 const trace = process.env.TRACE ? console.log : () => {}
 
 const { get, cannedGet } = require('./support/net');
-const { utc } = require('moment');
 
 // npm run test.integration -- --grep hack
 describe('Can fetch latest hacker news', async () => {
     it('from local server', async () => {
         const result = await list({ get, trace }, { count: 1, url: 'http://localhost:8080/hn' });
 
-        expect(result[0]).to.have.keys('_id', '_title', '_url', '_date', '_deleted');
+        expect(result[0]).to.have.keys(NewsItem.keys());
         
         expect(result.length).to.eql(1);
     });
@@ -20,7 +19,7 @@ describe('Can fetch latest hacker news', async () => {
     it('from remote server', async () => {
         const result = await list({ get, trace }, { count: 1, url: 'https://hnrss.org' });
 
-        expect(result[0]).to.have.keys('_id', '_title', '_url', '_date', '_deleted');
+        expect(result[0]).to.have.keys(NewsItem.keys());
         
         expect(result.length).to.eql(1);
     });

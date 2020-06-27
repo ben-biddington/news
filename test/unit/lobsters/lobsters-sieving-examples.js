@@ -37,7 +37,8 @@ describe('Seiving lobsters news', async () => {
         expect(seivedResult).to.eql([
             { 
                 id: 'B',
-                title: 'item B'
+                title: 'item B',
+                new: true
             },
         ]);
     });

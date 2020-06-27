@@ -5,47 +5,49 @@ class NewsItem extends Cloneable {
         return new NewsItem('', '', '', new Date());
     }
 
+    static keys() {
+        return Object.keys(new NewsItem());
+    }
+
     constructor(id, title, url, date) {
         super();
 
-        this._id = id;
-        this._title = title;
-        this._url = url;
-        this._date = date;
-        this._deleted = false;
+        this.id = id;
+        this.title = title;
+        this.url = url;
+        this.date = date;
+        this.deleted = false;
+        this.new = false
     }
 
-    get id()    { return this._id }
-    get title() { return this._title }
-    get url()   { return this._url }
-    get date()  { return this._date }
-    get deleted()      { return this._deleted }
-    set deleted(value) { this._deleted = value; }
-
-    get host()  { return require('url').parse(this._url || '').hostname || ''; }
+    get host()  { return require('url').parse(this.url || '').hostname || ''; }
 
     withUrl(url) {
-        return this.clone(it => it._url = url);
+        return this.clone(it => it.url = url);
     }
 
     dated(date) {
-        return this.clone(it => it._date = date);
+        return this.clone(it => it.date = date);
     }
 
     ageSince(when) {
         const moment = require('moment');
         
-        const difference = moment.duration(moment(when).diff(moment(this._date)));
+        const difference = moment.duration(moment(when).diff(moment(this.date)));
 
         return difference.humanize();
     }
 
     thatIsDeleted() {
-        const result = new NewsItem(this._id, this._title, this._url, this._date);
+        const result = new NewsItem(this.id, this.title, this.url, this.date);
 
-        result._deleted = true;
+        result.deleted = true;
 
         return result;
+    }
+
+    thatIsNew() {
+        return this.clone(it => it.new = true);
     }
 }
 

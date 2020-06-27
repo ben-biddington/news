@@ -1,7 +1,11 @@
 class Cloneable {
-    clone(fun) {
+    clone(fun = () => {}) {
       const clone = Object.create(this);
+    
+      Object.assign(clone, this);
+
       fun(clone);
+      
       return clone;
     }
   }

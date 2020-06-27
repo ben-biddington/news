@@ -29,7 +29,7 @@ const internet = new FetchBasedInternet();
 //
 // [i] This is where the real application is bootstrapped from
 //
-const application = toggles => {
+const application = (toggles, settings) => {
     let applicationPorts = new Ports(
         { 
             list   : () => lobstersList  ({ get: internet.get, trace: console.log }, { url: '/lobsters/hottest', count: 20 }),
@@ -67,7 +67,7 @@ const application = toggles => {
         count: () => deletedCount({ internet }, { baseUrl: '' }),
     });
 
-    return new Application(applicationPorts, toggles);
+    return new Application(applicationPorts, toggles, settings);
 }
 
 const { QueryStringToggles }    = require('../web/query-string-toggles');

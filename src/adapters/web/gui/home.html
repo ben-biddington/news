@@ -21,7 +21,7 @@
         } 
 
         var view        = new real.UIEvents();
-        var application = toggles.get('unplug') ? new mock.Application(toggles) : real.application(toggles);
+        var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);
         
         application.pollEvery(parseInt(settings.get('polling-frequency','600000')));
  

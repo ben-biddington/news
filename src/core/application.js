@@ -46,11 +46,12 @@ class NewsItems {
 }
 
 class Application {
-    constructor(ports, toggles) {
+    constructor(ports, toggles, settings) {
         this._ports     = ports;
         this._events    = new CustomEventEmitter(ports.log);
         this._log       = ports.log;
-        this._toggles   = toggles
+        this._toggles   = toggles;
+        this._settings  = settings;
         this._newsItems = new NewsItems();
     }
 
@@ -170,6 +171,10 @@ class Application {
 
     isToggledOn(toggleName) {
         return this._toggles.get(toggleName);
+    }
+
+    setting(name) {
+        return this._settings.get(name);
     }
 
     onAny(handler) { this._events.on('*', handler); }

@@ -130,8 +130,10 @@ class MockDeletedItemsUseCase {
 // The idea here is to maintain strict abstract separation between the UI and the application.
 const events  = require('events');
 const { MockToggles } = require('../../../test/support/mock-toggles');
+const { MockSettings } = require('../../../test/support/mock-settings');
+
 class Application {
-    constructor(toggles) {
+    constructor(toggles, settings) {
         this._lobstersUseCase       = new MockLobstersUseCase();
         this._hackerNewsUseseCase   = new MockLobstersUseCase();
         this._events                = new events.EventEmitter();
@@ -140,6 +142,7 @@ class Application {
         this.deletedItems           = new MockDeletedItemsUseCase();
         this._now                   = new Date();
         this.toggles                = toggles || new MockToggles();
+        this.settings               = settings || new MockSettings();
     }
 
     pollEvery(milliseconds) { }
@@ -185,8 +188,9 @@ class Application {
     }
 }
 
-module.exports.Application = Application;
-module.exports.NewsItem    = require('../../core/news-item').NewsItem;
-module.exports.Bookmark    = require('../../core/bookmark').Bookmark;
-module.exports.UIEvents    = require('../../adapters/web/gui/ui-events').UIEvents;
-module.exports.MockToggles = require('../../../test/support/mock-toggles').MockToggles;
+module.exports.Application  = Application;
+module.exports.NewsItem     = require('../../core/news-item').NewsItem;
+module.exports.Bookmark     = require('../../core/bookmark').Bookmark;
+module.exports.UIEvents     = require('../../adapters/web/gui/ui-events').UIEvents;
+module.exports.MockToggles  = MockToggles;
+module.exports.MockSettings = MockSettings;

@@ -51,6 +51,13 @@
                             title="Snooze item with id '{newsItem.id}'">
                             snooze
                         </a>
+                    {:else}
+                        <a
+                            href="javascript:void(0)"
+                            class="snooze btn btn-warning disabled"
+                            title="Snooze not allowed on this item">
+                            snooze
+                        </a>    
                     {/if}
                     {#if newsItem.deleted == false}
                         <a

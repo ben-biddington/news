@@ -96,7 +96,7 @@
             <NewsPanel load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
 
             {#await loadHackerNews()}{/await}
-            <NewsPanel id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} allowSnooze=false />
+            <NewsPanel id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} allowSnooze={false} />
 
             {#if application.isToggledOn('allow-rnz-news')}
               {#await loadRnzNews()}{/await}

@@ -36,7 +36,7 @@ div#application div.title .loading { color: silver }
 div#application #news .items .item .item-body { display: flex; align-items: stretch; }
 div#application #news .items .item .lead { float:left; }
 div#application #news .items .item .controls { align:right; }
-div#application #news .items .item .controls a { margin-right: 2px; color: blue; }
+div#application #news .items .item .controls a { margin-right: 2px; }
 div#application #news .items .item .meta { font-size: small }
 div#application #news .items li span.age { width:100px; display:inline-block; padding:1px;}
 div#application #news .items li a.title { width:700px; text-overflow: ellipsis; display:inline-block; clear:right;  }
@@ -58,6 +58,26 @@ div#deletedItems {
     color:silver; 
     padding: 10 10 10 25; 
     border-top: 1px dotted silver; }
+
+#bookmarks .items .item .item-body { display: flex; align-items: stretch; }
+#bookmarks .items .item .lead { float:left; }
+#bookmarks .items .item .controls a { margin-right: 2px; color: blue; }
+#bookmarks .items .item .meta { font-size: small }
+#bookmarks .items li span.age { width:100px; display:inline-block; padding:1px;}
+#bookmarks .items li a.title { width:700px; text-overflow: ellipsis; display:inline-block; clear:right;  }
+#bookmarks .items li { 
+    padding:5px;  
+    border-top: 1px dotted white;
+    border-bottom: 1px dotted white;}
+#bookmarks .items li:hover { 
+    -webkit-filter: grayscale(50%); 
+    filter: grayscale(50%);
+    border-top: 1px dotted silver;
+    border-bottom: 1px dotted silver;
+    background-color: #ededea;
+}
+#bookmarks .items li span.host { width:300px; display:inline-block; padding:1px; }
+#bookmarks .items li.deleted { background-color: #f0f0f0; }
 
 #weather .metservice { background-color: #1d4b87; padding: 5px; vertical-align: top; }
 #weather .marine-weather { padding: 5px }

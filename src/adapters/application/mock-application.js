@@ -186,6 +186,10 @@ class Application {
     isToggledOn(toggleName) {
         return this.toggles.get(toggleName);
     }
+
+    setting(name) {
+        return this.settings.get(name);
+    }
 }
 
 module.exports.Application  = Application;

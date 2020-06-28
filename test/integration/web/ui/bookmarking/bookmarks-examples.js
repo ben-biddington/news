@@ -1,4 +1,4 @@
-const itemsSelector = 'div#application div#bookmarks .items';
+const itemsSelector = 'div#bookmarks .items';
 
 const { 
     delay, describeFeatured, toggles, baseUrl, 
@@ -142,10 +142,10 @@ describeFeatured([...toggles, 'use-react'].filter(it => it != 'vanilla'), '[UI] 
             });
 
             await page.waitForFunction(
-                () => document.querySelectorAll(`div#application div#bookmarks .items li`).length == 1, 
+                () => document.querySelectorAll(`div#bookmarks .items li`).length == 1, 
                 { timeout: 1000 });
 
-            const allListItems = await page.$$eval(`div#application div#bookmarks .items li a.title`, items => items.map(it => ( it.innerText )));
+            const allListItems = await page.$$eval(`div#bookmarks .items li a.title`, items => items.map(it => ( it.innerText )));
 
             expect(allListItems).to.eql([ 'Title 1' ]);
         });

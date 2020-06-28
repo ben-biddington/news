@@ -129,32 +129,40 @@
         <div class="col-6 col-md-4">
           <div id="bookmarks">
             <div class="title">Bookmarks ({bookmarks.length})</div>
-            <ol class="items">
+            <ol class="items list-group">
             {#await loadBookmarks()}{/await}
             {#each bookmarks as bookmark}
-              <li class="item" id="bookmark-{bookmark.id}" transition:fade>
-                <a href={bookmark.url} class="title">{bookmark.title}</a>
-                {#if application.isToggledOn('allow-bookmark-favourites')}
-                  {#if bookmark.favourite == true}
-                    <a
-                      href="#"
-                      class="bookmark-favourite-on btn btn-success">
-                      <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
-                    </a>
-                  {:else}
-                    <a
-                      href="#"
-                      class="bookmark-favourite-off btn btn-success">
-                      <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
-                    </a>
-                  {/if}
-                {/if}
-                <a
-                  href="javascript:application.bookmarks.del('{bookmark.id}')"
-                  class="del"
-                  title="Delete item with id '{bookmark.id}'">
-                  delete
-                </a>
+              <li class="item list-group-item" id="bookmark-{bookmark.id}" transition:fade>
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col text-truncate">
+                      <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+                    </div>
+                    <div class="col align-self-end text-right align-right col-md-auto">
+                      {#if application.isToggledOn('allow-bookmark-favourites')}
+                        {#if bookmark.favourite == true}
+                          <a
+                            href="#"
+                            class="bookmark-favourite-on btn btn-success">
+                            <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
+                          </a>
+                        {:else}
+                          <a
+                            href="#"
+                            class="bookmark-favourite-off btn btn-success">
+                            <img alt="Favourite bookmark" class="favourite" src="/assets/icons/heart.svg" width="10" height="10" />
+                          </a>
+                        {/if}
+                      {/if}
+                      <a
+                        href="javascript:application.bookmarks.del('{bookmark.id}')"
+                        class="del"
+                        title="Delete item with id '{bookmark.id}'">
+                        delete
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </li>
             {/each}
             </ol>

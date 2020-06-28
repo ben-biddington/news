@@ -81,15 +81,36 @@
 {#await loadDeletedItemCount()}{/await}
 
 <div id="application">
-  <div id="navigation">
-    <ul class="items">
-      <li class="logo"><img src="https://svelte.dev/svelte-logo-horizontal.svg" alt="Svelte icon" width="90" height="20" style="position:relative; right:10; top:2" /></li>
-      <li><a href="#" on:click={() => navigate('news')}>news</a></li>
-      <li><a href="#" on:click={() => navigate('weather')}>weather</a></li>
-    </ul>
-  </div>
+  {#if window.application.setting('theme') != 'lux'}
+    <div id="navigation">
+      <ul class="items">
+        <li class="logo"><img src="https://svelte.dev/svelte-logo-horizontal.svg" alt="Svelte icon" width="90" height="20" style="position:relative; right:10; top:2" /></li>
+        <li><a href="#" on:click={() => navigate('news')}>news</a></li>
+        <li><a href="#" on:click={() => navigate('weather')}>weather</a></li>
+      </ul>
+    </div>
+  {:else}
+    <!-- https://getbootstrap.com/docs/4.0/components/navbar/ -->
+    <nav id="navigation" class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="#"><img src="https://svelte.dev/svelte-logo-horizontal.svg" alt="Svelte icon" width="90" height="20" style="" /></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item" class:active={page == 'news'}>
+            <a class="nav-link" href="#" on:click={() => navigate('news')}>News <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item" class:active={page == 'weather'}>
+            <a class="nav-link" href="#" on:click={() => navigate('weather')}>Weather</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  {/if}
   {#if page == 'news'}
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding-top:20px">
       <div class="row justify-content-end">
         <div class="col-12 col-md-8">
           <div id="news" transition:fade>

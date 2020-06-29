@@ -1,10 +1,11 @@
 <script>
     import { fade } from 'svelte/transition';
     import NewsPanel from './NewsPanel.svelte';
-	  import { afterUpdate } from 'svelte';
+    import Chart from './Chart.svelte';
+    import { afterUpdate } from 'svelte';
 
-	  afterUpdate(() => {
-		  window.view.notifyRendering();
+    afterUpdate(() => {
+      window.view.notifyRendering();
     });
     
     //
@@ -175,6 +176,8 @@
       <div class="title">Marine weather</div>
       <div class="body"><img src="/marine-weather" width="670" height="557" /></div>
     </div>
+
+    <Chart visible={window.application.isToggledOn('allow-chart')}/>
   {/if}
   {#if page == 'weather'}
   <div id="weather" transition:fade>

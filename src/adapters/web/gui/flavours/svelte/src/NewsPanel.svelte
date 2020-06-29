@@ -1,6 +1,7 @@
 <script>
     import { fade, fly } from 'svelte/transition';
 
+    export let application      = {};
     export let id               = 'unknown';
     export let title            = 'Default title';
     export let useCase          = 'default';
@@ -15,6 +16,8 @@
         const ellipsis = text.length > count ? '...' : '';
         return `${text.substring(0, count)}${ellipsis}`;
     }
+
+    const snooze = id => application[useCase].snooze(id);
 </script>
 
 <div id="{id}" class="bs-component">
@@ -49,7 +52,8 @@
 
                     {#if allowSnooze}
                         <a
-                            href="javascript:application.{useCase}.snooze('{newsItem.id}')"
+                            on:click={() => snooze(newsItem.id)} 
+                            href="#" 
                             class="snooze btn btn-warning"
                             title="Snooze item with id '{newsItem.id}'">
                             snooze

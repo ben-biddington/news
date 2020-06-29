@@ -114,12 +114,12 @@
       <div class="row justify-content-end">
         <div class="col-12 col-md-8">
           <div id="news" transition:fade>
-            <NewsPanel load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
+            <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
 
             {#await loadHackerNews()}{/await}
-            <NewsPanel id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} allowSnooze={false} />
+            <NewsPanel application={window.application} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} allowSnooze={false} />
 
-            {#if application.isToggledOn('allow-rnz-news')}
+            {#if window.application.isToggledOn('allow-rnz-news')}
               {#await loadRnzNews()}{/await}
               <NewsPanel id="rnzNews" useCase="rnzNews" title="RNZ news" bind:source={rnzNews} 
                 allowSnooze={false} allowBookmark={false} showHost={false} showAge={true} />

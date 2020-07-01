@@ -59,15 +59,10 @@ class Application {
         this._log(`[application] polling frequency set to <${milliseconds}ms>`);
 
         this._pollingTask = setInterval(async () => {
-            if (this._toggles.get('allow-lobsters-auto-refresh')) {
-                const lobstersNews = await this.lobsters.list();
-                this._events.emit('lobsters-items-loaded', { items: lobstersNews });
-            }
-
-            if (this._toggles.get('allow-auto-refresh')) {
-                const hackerNews = await this.hackerNews.list();
-                this._events.emit('hacker-news-items-loaded', { items: hackerNews });
-            }
+            await Promise.all([
+                this.lobsters.list().then(lobstersNews => this._events.emit('lobsters-items-loaded', { items: lobstersNews })),
+                this.hackerNews.list().then(hackerNews => this._events.emit('hacker-news-items-loaded', { items: hackerNews }))
+            ]);
         }, milliseconds);
     }
 

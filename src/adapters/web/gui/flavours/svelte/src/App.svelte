@@ -172,14 +172,15 @@
       </div>
     </div>
 
-    <div id="marine-weather">
-      <div class="title">Marine weather</div>
-      <div class="body">
-        <img src="/marine-weather" width="670" height="557" />
-        <img src="/windfinder/today" />
+    {#if window.application.isToggledOn('allow-marine-weather')}
+      <div id="marine-weather">
+        <div class="title">Marine weather</div>
+        <div class="body">
+          <img src="/marine-weather" width="670" height="557" />
+          <img src="/windfinder/today" />
+        </div>
       </div>
-    </div>
-
+    {/if}
     <Chart visible={window.application.isToggledOn('allow-chart')}/>
   {/if}
   {#if page == 'weather'}

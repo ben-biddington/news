@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const { ConsoleLog } = require('../../../src/core/logging/log');
 
-describe('[screenshotting] Windfinder', () => {
+describe.skip('[screenshotting] Windfinder', () => {
     let interactor, page, consoleMessages = null;
 
     before(async ()  => 

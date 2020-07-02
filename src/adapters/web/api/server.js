@@ -230,7 +230,7 @@ app.get('/wellington-weather/today', async (req, res) => {
 app.get('/wellington-weather/week', async (req, res) => {
     StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, async log => {
         cached(req, res, async () => {
-            const { week }         = require('../wellington-weather');
+            const { week }          = require('../wellington-weather');
             const temp              = require('temp');
             const filePath          = temp.path({suffix: '.png'}); 
     
@@ -239,6 +239,29 @@ app.get('/wellington-weather/week', async (req, res) => {
             return readFile(result.path);
         });
     });
+});
+
+app.get('/windfinder/today', async (req, res) => {
+  StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'windfinder' }, async log => {
+      cached(req, res, async () => {
+          const { wellington }    = require('../windfinder');
+          const temp              = require('temp');
+          const filePath          = temp.path({suffix: '.png'}); 
+
+          log.info(`Using temp path <${filePath}>`);
+
+          const result = await wellington({ path: filePath });
+
+          if (!result.path) {
+            res.status(500).json({ message: `The call to get screenshot returned undefined` });
+            return;
+          }
+
+          return readFile(result.path);
+      }).catch(e => {
+        res.status(500).json({ message: e.toString(), stackTrace: e.stackTrace });
+      });
+  });
 });
 
 initialise().then(() => app.listen(port, () => 

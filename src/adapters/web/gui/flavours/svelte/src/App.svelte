@@ -174,7 +174,10 @@
 
     <div id="marine-weather">
       <div class="title">Marine weather</div>
-      <div class="body"><img src="/marine-weather" width="670" height="557" /></div>
+      <div class="body">
+        <img src="/marine-weather" width="670" height="557" />
+        <img src="/windfinder/today" />
+      </div>
     </div>
 
     <Chart visible={window.application.isToggledOn('allow-chart')}/>
@@ -182,9 +185,9 @@
   {#if page == 'weather'}
   <div id="weather" transition:fade>
     <div class="metservice">
-      <img src="/wellington-weather/current" width="380" height="514" />
-      <img src="/wellington-weather/today" width="776" height="294" />
-      <img src="/wellington-weather/week" width="776" height="388" />
+      <img src="/wellington-weather/current" />
+      <img src="/wellington-weather/today" />
+      <img src="/wellington-weather/week" />
     </div>
   </div>
   {/if}

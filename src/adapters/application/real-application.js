@@ -70,7 +70,7 @@ const application = (toggles, settings) => {
     return new Application(applicationPorts, toggles, settings);
 }
 
-const { QueryStringToggles }    = require('../web/query-string-toggles');
+const { QueryStringToggles }    = require('../web/toggling/query-string-toggles');
 const { QueryStringSettings }   = require('../web/query-string-settings');
 const { ConsoleLog }            = require('../../core/logging/log');
 const { SocketListener }        = require('../web/gui/socket-listener');

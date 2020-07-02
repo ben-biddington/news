@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const { QueryStringToggles } = require('../../src/adapters/web/query-string-toggles');
+const { QueryStringToggles } = require('../../../src/adapters/web/toggling/query-string-toggles');
 
 // npm run test.integration -- --grep toggle
 describe('How to toggle by query string parameter', async () => {

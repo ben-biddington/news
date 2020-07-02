@@ -1,36 +1,34 @@
-const { StructuredLog, LogEntry } = require('./internal/structured-log');
-const { SocketNotifier } = require('./internal/sockets');
-const { QueryStringToggles } = require('../query-string-toggles'); 
 const port = 8080;
 
-var express = require('express')
-var app = express();
-
-app.use(express.static('src/adapters/web/gui'));
-app.use(express.json());
-
-const io = new SocketNotifier(1080);
+const { StructuredLog, LogEntry } = require('./internal/structured-log');
+const { SocketNotifier }          = require('./internal/sockets');
+const { QueryStringToggles }      = require('../toggling/query-string-toggles'); 
+const express                     = require('express')
 
 const { Deleted }   = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
 const { Cache }     = require('../../database/cache');
 const { Timespan }  = require('../../../core/timespan');
-
-const deleted   = new Deleted('./news.db')       ;
-const bookmarks = new Bookmarks('./bookmarks.db');
 const { add: savedIo, getCredential: getSavedIoCredential } = require('../../saved.io');
-const cache = new Cache('./cache.db'); 
-const log = console.log;
-const fs = require('fs');
-const util = require('util');
-const { Internet } = require('../../internet');
+
+const app = express();
+const io  = new SocketNotifier(1080);
+
+app.use(express.static('src/adapters/web/gui'));
+app.use(express.json());
+
+const deleted       = new Deleted('./news.db')       ;
+const bookmarks     = new Bookmarks('./bookmarks.db');
+const cache         = new Cache('./cache.db'); 
+const log           = console.log;
+const fs            = require('fs');
+const util          = require('util');
+const { Internet }  = require('../../internet');
 
 const readFile = util.promisify(fs.readFile);
 
 const initialise = async () => {
-    await deleted.init();
-    await bookmarks.init();
-    await cache.init();
+    await Promise.all([deleted.init(), bookmarks.init(), cache.init()]);
 
     const { init: initDeleted } = require('./internal/deleted-items-resource');
 

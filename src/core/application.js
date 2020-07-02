@@ -45,14 +45,17 @@ class NewsItems {
     }
 }
 
-class Application {
+class Application { 
     constructor(ports, toggles, settings) {
         this._ports     = ports;
         this._events    = new CustomEventEmitter(ports.log);
         this._log       = ports.log;
-        this._toggles   = toggles;
         this._settings  = settings;
         this._newsItems = new NewsItems();
+
+        /* @todo: consolidate the `toggles` arg and `ports.toggles` */
+        this._toggles   = toggles;
+        this._toggleSource = ports.toggles;
     }
 
     pollEvery(milliseconds) {
@@ -160,6 +163,15 @@ class Application {
                     });
             },
         }
+    }
+
+    get toggles() {
+      return {
+        save: toggle => {
+          this._events.emit('toggle-saved', { toggle: toggle });
+          return Promise.resolve();
+        }
+      }
     }
 
     now() { return new Date(); }

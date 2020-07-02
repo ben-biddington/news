@@ -12,6 +12,10 @@ class MockToggles {
     get(name) {
         return this._toggles[name] === true;
     }
+
+    save(toggle) {
+      
+    }
 }
 
 module.exports.MockToggles = MockToggles;

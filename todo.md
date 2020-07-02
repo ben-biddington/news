@@ -10,3 +10,4 @@
 * make it so you can go get a screenshot of the website as a preview
 * why not use url as id? Filter would work across any source then.
 * [bookmarks] add a keep icon where you can send it to remote storage
+* try out [`jsonbase`](https://github.com/Devs-Garden/jsonbase)

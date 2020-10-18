@@ -1,4 +1,7 @@
 const { distPath, entryPoint } = require('./webpack.settings');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
     mode: 'development',
@@ -12,19 +15,45 @@ module.exports = {
       globalObject: 'this',
       library: '[name]',
     },
-    module: {
-		rules: [
-			{
-				test: /\.svelte$/,
-				use: {
-					loader: 'svelte-loader',
-					options: {
-						emitCss: false,
-						hotReload: false
-					}
-				}
-			},
-		]
-	},
-    stats: 'errors-only'
-  };
+    plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[name].[id].css'
+    }),
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.css$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorPluginOptions: {
+        preset: ['default', { discardComments: { removeAll: true } }]
+      },
+      canPrint: true
+    })
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.(html|svelte)$/,
+        use: 'svelte-loader'
+      },
+      {
+        test: /\.(sa|sc|c)ss$/,
+        use: [
+          'style-loader',
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                includePaths: [
+                  './theme',
+                  './node_modules'
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+};

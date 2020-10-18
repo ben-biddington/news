@@ -53,14 +53,14 @@
                     {#if allowSnooze}
                         <a
                             on:click={() => snooze(newsItem.id)} 
-                            href="#" 
+                            href={"#"} 
                             class="snooze btn btn-warning"
                             title="Snooze item with id '{newsItem.id}'">
                             snooze
                         </a>
                     {:else}
                         <a
-                            href="javascript:void(0)"
+                            href={"#"}
                             class="snooze btn btn-warning disabled"
                             title="Snooze not allowed on this item">
                             snooze

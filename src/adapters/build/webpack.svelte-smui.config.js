@@ -1,21 +1,20 @@
 const { distPath, entryPoint } = require('./webpack.settings');
-const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+  mode: 'development',
     entry: {
-      svelte: entryPoint('svelte/src/main.js'),
+      'svelte-smui' : entryPoint('svelte-smui/src/main.js'),
     },
     output: {
       path: distPath,
-      filename: '[name].bundle.js',
+      filename: 'adapters.web.[name].bundle.js',
       libraryTarget: 'umd',
       globalObject: 'this',
       library: '[name]',
     },
-    plugins: [
+  plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[name].[id].css'
@@ -46,7 +45,7 @@ module.exports = {
             options: {
               sassOptions: {
                 includePaths: [
-                  './src/adapters/web/gui/flavours/svelte/src/theme',
+                  './src/adapters/web/gui/flavours/svelte-smui/src/theme',
                   './node_modules'
                 ]
               }

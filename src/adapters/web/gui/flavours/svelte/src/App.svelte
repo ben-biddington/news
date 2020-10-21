@@ -80,7 +80,6 @@
       };
     }
 </script>
-
 <div id="application">
   {#if window.application.setting('theme') != 'lux'}
     <div id="navigation">

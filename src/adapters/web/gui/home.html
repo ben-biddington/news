@@ -6,6 +6,12 @@
         <script src="/assets/dist/mock.application.bundle.js"></script>
         <script src="/assets/dist/real.bundle.js"></script>
         <link rel="stylesheet" type="text/css" href="/assets/css/default.css" />
+        <style>
+            html, body {
+              margin: 0;
+              padding: 0;
+            }
+          </style>
     </head>
     <body></body>
     <script>
@@ -33,6 +39,13 @@
             document.body.appendChild(scriptTag);
         }
 
+        const addCss = src => {
+            const linkTag = document.createElement('link');
+            linkTag.setAttribute('href', src);
+            linkTag.setAttribute('rel', 'stylesheet');
+            document.body.appendChild(linkTag);
+        }
+
         var start = async () => {
             const applicationNode = document.querySelector('#application');
             
@@ -46,14 +59,15 @@
             if (window.toggles.get('use-svelte')) {
                 addScript('/assets/dist/svelte.bundle.js');
                 document.title += " -- Svelte";
+            }
+            else if (window.toggles.get('use-svelte-smui')) {
+                addCss('/assets/dist/adapters.web.svelte-smui.css');
+                addScript('/assets/dist/adapters.web.svelte-smui.bundle.js');
+                document.title += " -- Svelte SMUI";
             } 
             else if (window.toggles.get('use-vue')) {
                 addScript('/assets/dist/adapters.web.vue.bundle.js');
                 document.title += " -- Vue.js";
-            }
-            else if (window.toggles.get('use-polymer')) {
-                await polymer.render(document, application);
-                document.title += " -- Polymer";
             }
             else if (window.toggles.get('use-angular')) {
                 addScript('/assets/dist/adapters.web.angular.bundle.js');
@@ -66,7 +80,8 @@
                 addScript('/assets/dist/adapters.web.react.bundle.js');
                 document.title += " -- React";
             }
-            else {
+            else 
+            {
                 vanilla.render(document, application);
             }
         }

@@ -21,6 +21,7 @@
     "@babel/polyfill": "^7.10.1",
     "@babel/preset-env": "^7.1.6",
     "@babel/preset-react": "^7.0.0",
+    "@smui/button": "^1.0.0",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
     "chai": "^4.2.0",

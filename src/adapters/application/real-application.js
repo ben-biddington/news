@@ -75,5 +75,6 @@ const { QueryStringSettings }   = require('../web/query-string-settings');
 const { ConsoleLog }            = require('../../core/logging/log');
 const { SocketListener }        = require('../web/gui/socket-listener');
 const { UIEvents }              = require('../web/gui/ui-events');
+const { Title }                 = require('../web/gui/title');
 
-module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketListener, UIEvents }
+module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketListener, UIEvents, Title }

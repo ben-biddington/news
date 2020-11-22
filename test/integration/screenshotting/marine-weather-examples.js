@@ -1,4 +1,4 @@
-const { ConsoleListener, WebInteractor } = require('../integration-test');
+const { ConsoleListener, WebInteractor } = require('../integration-test.js');
 
 const { wellington } = require('../../../src/adapters/web/marine-weather');
 

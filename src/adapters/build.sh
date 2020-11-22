@@ -3,7 +3,7 @@ set -e
 
 echo "Building at <$PWD>"
 
-webpack --config ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
+# webpack --config ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
 
 webpack --config ./src/adapters/build/webpack.config.js
 webpack --config ./src/adapters/build/webpack.mocks.config.js

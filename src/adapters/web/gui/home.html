@@ -2,7 +2,6 @@
     <head>
         <title>Vanilla</title>
         <script src="/assets/dist/adapters.web.vanilla.bundle.js"></script>
-        <script src="/assets/dist/adapters.web.polymer.bundle.js"></script>
         <script src="/assets/dist/mock.application.bundle.js"></script>
         <script src="/assets/dist/real.bundle.js"></script>
         <link rel="stylesheet" type="text/css" href="/assets/css/default.css" />
@@ -30,7 +29,9 @@
         var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);
         
         application.pollEvery(parseInt(settings.get('polling-frequency','600000')));
- 
+
+        let title;
+
         view.onRender(e => console.log(`[render] ${JSON.stringify(e)}`));
 
         const addScript = src => {
@@ -43,7 +44,8 @@
             const linkTag = document.createElement('link');
             linkTag.setAttribute('href', src);
             linkTag.setAttribute('rel', 'stylesheet');
-            document.body.appendChild(linkTag);
+            linkTag.setAttribute('type', 'text/css');
+            document.head.appendChild(linkTag);
         }
 
         var start = async () => {
@@ -69,10 +71,6 @@
                 addScript('/assets/dist/adapters.web.vue.bundle.js');
                 document.title += " -- Vue.js";
             }
-            else if (window.toggles.get('use-angular')) {
-                addScript('/assets/dist/adapters.web.angular.bundle.js');
-                document.title += " -- Angular";
-            }
             else if (window.toggles.get('use-react')) {
                 const div = document.createElement('div');
                 div.setAttribute('id', 'application');
@@ -84,13 +82,7 @@
             {
                 vanilla.render(document, application);
             }
-        }
-
-        if (toggles.get('use-98-css')) {
-            const linkTag = document.createElement('link');
-            linkTag.setAttribute('rel'   , 'stylesheet');
-            linkTag.setAttribute('href'  , 'https://unpkg.com/98.css');
-            document.head.appendChild(linkTag);       
+            title = new real.Title(application, document);
         }
 
         if (toggles.get('allow-sockets')) {

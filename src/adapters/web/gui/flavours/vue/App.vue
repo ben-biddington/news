@@ -48,7 +48,6 @@
             await Promise.all([
                 window.application.lobsters.list(), 
                 window.application.hackerNews.list(), 
-                window.application.rnzNews.list(),
                 window.application.bookmarks.list()]);
 
             this.application            = window.application;

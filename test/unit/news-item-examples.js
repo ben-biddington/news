@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const { NewsItem } = require('../../src/core/news-item');
+const { NewsItem } = require('../../src/core/dist/news-item');
 
 describe('News item host', async () => {
     it('calculates host automatically', () => {

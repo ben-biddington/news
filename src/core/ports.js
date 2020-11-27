@@ -1,4 +1,4 @@
-const { Cloneable } = require('./cloneable');
+const { Cloneable } = require('./dist/cloneable');
 
 class Ports extends Cloneable{
     constructor(lobsters, log, seive, hackerNews, rnzNews) {

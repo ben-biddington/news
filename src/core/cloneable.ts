@@ -1,5 +1,5 @@
-class Cloneable {
-    clone(fun = () => {}) {
+export class Cloneable {
+    clone(fun = _ => {}) {
       const clone = Object.create(this);
     
       Object.assign(clone, this);
@@ -9,5 +9,3 @@ class Cloneable {
       return clone;
     }
   }
-  
-  module.exports.Cloneable = Cloneable;

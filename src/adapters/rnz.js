@@ -18,7 +18,7 @@ const list = (ports = {}, opts = {}) => {
 }
 
 const mapItem = item => {
-    const { NewsItem } = require('../core/news-item');
+    const { NewsItem } = require('../core/dist/news-item');
 
     return new NewsItem(item.guid, item.title, item.link, new Date(new Date(item.isoDate).toUTCString()));
 }

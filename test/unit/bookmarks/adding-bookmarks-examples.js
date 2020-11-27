@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 const { Application, Ports } = require('../../../src/core/application');
 
-const { NewsItem } = require('../../../src/core/news-item')
+const { NewsItem } = require('../../../src/core/dist/news-item')
 
 const { MockLobsters } = require('../../support/mock-lobsters');
 

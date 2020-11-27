@@ -1,6 +1,6 @@
 const { Application, Ports } = require('../../core/application');
 const { ConcreteNewsApplication } = require('../../core/dist/app');
-const { NewsItem } = require('../../core/news-item');
+const { NewsItem } = require('../../core/dist/news-item');
 
 const { list: lobstersList   }                  = require('../lobsters');
 const { list: hackerNewsList }                  = require('../hn');

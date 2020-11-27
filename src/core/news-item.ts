@@ -1,7 +1,14 @@
-const { Cloneable } = require('./cloneable');
+import { Cloneable } from './cloneable';
 
-class NewsItem extends Cloneable {
-    static blank() {
+export class NewsItem extends Cloneable {
+    id: string = '';
+    title: string = '';
+    url: string = '';
+    date: Date = null;
+    deleted: boolean = false;
+    new: boolean = false;
+
+    static blank() : NewsItem {
         return new NewsItem('', '', '', new Date());
     }
 
@@ -9,7 +16,7 @@ class NewsItem extends Cloneable {
         return Object.keys(new NewsItem());
     }
 
-    constructor(id, title, url, date) {
+    constructor(id?: string, title?: string, url?: string, date?: Date) {
         super();
 
         this.id = id;
@@ -50,5 +57,3 @@ class NewsItem extends Cloneable {
         return this.clone(it => it.new = true);
     }
 }
-
-module.exports.NewsItem = NewsItem

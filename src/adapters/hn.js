@@ -19,7 +19,7 @@ const list = (ports = {}, opts = {}) => {
 }
 
 const mapItem = item => {
-    const { NewsItem } = require('../core/news-item');
+    const { NewsItem } = require('../core/dist/news-item');
 
     const queryStringSettings = new QueryStringSettings(item.guid);
 

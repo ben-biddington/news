@@ -3,7 +3,7 @@ const { list } = require('../../src/adapters/rnz.js');
 const { get } = require('./support/net');
 
 const { expect, log } = require('./integration-test');
-const { NewsItem } = require('../../src/core/news-item.js');
+const { NewsItem } = require('../../src/core/dist/news-item.js');
 
 // npm run test.integration -- --grep hack
 describe('Can fetch latest rnz news', async () => {

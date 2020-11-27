@@ -1,5 +1,5 @@
 const { expect }   = require('./integration-test');
-const { NewsItem } = require('../../src/core/news-item');
+const { NewsItem } = require('../../src/core/dist/news-item');
 const { list }     = require('../../src/adapters/hn.js');
 
 const trace = process.env.TRACE ? console.log : () => {}

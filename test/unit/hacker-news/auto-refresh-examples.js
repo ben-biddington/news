@@ -1,8 +1,6 @@
 const { 
     delay, Application, Ports,
-    mockLog: log, MockToggles, MockSeive, MockListener, MockLobsters } = require('../application-unit-test');
-
-    const { NewsItem } = require('../../../src/core/news-item');
+    mockLog: log, MockToggles, MockSeive, MockListener, MockLobsters, NewsItem } = require('../application-unit-test');
 
 describe('Automatically refreshing lobsters news on a schedule', async () => {
     it("notifies with 'hacker-new-items-loaded'", async () => {

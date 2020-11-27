@@ -1,4 +1,4 @@
-const { Cloneable } = require("../../../../core/cloneable");
+const { Cloneable } = require("../../../../core/dist/cloneable");
 
 class StructuredLog {
     constructor(req, res, opts = { trace: false, prefix: '' }) {

@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "sourceMap": false,
     "declaration": false,
-    "module": "esnext",
+    "module": "commonJs",
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",

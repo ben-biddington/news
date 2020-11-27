@@ -1,5 +1,5 @@
 const { Database } = require('./internal/database');
-const { Bookmark } = require('../../core/bookmark');
+const { Bookmark } = require('../../core/dist/bookmark');
 
 class Bookmarks {
     constructor(fileName, log = _ => {}) {

@@ -1,4 +1,9 @@
-class Bookmark {
+export class Bookmark {
+    id: string = '';
+    title: string = '';
+    url: string = '';
+    source: string = '';
+
     constructor(id, title, url, source) {
         this.id     = id;
         this.title  = title;
@@ -6,5 +11,3 @@ class Bookmark {
         this.source = source;
     }
 }
-
-module.exports.Bookmark = Bookmark;

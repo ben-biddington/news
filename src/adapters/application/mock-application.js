@@ -194,7 +194,7 @@ class Application {
 
 module.exports.Application  = Application;
 module.exports.NewsItem     = require('../../core/news-item').NewsItem;
-module.exports.Bookmark     = require('../../core/bookmark').Bookmark;
+module.exports.Bookmark     = require('../../core/dist/bookmark').Bookmark;
 module.exports.UIEvents     = require('../../adapters/web/gui/ui-events').UIEvents;
 module.exports.MockToggles  = MockToggles;
 module.exports.MockSettings = MockSettings;

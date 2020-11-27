@@ -4,7 +4,7 @@ const temp   = require('temp');
 temp.track();
 
 const { Bookmarks } = require('../../../src/adapters/database/bookmarks');
-const { Bookmark }  = require('../../../src/core/bookmark');
+const { Bookmark }  = require('../../../src/core/dist/bookmark');
 
 describe('[bookmarks] Can store bookmarks', () => {
     let tempFile, bookmarks = null;

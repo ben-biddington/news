@@ -6,7 +6,7 @@ const { add, list, del } = require('../../../../src/adapters/bookmarks');
 const trace = process.env.TRACE ? console.log : () => {}
 
 const { postJson, get, del: _delete } = require('../../../../src/adapters/internet');
-const { Bookmark } = require('../../../../src/core/bookmark');
+const { Bookmark } = require('../../../../src/core/dist/bookmark');
 
 describe('Can add bookmarks', async () => {
     it('from local server', async () => {

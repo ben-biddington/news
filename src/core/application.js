@@ -1,5 +1,8 @@
 const events  = require('events');
 const { NewsItems } = require('./dist/news-items');
+const { list: listNews } = require('./internal/use-cases/news/list');
+const { Ports }  = require('./ports');
+const { Bookmark } = require('./dist/bookmark');
 
 // https://stackoverflow.com/questions/5178869/listen-to-all-emitted-events-in-node-js
 class CustomEventEmitter extends events.EventEmitter {
@@ -22,9 +25,7 @@ class CustomEventEmitter extends events.EventEmitter {
     }
 }
 
-const { list: listNews } = require('./internal/use-cases/news/list');
-const { Ports }  = require('./ports');
-const { Bookmark } = require('./bookmark');
+
 
 class Application { 
     constructor(ports, toggles, settings) {

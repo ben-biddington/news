@@ -16,7 +16,7 @@ const { MockBookMarks } = require('../../support/mock-bookmarks');
 
 const { log } = require('../../support/mock-log');
 
-const { Bookmark } = require('../../../src/core/bookmark');
+const { Bookmark } = require('../../../src/core/dist/bookmark');
 
 const mockPorts = () => new Ports(new MockLobsters(), log, new MockSeive(), new MockLobsters());
 

@@ -13,15 +13,12 @@ class NewsPanel extends React.Component {
 
   async componentDidMount() {
     this.props.application.on(this.props.loadEvents, 
-        e => this.setState({ 
-            source: e.items }));
+        e => this.setState({ source: e.items }));
 
     this.props.application.on(this.props.filterEvents, 
-        e => this.setState({ 
-            source: this.state.source.filter(it => it.id != e.id) }));
+        e => this.setState({ source: this.state.source.filter(it => it.id != e.id) }));
 
-    this.setState({ 
-            source: await this.props.application[this.props.useCase].list() });
+    this.setState({ source: await this.props.application[this.props.useCase].list() });
   }
 
   trim (text, count) {
@@ -43,7 +40,7 @@ class NewsPanel extends React.Component {
 
     return (
       <div id={props.id} className="bs-component">
-        <div className="title">{props.title} <span class='lastUpdated'></span></div>
+        <div className="title">{props.title} <span className='lastUpdated'></span></div>
         <ol className="items list-group">
             {this.state.source.map((newsItem, i) => 
               <li className={`item list-group-item ${newsItem.deleted ? 'deleted': ''}`} id={`news-${newsItem.id}`} key={newsItem.id}>

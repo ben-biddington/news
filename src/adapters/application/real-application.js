@@ -1,4 +1,5 @@
 const { Application, Ports } = require('../../core/application');
+const { ConcreteNewsApplication } = require('../../core/dist/app');
 const { NewsItem } = require('../../core/news-item');
 
 const { list: lobstersList   }                  = require('../lobsters');
@@ -77,4 +78,4 @@ const { SocketListener }        = require('../web/gui/socket-listener');
 const { UIEvents }              = require('../web/gui/ui-events');
 const { Title }                 = require('../web/gui/title');
 
-module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketListener, UIEvents, Title }
+module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketListener, UIEvents, Title, ConcreteNewsApplication }

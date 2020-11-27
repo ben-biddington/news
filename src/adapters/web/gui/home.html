@@ -28,6 +28,10 @@
         var view        = new real.UIEvents();
         var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);
         
+        if (false === toggles.get('unplug')) {
+            var x = new real.ConcreteNewsApplication();
+        }
+
         application.pollEvery(parseInt(settings.get('polling-frequency','600000')));
 
         let title;

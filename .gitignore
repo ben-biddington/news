@@ -3,3 +3,4 @@ node_modules
 lobsters-deleted.sql
 *.db
 .saved.io.credential
+./src/core/dist/

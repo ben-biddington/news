@@ -1,4 +1,6 @@
-class Timespan {
+export class Timespan {
+    private _timeInMilliseconds : number;
+
     constructor(timeInMilliseconds) {
         this._timeInMilliseconds = timeInMilliseconds;
     }
@@ -15,5 +17,3 @@ class Timespan {
         return this._timeInMilliseconds;
     }
 }
-
-module.exports = { Timespan }

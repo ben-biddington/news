@@ -4,7 +4,7 @@ const temp = require('temp');
 const md5 = require('md5');
 const fs = require('fs');
 const path = require('path');
-const { Timespan } = require('../../../src/core/timespan');
+const { Timespan } = require('../../../src/core/dist/timespan');
 
 describe('[disk-cache]', async () => {
     let tempFile, cache;

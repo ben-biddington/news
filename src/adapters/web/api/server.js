@@ -8,7 +8,7 @@ const express                     = require('express')
 const { Deleted }   = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
 const { Cache }     = require('../../database/cache');
-const { Timespan }  = require('../../../core/timespan');
+const { Timespan }  = require('../../../core/dist/timespan');
 const { add: savedIo, getCredential: getSavedIoCredential } = require('../../saved.io');
 
 const app = express();

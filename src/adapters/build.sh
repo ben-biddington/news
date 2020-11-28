@@ -9,7 +9,7 @@ npx tsc -p src/core/tsconfig.json --listEmittedFiles
 
 echo "Packing"
 
-# webpack --config ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
+webpack --config ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
 
 webpack --config ./src/adapters/build/webpack.config.js
 webpack --config ./src/adapters/build/webpack.mocks.config.js

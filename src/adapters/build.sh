@@ -1,20 +1,28 @@
 #!/bin/bash 
 set -e 
 
+function build {
+    name="$1"
+    config="$2"
+    echo "[webpack] Building $1 <$2>"
+    webpack --config $config
+}
+
 echo "Building at <$PWD>"
 
 echo "Compiling typescript"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
 
-echo "Packing"
+echo ""
 
-webpack --config ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
+echo -e "Packing\n"
 
-webpack --config ./src/adapters/build/webpack.config.js
-webpack --config ./src/adapters/build/webpack.mocks.config.js
-webpack --config ./src/adapters/build/webpack.adapters.config.js
+build 'core' ./src/adapters/build/webpack.config.js
+build 'mocks' ./src/adapters/build/webpack.mocks.config.js
+build 'adapters' ./src/adapters/build/webpack.adapters.config.js
 
-webpack --config ./src/adapters/build/webpack.svelte.config.js
-webpack --config ./src/adapters/build/webpack.vue.config.js
-webpack --config ./src/adapters/build/webpack.react.config.js
+build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
+build 'svelte' ./src/adapters/build/webpack.svelte.config.js
+build 'vue' ./src/adapters/build/webpack.vue.config.js
+build 'react' ./src/adapters/build/webpack.react.config.js

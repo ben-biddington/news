@@ -8,9 +8,9 @@ function build {
     webpack --config $config
 }
 
-echo "Building at <$PWD>"
+echo -e "Building at <$PWD>\n"
 
-echo "Compiling typescript"
+echo -e "Compiling typescript\n"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
 

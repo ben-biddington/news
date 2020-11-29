@@ -3,6 +3,9 @@
 //
 
 @import "@material/theme/color-palette";
+@import "@material/typography/mdc-typography";
+@import "@smui/button/style";
+@import "@smui/fab/style";
 
 // Svelte Colors!
 $mdc-theme-primary: #ff3e00;

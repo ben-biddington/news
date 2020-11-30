@@ -25,8 +25,6 @@ class CustomEventEmitter extends events.EventEmitter {
     }
 }
 
-
-
 class Application { 
     constructor(ports, toggles, settings) {
         this._ports     = ports;
@@ -45,8 +43,8 @@ class Application {
 
         this._pollingTask = setInterval(async () => {
             await Promise.all([
-                this.lobsters.list().then(lobstersNews => this._events.emit('lobsters-items-loaded', { items: lobstersNews })),
-                this.hackerNews.list().then(hackerNews => this._events.emit('hacker-news-items-loaded', { items: hackerNews }))
+                this.lobsters.list(),
+                this.hackerNews.list()
             ]);
         }, milliseconds);
     }
@@ -63,6 +61,8 @@ class Application {
                 this._newsItems.missing(newsItems).forEach(item => item.new = true);
 
                 this._save(newsItems);
+
+                this._events.emit('lobsters-items-loaded', { items: newsItems });
 
                 return newsItems;
             },
@@ -85,6 +85,8 @@ class Application {
                 const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._toggles);
 
                 this._save(newsItems);
+
+                this._events.emit('hacker-news-items-loaded', { items: newsItems });
 
                 return newsItems;
             },

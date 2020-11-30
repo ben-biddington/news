@@ -1,56 +1,79 @@
 <script>
   import Button, {Label, Icon} from '@smui/button';
-  import TopAppBar, {Row, Section, Title} from '@smui/top-app-bar';
   import IconButton from '@smui/icon-button';
   import Checkbox from '@smui/checkbox';
   import FormField from '@smui/form-field';
-  let prominent = false;
-  let dense = false;
-  let secondaryColor = false;
+  import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
+  import NewsPanel from './NewsPanel.svelte';
+
+  const application = window.application;
+
+  $: bookmarks = [];
+    
+  const loadBookmarks = () => window.application.bookmarks.list().then(result => bookmarks = result);
+
+  $: lobstersNews = [];
+
+  const loadLobstersNews = () => window.application.lobsters.list().then(result => lobstersNews = result);
+
+  $: hackerNews = [];
+
+  const loadHackerNews = () => window.application.hackerNews.list().then(result => hackerNews = result);
+
+  application.on("bookmark-added"             , bookmark    => bookmarks  = [...bookmarks, bookmark ]);
+  application.on("bookmark-deleted"           , e           => bookmarks  = bookmarks.filter(it => it.id != e.id));
+
+  application.on(
+      [ "lobsters-item-deleted", "lobsters-item-snoozed" ], 
+      e => lobstersNews = lobstersNews.filter(it => it.id != e.id));
+    
+  application.on("lobsters-items-loaded"      , e => lobstersNews = e.items);
+
+  application.on("hacker-news-items-loaded"   , e => hackerNews = e.items);
+  application.on("hacker-news-item-deleted"   , e           => hackerNews = hackerNews.filter(it => it.id != e.id));
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 <style>
-  .top-app-bar-container {
-    max-width: 480px;
-    min-width: 480px;
-    height: 320px;
-    border: 1px solid rgba(0,0,0,.1);
-    margin: 0 18px 18px 0;
-  }
-
-  .top-app-bar-container {
-    overflow: auto;
-    display: inline-block;
-  }
-
   .flexy {
-    display: flex;
-    flex-wrap: wrap;
+      margin: 0 auto;
+      width: 100%;
   }
 </style>
 
-<section>
-<Button variant="unelevated"><Label>Unelevated</Label></Button>
-  <div class="flexy">
-    <div class="top-app-bar-container">
-      <TopAppBar variant="static" {prominent} {dense} color={secondaryColor ? 'secondary' : 'primary'}>
-        <Row>
-          <Section>
-            <IconButton class="material-icons">menu</IconButton>
-            <Title>Static</Title>
-          </Section>
-          <Section align="end" toolbar>
-            <IconButton class="material-icons" aria-label="Download">file_download</IconButton>
-            <IconButton class="material-icons" aria-label="Print this page">print</IconButton>
-            <IconButton class="material-icons" aria-label="Bookmark this page">bookmark</IconButton>
-          </Section>
-        </Row>
-      </TopAppBar>
-      <div>
-        abc def
-      </div>
-    </div>
-  </div>
-</section>
+<div class="flexy">
+  <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
+  <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} />
+  <DataTable table$aria-label="Bookmarks">
+    <Head>
+      <Row>
+        <Cell colspan="4">Bookmarks ({bookmarks.length})</Cell>
+      </Row>
+    </Head>
+    <Body>
+      {#await loadBookmarks() then _}
+        {#each bookmarks as bookmark, i}
+          <Row id="bookmark-{bookmark.id}">
+            <Cell>
+              {i+1}
+            </Cell>
+            <Cell>
+              <div class="text-truncate">
+                <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+              </div>
+            </Cell>
+            <Cell>
+                <a
+                  href="javascript:application.bookmarks.del('{bookmark.id}')"
+                  class="del"
+                  title="Delete item with id '{bookmark.id}'">
+                  delete
+                </a>
+            </Cell>
+          </Row>
+        {/each}
+      {/await}
+    </Body>
+  </DataTable>
+</div>

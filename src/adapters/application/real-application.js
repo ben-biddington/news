@@ -74,8 +74,8 @@ const application = (toggles, settings) => {
 const { QueryStringToggles }    = require('../web/toggling/query-string-toggles');
 const { QueryStringSettings }   = require('../web/query-string-settings');
 const { ConsoleLog }            = require('../../core/logging/log');
-const { SocketListener }        = require('../web/gui/socket-listener');
+const { SocketSync }            = require('../web/gui/socket-sync');
 const { UIEvents }              = require('../web/gui/ui-events');
 const { Title }                 = require('../web/gui/title');
 
-module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketListener, UIEvents, Title, ConcreteNewsApplication }
+module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketSync, UIEvents, Title, ConcreteNewsApplication }

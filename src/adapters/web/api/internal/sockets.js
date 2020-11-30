@@ -19,6 +19,7 @@ class SocketNotifier {
 
             if (client.readyState === WebSocket.OPEN) {
                 client.send(text);
+                console.log(`[ws] Sent: ${text}`);
             } else {
                 console.log(`[ws] Invalid ready state <${client.readyState}>`);   
             }

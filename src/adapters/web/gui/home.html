@@ -17,21 +17,9 @@
         var toggles     = new real.QueryStringToggles(document.location.search);
         var settings    = new real.QueryStringSettings(document.location.search);
 
-        if (settings.get('theme') == 'lux') {
-            // https://bootswatch.com/lux/
-            const linkTag = document.createElement('link');
-            linkTag.setAttribute('rel'   , 'stylesheet');
-            linkTag.setAttribute('href'  , '/assets/css/lux/bootstrap.min.css');
-            document.head.appendChild(linkTag);
-        } 
-
         var view        = new real.UIEvents();
         var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);
         
-        if (false === toggles.get('unplug')) {
-            var x = new real.ConcreteNewsApplication();
-        }
-
         application.pollEvery(parseInt(settings.get('polling-frequency','600000')));
 
         let title;
@@ -58,7 +46,6 @@
             console.log(`[start] node => <${document.querySelector('#application')}>`);
 
             if (applicationNode) {
-                console.log(`Removing application node`);
                 document.body.removeChild(applicationNode);
             }
 
@@ -82,25 +69,17 @@
                 addScript('/assets/dist/adapters.web.react.bundle.js');
                 document.title += " -- React";
             }
-            else 
+            else
             {
                 vanilla.render(document, application);
             }
             title = new real.Title(application, document);
         }
 
-        if (toggles.get('allow-sockets')) {
-            const url = `ws://${document.location.hostname}:1080`;
-            
-            console.log(`[socket] Starting to listen on url <${url}>`);
-            
-            const listener = new real.SocketListener(
-                url, 
-                { info: console.log, trace: console.log });
-
-            listener.onOpen(m => console.log(`[socket] ${JSON.stringify(m)}`));
-            listener.onMessage(m => console.log(`[socket] data:${m.data}`));
-        }
+        if (! toggles.get('unplug')) {
+          const sync = new real.SocketSync(`ws://${document.location.hostname}:1080`, console.log);
+          sync.connect(window.application);
+      }
     </script>
     <script>
         if (!toggles.get('disallow-autostart')) {

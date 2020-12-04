@@ -5,6 +5,7 @@
   import FormField from '@smui/form-field';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import NewsPanel from './NewsPanel.svelte';
+  import TopAppBar, {Row as TopAppBarRow, Section, Title} from '@smui/top-app-bar';
 
   const application = window.application;
 
@@ -31,6 +32,13 @@
 
   application.on("hacker-news-items-loaded"   , e => hackerNews = e.items);
   application.on("hacker-news-item-deleted"   , e           => hackerNews = hackerNews.filter(it => it.id != e.id));
+
+  application.on(
+      [ "hacker-news-item-deleted", "lobsters-item-deleted" ], 
+    _ => deletedItemCount = deletedItemCount + 1);
+
+  $: deletedItemCount = 0;
+  const loadDeletedItemCount = () => window.application.deletedItems.count().then(result => deletedItemCount = result);
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700">
@@ -40,7 +48,31 @@
       margin: 0 auto;
       width: 100%;
   }
+
+  .top-app-bar-container {
+    max-width: 100%;
+    min-width: 480px;
+    overflow: auto;
+    display: block;
+  }
 </style>
+
+{#await loadDeletedItemCount() then _}
+   <div class="top-app-bar-container">
+    <TopAppBar variant="static" prominent=true dense=true color='primary'>
+        <Row>
+          <Section>
+            <IconButton class="material-icons">menu</IconButton>
+            <Title>News</Title>
+          </Section>
+          <Section align="end" toolbar>
+            <IconButton class="material-icons" aria-label="Bookmark this page">bookmark</IconButton>
+            <div id="deletedItems">{deletedItemCount} deleted items</div>
+          </Section>
+        </Row>
+    </TopAppBar>
+  </div>
+{/await}
 
 <div class="flexy">
   <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />

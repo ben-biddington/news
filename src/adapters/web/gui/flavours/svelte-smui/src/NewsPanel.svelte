@@ -1,6 +1,6 @@
 <script>
     import { fade, fly } from 'svelte/transition';
-    import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
+    import List, {Group, Item, Graphic, Meta, Label as ListLabel, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
 
     export let application      = {};
     export let id               = 'unknown';
@@ -12,6 +12,7 @@
     export let load             = () => Promise.resolve();
     export let showHost         = true;
     export let showAge          = true;
+    export let titleLengthLimit = 80;
 
     const trim = (text, count) => {
         const ellipsis = text.length > count ? '...' : '';
@@ -19,41 +20,50 @@
     }
 
     const snooze = id => application[useCase].snooze(id);
+
+    const cssClassFor = newsItem => {
+      return [
+        'item', 
+        (newsItem.new ? 'new' : ''),
+        (newsItem.deleted ? 'deleted' : ''),
+      ].filter(it => it != '').join(' ');
+    }
 </script>
 
-<DataTable id="{id}" table$aria-label="Bookmarks">
-    <Head>
-      <Row>
-        <Cell colspan="4">{title} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Cell>
-      </Row>
-    </Head>
-    <Body>
+<Group id={id}>
+    <Subheader>{title} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Subheader>
+    <List class="items" dense={false}>
       {#each source as newsItem, i} <!-- https://svelte.dev/docs#class_name -->
-        <Row>
-          <Cell>
-          {i+1}
-          </Cell>
-          <Cell style="min-width: 75px">
-            <a href={newsItem.url} class="title" title="{newsItem.title}">{trim(newsItem.title, 50)}</a>
-            <div class="meta">
-                {#if showAge}
-                    <span class="age">{newsItem.ageSince(window.application.now())}</span>
-                {/if}
-                {#if showHost}
-                    <span class="host">{newsItem.host}</span>
-                {/if}
-            </div>
-          </Cell>
-          <Cell>
-           {#if allowBookmark}
-              <a
-                  href="javascript:application.bookmarks.add('{newsItem.id}')"
-                  class="bookmark btn btn-success">
-                  bookmark
-              </a>
-            {/if}
+        <Item 
+          id="news-{newsItem.id}" 
+          class={cssClassFor(newsItem)}>
+            <Text>
+              <PrimaryText>
+                <span style="width:50px;display:inline-block;">{i+1}.</span>
+                <a href={newsItem.url} class="title" title="{newsItem.title}">{trim(newsItem.title, titleLengthLimit)}</a>
+              </PrimaryText>
+              
+              {#if showAge}
+                <SecondaryText>
+                  <span class="age">{newsItem.ageSince(window.application.now())}</span>
+                </SecondaryText>
+              {/if}
+              {#if showHost}
+                <SecondaryText>
+                  <span class="host">{newsItem.host}</span>
+                </SecondaryText>
+              {/if}
+            </Text>
+            <Meta>
+              {#if allowBookmark}
+                <a
+                    href="javascript:application.bookmarks.add('{newsItem.id}')"
+                    class="bookmark btn btn-success">
+                    bookmark
+                </a>
+              {/if}
 
-            {#if allowSnooze}
+              {#if allowSnooze}
                 <a
                     on:click={() => snooze(newsItem.id)} 
                     href={"#"} 
@@ -61,25 +71,25 @@
                     title="Snooze item with id '{newsItem.id}'">
                     snooze
                 </a>
-            {:else}
+              {:else}
                 <a
                     href={"#"}
                     class="snooze btn btn-warning disabled"
                     title="Snooze not allowed on this item">
                     snooze
                 </a>    
-            {/if}
+              {/if}
                     
-            {#if newsItem.deleted == false}
+              {#if newsItem.deleted == false}
                 <a
                     href="javascript:application.{useCase}.delete('{newsItem.id}')"
                     class="del btn btn-danger"
                     title="Delete item with id '{newsItem.id}'">
                     delete
                 </a>
-            {/if}
-          </Cell>
-        </Row>
-        {/each}
-    </Body>
-  </DataTable>
+              {/if}
+            </Meta>
+          </Item>
+      {/each}
+    </List>
+  </Group>

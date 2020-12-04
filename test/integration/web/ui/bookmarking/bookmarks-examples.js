@@ -1,10 +1,10 @@
-const itemsSelector = 'div#bookmarks .items';
+const itemsSelector = '#bookmarks .items';
 
 const { 
-    delay, describeFeatured, toggles, baseUrl, 
+    describeFeatured, toggles, baseUrl, 
     expect, WebInteractor, ConsoleListener } = require('../ui-integration-test');
 
-describeFeatured([...toggles, 'use-react'].filter(it => it != 'vanilla'), '[UI] Bookmarks', async feature => {
+describeFeatured(toggles, '[UI] Bookmarks', async feature => {
     let interactor, page, consoleMessages = null;
 
     before(async ()  => 

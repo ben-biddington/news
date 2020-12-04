@@ -1,6 +1,6 @@
 const { describeFeatured, toggles, baseUrl, expect, delay, WebInteractor } = require('./ui-integration-test');
 
-const selector  = 'div#deletedItems';
+const selector  = '#deletedItems';
 const useSvelte = process.env.USE_SVELTE || true;
 const headless  = (process.env.HEADLESS || 'true') === 'true';
 

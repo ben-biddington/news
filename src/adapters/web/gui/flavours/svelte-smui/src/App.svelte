@@ -6,6 +6,7 @@
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import NewsPanel from './NewsPanel.svelte';
   import TopAppBar, {Row as TopAppBarRow, Section, Title} from '@smui/top-app-bar';
+  import List, {Group, Item, Graphic, Meta, Label as ListLabel, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
 
   const application = window.application;
 
@@ -45,7 +46,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 <style>
   .flexy {
-      margin: 0 auto;
       width: 100%;
   }
 
@@ -66,8 +66,8 @@
             <Title>News</Title>
           </Section>
           <Section align="end" toolbar>
-            <IconButton class="material-icons" aria-label="Bookmark this page">bookmark</IconButton>
-            <div id="deletedItems">{deletedItemCount} deleted items</div>
+            <IconButton class="material-icons" aria-label="Bookmark this page">delete</IconButton>
+            {deletedItemCount} deleted items
           </Section>
         </Row>
     </TopAppBar>
@@ -77,35 +77,26 @@
 <div class="flexy">
   <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
   <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} />
-  <DataTable table$aria-label="Bookmarks">
-    <Head>
-      <Row>
-        <Cell colspan="4">Bookmarks ({bookmarks.length})</Cell>
-      </Row>
-    </Head>
-    <Body>
+  <Group id="bookmarks">
+    <Subheader>Bookmarks ({bookmarks.length})</Subheader>
+    <List class="items" dense={true}>
       {#await loadBookmarks() then _}
         {#each bookmarks as bookmark, i}
-          <Row id="bookmark-{bookmark.id}">
-            <Cell>
-              {i+1}
-            </Cell>
-            <Cell>
-              <div class="text-truncate">
-                <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
-              </div>
-            </Cell>
-            <Cell>
-                <a
-                  href="javascript:application.bookmarks.del('{bookmark.id}')"
-                  class="del"
-                  title="Delete item with id '{bookmark.id}'">
-                  delete
-                </a>
-            </Cell>
-          </Row>
+          <Item id="bookmark-{bookmark.id}">
+            <div class="text-truncate">
+              <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+            </div>
+            <Meta>
+              <a
+                href="javascript:application.bookmarks.del('{bookmark.id}')"
+                class="del"
+                title="Delete item with id '{bookmark.id}'">
+                delete
+              </a>
+            </Meta>
+          </Item>
         {/each}
       {/await}
-    </Body>
-  </DataTable>
+    </List>
+  </Group>
 </div>

@@ -1,4 +1,4 @@
-const itemsSelector = 'div#application div#bookmarks .items';
+const itemsSelector = '#application #bookmarks .items';
 
 const { 
     delay, describeFeatured, toggles, baseUrl, 

@@ -1,24 +1,23 @@
-const itemsSelector = 'div#application div#hackerNews .items';
-
+const itemsSelector = '#hackerNews .items';
 const { baseUrl, expect, WebInteractor, toggles, describeFeatured, ConsoleListener } = require('./ui-integration-test');
-const { delay } = require('../../support/support');
 
-describeFeatured(toggles.plus('use-react'), '[UI] it shows hacker news', async toggle => {
+describeFeatured(toggles, '[UI] it shows hacker news', async toggle => {
     let interactor, page = null;
 
     before(async ()  => 
     {
         interactor  = new WebInteractor({ headless: true });
         page        = await interactor.page();
-        await page.goto(`${baseUrl}?unplug=1&${toggle}`);
     });
-    
+
+    beforeEach(async () => {
+        await page.goto(`${baseUrl}?unplug&disallow-autostart&${toggle}`);
+    });
+
     after(async () => await interactor.close());
 
     it('for example', async () => {
-        await page.goto(`${baseUrl}?unplug=1&${toggle}`);
-
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             application.hackerNews.listReturns(Promise.resolve([ 
                 new mock.NewsItem(
                     'id-abc', 
@@ -28,6 +27,8 @@ describeFeatured(toggles.plus('use-react'), '[UI] it shows hacker news', async t
             ]));
             
             window.start(); 
+
+            await view.waitUntilIdle({ timeout: 1000 });
             
             application.lobsters.mustHaveHadListCalled();
         });
@@ -63,26 +64,19 @@ describeFeatured(toggles.plus('use-react'), '[UI] it shows hacker news', async t
         expect(bookmarkControls.map(it => it.split(' ')).flat()).to.include( 'bookmark' );
     });
 
-    const skipWhen = (condition, title, fn) => {
-        if (condition())
-            return it(`Skipped because of condition <${condition}>`);
-
-        return it(title, fn);
-    }
-
-    skipWhen(() => toggle == 'use-vanilla', "reloads list items in response to 'hacker-news-items-loaded' notification", async () => {
+    it("reloads list items in response to 'hacker-news-items-loaded' notification", async () => {
 
         consoleMessages = new ConsoleListener(page);
 
-        await page.goto(`${baseUrl}?unplug=1&${toggle}`);
-
-        await page.evaluate(() => {
-            application.lobsters.listReturns(Promise.resolve([ ]));
+        await page.evaluate(async () => {
+            application.hackerNews.listReturns(Promise.resolve([ ]));
 
             window.start();
+
+            await view.waitUntilIdle();
         });
 
-        await page.waitForSelector('div#hackerNews');
+        await page.waitForSelector('#hackerNews');
 
         await page.evaluate(() => {
             application.notify(
@@ -119,9 +113,9 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
     });
 
     beforeEach(async () => {
-        await page.goto(`${baseUrl}?unplug=1&${feature}`);
+        await page.goto(`${baseUrl}?unplug&disallow-autostart&${feature}`);
     });
-    
+
     after(async () => await interactor.close());
 
     it('calls the delete use case', async () => {
@@ -174,17 +168,15 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             );
         });
 
-        await page.waitForFunction(() => document.querySelector(`div#application div#hackerNews .items li`) == null, { timeout: 5000 });
+        await page.waitForFunction(() => document.querySelector(`#hackerNews .items li`) == null, { timeout: 5000 });
 
-        const allListItems = await page.evaluate(() => document.querySelector(`div#application div#hackerNews .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#hackerNews .items li`));
 
         expect(allListItems).to.be.null;
     });
 
-    it("deletes list items have 'deleted' css class and no delete button", async () => {
+    it("deleted list items have 'deleted' css class and no delete button", async () => {
         
-        await page.waitForSelector('div#hackerNews');
-
         await page.evaluate(async () => {
             application.hackerNews.listReturns(Promise.resolve([ 
                 new mock.NewsItem('a', '', '').thatIsDeleted()
@@ -209,16 +201,19 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
     //TEST: it allows deleting ids that don't exist
 });
 
-describeFeatured(toggles, '[UI] Bookmarking hacker news items', async toggles => {
+describeFeatured(toggles, '[UI] Bookmarking hacker news items', async feature => {
     let interactor, page = null;
 
     before(async ()  => 
     {
         interactor = new WebInteractor({ headless: true });
         page       = await interactor.page();
-        await page.goto(`${baseUrl}?unplug=1&${toggles}`);
     });
     
+    beforeEach(async () => {
+        await page.goto(`${baseUrl}?unplug&disallow-autostart&${feature}`);
+    });
+
     after(async () => await interactor.close());
 
     it('calls the bookmark use case', async () => {
@@ -234,7 +229,7 @@ describeFeatured(toggles, '[UI] Bookmarking hacker news items', async toggles =>
             
             window.start();
 
-            await view.waitUntilIdle();
+            await view.waitUntilIdle({ timeout: 1000 });
         });
 
         await page.waitForSelector(`${itemsSelector} li`);

@@ -2,7 +2,7 @@ const {
     baseUrl, delay, expect, WebInteractor, 
     ConsoleListener, describeFeatured, toggles } = require('./ui-integration-test');
 
-const itemsSelector = 'div#application div#lobsters .items';
+const itemsSelector = '#lobsters .items';
 
 describeFeatured(toggles, '[UI] How it displays lobsters news items', async toggles => {
     it('renders items like this', async () => {
@@ -15,7 +15,7 @@ describeFeatured(toggles, '[UI] How it displays lobsters news items', async togg
         const browser = await puppeteer.launch({ headless: true });
         const page    = await browser.newPage();
 
-        const itemsSelector = 'div#application div#lobsters .items';
+        const itemsSelector = '#lobsters .items';
 
         try 
         {
@@ -80,7 +80,7 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
     after(async () => await interactor.close());
 
     it('calls the delete use case', async () => {
-        const itemsSelector = 'div#application div#lobsters .items';
+        const itemsSelector = '#lobsters .items';
 
         await page.goto(`${baseUrl}?unplug=1&${toggles}`);
 
@@ -128,7 +128,7 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
         });
 
         //@todo: this element finding is not very good it returns either null or {}. There must be a better way.
-        const allListItems = await page.evaluate(() => document.querySelector(`div#application div#lobsters .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items li`));
 
         expect(allListItems).to.be.null;
     });
@@ -136,7 +136,7 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
     it("deleted list items have 'deleted' css class and no delete button", async () => {
         await page.goto(`${baseUrl}?unplug=1`);
 
-        await page.waitForSelector('div#lobsters');
+        await page.waitForSelector('#lobsters');
 
         await page.evaluate(() => {
             application.lobsters.listReturns(Promise.resolve([ 
@@ -158,15 +158,17 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
     it("reloads list items in response to 'lobsters-items-loaded' notification", async () => {
         consoleMessages = new ConsoleListener(page);
 
-        await page.goto(`${baseUrl}?unplug=1&${toggles}`);
+        await page.goto(`${baseUrl}?unplug&disallow-autostart&${toggles}`);
 
-        await page.evaluate(() => {
+        await page.evaluate(async () => {
             application.lobsters.listReturns(Promise.resolve([ ]));
 
             window.start();
+
+            await view.waitUntilIdle();
         });
 
-        await page.waitForSelector('div#lobsters');
+        await page.waitForSelector('#lobsters');
 
         await page.evaluate(() => {
             application.notify(
@@ -197,14 +199,14 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
 
 describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters news items', async toggles => {
     let interactor, page = null;
-    const itemsSelector = 'div#application div#lobsters .items';
+    const itemsSelector = '#lobsters .items';
 
     beforeEach(async ()  => 
     {
         interactor  = new WebInteractor({ headless: true });
         page        = await interactor.page();
         await page.goto(`${baseUrl}?unplug=1&${toggles}`);
-        await page.waitForSelector('div#lobsters');
+        await page.waitForSelector('#lobsters');
     });
 
     afterEach(async () => await interactor.close());
@@ -222,7 +224,7 @@ describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters
             window.start();
         });
 
-        await page.waitForSelector('div#lobsters');
+        await page.waitForSelector('#lobsters');
 
         await page.$$eval(`${itemsSelector} li a.snooze`, items => items.map(it => ( it.click() )));
 
@@ -255,9 +257,9 @@ describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters
 
         await delay(500);
 
-        await page.waitForFunction(() => document.querySelector(`div#application div#lobsters .items li`) == null, { timeout: 5000})
+        await page.waitForFunction(() => document.querySelector(`#lobsters .items li`) == null, { timeout: 5000})
 
-        const allListItems = await page.evaluate(() => document.querySelector(`div#application div#lobsters .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items li`));
 
         expect(allListItems).to.be.null;
     });

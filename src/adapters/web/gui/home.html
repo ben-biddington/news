@@ -4,11 +4,23 @@
         <script src="/assets/dist/adapters.web.vanilla.bundle.js"></script>
         <script src="/assets/dist/mock.application.bundle.js"></script>
         <script src="/assets/dist/real.bundle.js"></script>
-        <link rel="stylesheet" type="text/css" href="/assets/css/default.css" />
         <style>
             html, body {
               margin: 0;
-              padding: 0;
+              padding: 10;
+            }
+
+            .items {
+                list-style-type: none;
+                counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
+            }
+
+            .items .item .title {
+                counter-increment: css-counter 1; /* Increase the counter by 1. */
+            }
+
+            .items .item .title:before {
+                content: counter(css-counter) ". "; /* Apply counter before children's content. */
             }
           </style>
     </head>
@@ -47,6 +59,10 @@
 
             if (applicationNode) {
                 document.body.removeChild(applicationNode);
+            }
+
+            if (false === window.toggles.get('use-svelte-smui')) {
+                addCss('/assets/css/default.css');
             }
 
             if (window.toggles.get('use-svelte')) {

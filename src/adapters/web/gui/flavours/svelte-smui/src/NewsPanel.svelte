@@ -30,6 +30,10 @@
     }
 </script>
 
+<style>
+  span.age { margin-right: 5em; }
+</style>
+
 <Group id={id}>
     <Subheader>{title} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Subheader>
     <List class="items" dense={false}>
@@ -39,18 +43,17 @@
           class={cssClassFor(newsItem)}>
             <Text>
               <PrimaryText>
-                <span style="width:50px;display:inline-block;">{i+1}.</span>
                 <a href={newsItem.url} class="title" title="{newsItem.title}">{trim(newsItem.title, titleLengthLimit)}</a>
               </PrimaryText>
               
-              {#if showAge}
+              {#if showAge || showHost}
                 <SecondaryText>
-                  <span class="age">{newsItem.ageSince(window.application.now())}</span>
-                </SecondaryText>
-              {/if}
-              {#if showHost}
-                <SecondaryText>
-                  <span class="host">{newsItem.host}</span>
+                  {#if showAge}
+                    <span class="age">{newsItem.ageSince(window.application.now())}</span>
+                  {/if}
+                  {#if showHost}
+                    <span class="host">{newsItem.host}</span>
+                  {/if}
                 </SecondaryText>
               {/if}
             </Text>

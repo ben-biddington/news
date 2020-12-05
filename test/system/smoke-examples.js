@@ -15,7 +15,7 @@ describe('[UI] renders without error', async () => {
     
     after(async () => await interactor.close());
 
-    [ 'vanilla', 'svelte', 'vue', 'react', 'polymer' ].forEach(name => {
+    [ 'svelte', 'vue', 'react', 'svelet-smui' ].forEach(name => {
         const url = `${baseUrl}?&use-${name}`;
 
         it(`[${name}] for example -- ${url}`, async () => {

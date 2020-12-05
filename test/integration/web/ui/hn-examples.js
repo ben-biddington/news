@@ -130,7 +130,7 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             
             window.start();
 
-            await view.waitUntilIdle();
+            await view.waitUntilIdle({ timeout: 1000 });
         });
 
         await page.waitForSelector(`${itemsSelector} li`);
@@ -156,7 +156,7 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
 
             window.start();
 
-            await view.waitUntilIdle();
+            await view.waitUntilIdle({ timeout: 1000 });
         });
 
         await page.waitForSelector(`${itemsSelector} li`);
@@ -184,7 +184,7 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
 
             window.start();
 
-            await view.waitUntilIdle();
+            await view.waitUntilIdle({ timeout: 1000 });
         });
 
         await page.waitForSelector(`${itemsSelector} li`);

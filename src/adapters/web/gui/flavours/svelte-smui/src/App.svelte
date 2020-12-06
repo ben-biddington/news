@@ -74,9 +74,45 @@
   </div>
 {/await}
 
+<div style="display: flex;">
+    <!-- Column -->
+    <div style="
+        flex: 1;
+        /* Space between columns */
+        margin: 0 8px;
+
+        /* Layout each column */
+        display: flex;
+        flex-direction: column;
+    ">
+        <div style="
+            /* Take available height */
+            flex: 1;
+        ">
+          <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
+        </div>
+
+    </div>
+    <!-- Column -->
+    <div style="
+        flex: 1;
+        /* Space between columns */
+        margin: 0 8px;
+
+        /* Layout each column */
+        display: flex;
+        flex-direction: column;
+    ">
+        <div style="
+            /* Take available height */
+            flex: 1;
+        ">
+          <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} />
+        </div>
+    </div>
+</div>
+
 <div class="flexy">
-  <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
-  <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} />
   <Group id="bookmarks">
     <Subheader>Bookmarks ({bookmarks.length})</Subheader>
     <List class="items" dense={true}>

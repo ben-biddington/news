@@ -6,8 +6,8 @@
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
   import NewsPanel from './NewsPanel.svelte';
   import TopAppBar, {Row as TopAppBarRow, Section, Title} from '@smui/top-app-bar';
-  import List, {Group, Item, Graphic, Meta, Label as ListLabel, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
-
+  import List, {Group, Item, Graphic, Meta, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
+  
   const application = window.application;
 
   $: bookmarks = [];
@@ -45,10 +45,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 <style>
-  .flexy {
-      width: 100%;
-  }
-
   .top-app-bar-container {
     max-width: 100%;
     min-width: 480px;
@@ -74,7 +70,7 @@
   </div>
 {/await}
 
-<div style="display: flex;">
+<div style="display: flex; margin-bottom:10px; padding-bottom:15px; border-bottom: 1px dashed silver">
     <!-- Column -->
     <div style="
         flex: 1;
@@ -112,7 +108,13 @@
     </div>
 </div>
 
-<div id="bookmarks" style="margin-top:10px; padding:5px; border-top: 1px dashed silver">
+<div id="weather">
+  <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
+  <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
+  <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>
+</div>
+
+<div id="bookmarks">
   <DataTable class="items">
     <Head>
       <Row>

@@ -112,27 +112,35 @@
     </div>
 </div>
 
-<div class="flexy">
-  <Group id="bookmarks">
-    <Subheader>Bookmarks ({bookmarks.length})</Subheader>
-    <List class="items" dense={true}>
+<div id="bookmarks" style="margin-top:10px; padding:5px; border-top: 1px dashed silver">
+  <DataTable class="items">
+    <Head>
+      <Row>
+        <Cell colspan="2">
+          Bookmarks ({bookmarks.length})
+        </Cell>
+      </Row>
+    </Head>
+    <Body>
       {#await loadBookmarks() then _}
         {#each bookmarks as bookmark, i}
-          <Item id="bookmark-{bookmark.id}">
-            <div class="text-truncate">
-              <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
-            </div>
-            <Meta>
+          <Row id="bookmark-{bookmark.id}" class="item">
+            <Cell>
+              <div class="text-truncate">
+                <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+              </div>
+            </Cell>
+            <Cell>
               <a
                 href="javascript:application.bookmarks.del('{bookmark.id}')"
                 class="del"
                 title="Delete item with id '{bookmark.id}'">
                 delete
               </a>
-            </Meta>
-          </Item>
+            </Cell>
+          </Row>
         {/each}
       {/await}
-    </List>
-  </Group>
+    </Body>
+  </DataTable>
 </div>

@@ -36,7 +36,7 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
                 await view.waitUntilIdle();
             });
 
-            await page.waitForSelector(`${itemsSelector} li`);
+            await page.waitForSelector(`${itemsSelector} .item`);
 
             //@todo: must be a better way than delaying -- custom event when rendering?
             await consoleMessages.mustHaveNoErrors({ delay: 1000 });
@@ -45,15 +45,15 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
                 application.bookmarks.mustHaveHadListCalled();
             });
     
-            const listIds = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.id )));
+            const listIds = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.id )));
 
             expect(listIds).to.eql([ 'bookmark-id-1' ]);
 
-            const listTitles = await page.$$eval(`${itemsSelector} li a.title`, items => items.map(it => ( it.innerText )));
+            const listTitles = await page.$$eval(`${itemsSelector} .item a.title`, items => items.map(it => ( it.innerText )));
     
             expect(listTitles).to.eql([ 'Title 1' ]);
     
-            const deleteButtons = await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.title )));
+            const deleteButtons = await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.title )));
     
             expect(deleteButtons).to.not.be.empty;
         });
@@ -72,9 +72,9 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
                 );
             });
 
-            await page.waitForSelector(`${itemsSelector} li`);
+            await page.waitForSelector(`${itemsSelector} .item`);
 
-            const listIds = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.id )));
+            const listIds = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.id )));
 
             expect(listIds).to.eql([ 'bookmark-id-1337' ]);
         });
@@ -96,11 +96,11 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
                 await view.waitUntilIdle();    
             });
 
-            await page.waitForSelector(`${itemsSelector} li`);
+            await page.waitForSelector(`${itemsSelector} .item`);
 
             await consoleMessages.mustHaveNoErrors({ delay: 1000 });
     
-            await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.click() )));
+            await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.click() )));
 
             await page.waitForFunction(() => application.bookmarks.hasHadDeleteCalled('id-1'), { timeout: 5000 });
 
@@ -130,7 +130,7 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
                 await view.waitUntilIdle();
             });
 
-            await page.waitForSelector(`${itemsSelector} li`);
+            await page.waitForSelector(`${itemsSelector} .item`);
 
             await consoleMessages.mustHaveNoErrors({ delay: 1000 });
             
@@ -142,12 +142,12 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
             });
 
             await page.waitForFunction(
-                () => document.querySelectorAll(`div#bookmarks .items li`).length == 1, 
+                () => document.querySelectorAll(`div#bookmarks .items .item`).length == 1, 
                 { timeout: 1000 });
 
-            const allListItems = await page.$$eval(`div#bookmarks .items li a.title`, items => items.map(it => ( it.innerText )));
+            const allListItems = await page.$$eval(`div#bookmarks .items .item a.title`, items => items.map(it => ( it.innerText )));
 
             expect(allListItems).to.eql([ 'Title 1' ]);
-        });
+        }); 
     });
 });

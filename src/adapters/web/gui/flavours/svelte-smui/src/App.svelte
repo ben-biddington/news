@@ -85,7 +85,11 @@
             /* Take available height */
             flex: 1;
         ">
-          <NewsPanel application={window.application} load={loadLobstersNews} id="lobsters" useCase="lobsters" title="Lobsters" bind:source={lobstersNews} />
+          <NewsPanel 
+            application={window.application} load={loadLobstersNews} 
+            id="lobsters" useCase="lobsters" 
+            icon={{ url: 'https://lobste.rs/favicon.ico', width: 16, height: 16, alt: "Lobsters" }} 
+            bind:source={lobstersNews} />
         </div>
 
     </div>
@@ -103,12 +107,14 @@
             /* Take available height */
             flex: 1;
         ">
-          <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" title="Hacker news" bind:source={hackerNews} />
+          <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" 
+          icon={{ url: 'https://news.ycombinator.com/favicon.ico', width: 16, height: 16, alt: "Hacker news" }}  
+          bind:source={hackerNews} />
         </div>
     </div>
 </div>
 
-<div id="weather">
+<div id="weather" style="padding:15px">
   <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
   <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
   <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>

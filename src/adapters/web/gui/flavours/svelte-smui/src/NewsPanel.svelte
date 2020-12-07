@@ -4,7 +4,7 @@
 
     export let application      = {};
     export let id               = 'unknown';
-    export let title            = 'Default title';
+    export let title            = null;
     export let useCase          = 'default';
     export let allowSnooze      = true;
     export let allowBookmark    = true;
@@ -13,6 +13,7 @@
     export let showHost         = true;
     export let showAge          = true;
     export let titleLengthLimit = 80;
+    export let icon             = null;
 
     const trim = (text, count) => {
         const ellipsis = text.length > count ? '...' : '';
@@ -35,7 +36,7 @@
 </style>
 
 <Group id={id}>
-    <Subheader>{title} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Subheader>
+    <Subheader>{#if icon}<img src={icon.url} alt="{icon.alt}" width={icon.width} height={icon.height}/>{/if}{#if title}{title}{/if} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Subheader>
     <List class="items" dense={false}>
       {#each source as newsItem, i} <!-- https://svelte.dev/docs#class_name -->
         <Item 

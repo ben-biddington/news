@@ -191,7 +191,7 @@ app.get(/marine-weather/, async (req, res) => {
 
 app.get('/wellington-weather/current', async (req, res) => {
     io.notify({ url: `${req.path}` });
-    StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, async log => {
+    return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, async log => {
         cached(req, res, async () => {
             const { current }       = require('../wellington-weather');
             const temp              = require('temp');

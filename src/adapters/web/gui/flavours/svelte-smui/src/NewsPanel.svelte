@@ -62,7 +62,7 @@
               {#if allowBookmark}
                 <a
                     href="javascript:application.bookmarks.add('{newsItem.id}')"
-                    class="bookmark btn btn-success">
+                    class="bookmark btn">
                     bookmark
                 </a>
               {/if}
@@ -71,14 +71,14 @@
                 <a
                     on:click={() => snooze(newsItem.id)} 
                     href={"#"} 
-                    class="snooze btn btn-warning"
+                    class="snooze btn"
                     title="Snooze item with id '{newsItem.id}'">
                     snooze
                 </a>
               {:else}
                 <a
                     href={"#"}
-                    class="snooze btn btn-warning disabled"
+                    class="snooze btn"
                     title="Snooze not allowed on this item">
                     snooze
                 </a>    
@@ -87,7 +87,7 @@
               {#if newsItem.deleted == false}
                 <a
                     href="javascript:application.{useCase}.delete('{newsItem.id}')"
-                    class="del btn btn-danger"
+                    class="del btn"
                     title="Delete item with id '{newsItem.id}'">
                     delete
                 </a>

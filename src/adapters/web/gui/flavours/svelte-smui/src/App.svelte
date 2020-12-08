@@ -121,6 +121,7 @@
         ">
           <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" 
           icon={{ url: '/hacker-news-favicon.ico', width: 16, height: 16, alt: "Hacker news" }}  
+          allowSnooze={false} 
           bind:source={hackerNews} />
         </div>
     </div>
@@ -130,37 +131,56 @@
   <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
   <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
   <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>
+  <script src="https://www.windfinder.com/widget/forecast/js/wellington?unit_wave=m&unit_rain=mm&unit_temperature=c&unit_wind=kts&days=4&show_day=0"></script>
 </div>
 
-<div id="bookmarks" style="display: flex; padding:15px;">
-  <DataTable class="items">
-    <Head>
-      <Row>
-        <Cell colspan="2">
-          Bookmarks ({bookmarks.length})
-        </Cell>
-      </Row>
-    </Head>
-    <Body>
-      {#await loadBookmarks() then _}
-        {#each bookmarks as bookmark, i}
-          <Row id="bookmark-{bookmark.id}" class="item">
-            <Cell>
-              <div class="text-truncate">
-                <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
-              </div>
-            </Cell>
-            <Cell>
-              <a
-                href="javascript:application.bookmarks.del('{bookmark.id}')"
-                class="del"
-                title="Delete item with id '{bookmark.id}'">
-                delete
-              </a>
-            </Cell>
-          </Row>
-        {/each}
-      {/await}
-    </Body>
-  </DataTable>
+<div id="bookmarks" style="display: flex; margin-bottom:10px; padding-bottom:15px;">
+    <!-- Column -->
+    <div style="
+        flex: 1;
+        /* Space between columns */
+        margin: 0 8px;
+
+        /* Layout each column */
+        display: flex;
+        flex-direction: column;
+    ">
+        <div style="
+            /* Take available height */
+            flex: 1;
+        ">
+         <DataTable class="items">
+          <Head>
+            <Row>
+              <Cell colspan="2">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-bookmark-check-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M4 0a2 2 0 0 0-2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4zm6.854 5.854a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+              </svg> ({bookmarks.length})
+              </Cell>
+            </Row>
+          </Head>
+          <Body>
+            {#await loadBookmarks() then _}
+              {#each bookmarks as bookmark, i}
+                <Row id="bookmark-{bookmark.id}" class="item">
+                  <Cell>
+                    <div class="text-truncate">
+                      <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+                    </div>
+                  </Cell>
+                  <Cell>
+                    <a
+                      href="javascript:application.bookmarks.del('{bookmark.id}')"
+                      class="del"
+                      title="Delete item with id '{bookmark.id}'">
+                      delete
+                    </a>
+                  </Cell>
+                </Row>
+              {/each}
+            {/await}
+          </Body>
+        </DataTable>
+        </div>
+    </div>
 </div>

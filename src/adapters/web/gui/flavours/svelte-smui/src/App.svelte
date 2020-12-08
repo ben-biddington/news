@@ -97,7 +97,7 @@
           <NewsPanel 
             application={window.application} load={loadLobstersNews} 
             id="lobsters" useCase="lobsters" 
-            icon={{ url: 'https://lobste.rs/favicon.ico', width: 16, height: 16, alt: "Lobsters" }} 
+            icon={{ url: '/lobsters-favicon.ico', width: 16, height: 16, alt: "Lobsters" }} 
             bind:source={lobstersNews} />
         </div>
 
@@ -117,7 +117,7 @@
             flex: 1;
         ">
           <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" 
-          icon={{ url: 'https://news.ycombinator.com/favicon.ico', width: 16, height: 16, alt: "Hacker news" }}  
+          icon={{ url: '/hacker-news-favicon.ico', width: 16, height: 16, alt: "Hacker news" }}  
           bind:source={hackerNews} />
         </div>
     </div>

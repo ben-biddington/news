@@ -33,33 +33,29 @@ describeFeatured(toggles, '[UI] it shows hacker news', async toggle => {
             application.lobsters.mustHaveHadListCalled();
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
-        const listIds = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.id )));
+        const listIds = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.id )));
 
         expect(listIds).to.eql([ 'news-id-abc' ]);
 
-        const listItems = await page.$$eval(`${itemsSelector} a.title`, items => items.map(it => ( it.innerText )));
+        const listItems = await page.$$eval(`${itemsSelector} .item a.title`, items => items.map(it => ( it.innerText )));
 
         expect(listItems).to.eql([ 'Title 1' ]);
 
-        const listLinks = await page.$$eval(`${itemsSelector} li a.title`, items => items.map(it => ( it.href )));
+        const listLinks = await page.$$eval(`${itemsSelector} .item a.title`, items => items.map(it => ( it.href )));
 
         expect(listLinks).to.eql([ 'http://example/1' ]);
 
-        const hosts = await page.$$eval(`${itemsSelector} li span.host`, items => items.map(it => ( it.innerText )));
+        const hosts = await page.$$eval(`${itemsSelector} .item span.host`, items => items.map(it => ( it.innerText )));
 
         expect(hosts).to.eql([ "example" ]);
 
-        const deleteButtons = await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.title )));
+        const deleteButtons = await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.title )));
 
         expect(deleteButtons).to.not.be.empty;
 
-        const cssClasses = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.getAttribute('class') )));
-        
-        expect(cssClasses.map(it => it.split(' ')).flat()).to.include( 'item' );
-
-        const bookmarkControls = await page.$$eval(`${itemsSelector} li a.bookmark`, items => items.map(it => ( it.getAttribute('class') )));
+        const bookmarkControls = await page.$$eval(`${itemsSelector} .item a.bookmark`, items => items.map(it => ( it.getAttribute('class') )));
         
         expect(bookmarkControls.map(it => it.split(' ')).flat()).to.include( 'bookmark' );
     });
@@ -93,7 +89,7 @@ describeFeatured(toggles, '[UI] it shows hacker news', async toggle => {
             );
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
         await consoleMessages.mustHaveNoErrors({ delay: 1000 });
 
@@ -133,9 +129,9 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             await view.waitUntilIdle({ timeout: 1000 });
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
-        await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.click() )));
+        await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.click() )));
 
         await page.waitForFunction(() => application.hackerNews.deleteHasBeenCalled('id-abc-def'), { timeout: 5000 });
 
@@ -159,7 +155,7 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             await view.waitUntilIdle({ timeout: 1000 });
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
         await page.evaluate(() => {
             application.notify(
@@ -168,9 +164,9 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             );
         });
 
-        await page.waitForFunction(() => document.querySelector(`#hackerNews .items li`) == null, { timeout: 5000 });
+        await page.waitForFunction(() => document.querySelector(`#hackerNews .items .item`) == null, { timeout: 5000 });
 
-        const allListItems = await page.evaluate(() => document.querySelector(`#hackerNews .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#hackerNews .items .item`));
 
         expect(allListItems).to.be.null;
     });
@@ -187,13 +183,13 @@ describeFeatured(toggles, '[UI] Deleting hacker news items', async feature => {
             await view.waitUntilIdle({ timeout: 1000 });
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
-        const cssClasses = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.getAttribute('class') )));
+        const cssClasses = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.getAttribute('class') )));
         
-        expect(cssClasses.map(it => it.split(' ')).flat()).to.include( 'deleted' );
+        expect(cssClasses.map(it => it.split(' ')).flat().map(it => it.trim())).to.include( 'deleted' );
 
-        const deleteButtons = await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.title )));
+        const deleteButtons = await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.title )));
 
         expect(deleteButtons).to.be.empty;
     });
@@ -232,9 +228,9 @@ describeFeatured(toggles, '[UI] Bookmarking hacker news items', async feature =>
             await view.waitUntilIdle({ timeout: 1000 });
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
-        await page.$$eval(`${itemsSelector} li a.bookmark`, items => items.forEach(it => it.click()));
+        await page.$$eval(`${itemsSelector} .item a.bookmark`, items => items.forEach(it => it.click()));
 
         await page.waitForFunction(() => application.bookmarks.addHasBeenCalled(), { timeout: 10000, polling: 'mutation' });
 

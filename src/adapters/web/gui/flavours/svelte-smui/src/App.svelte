@@ -9,6 +9,7 @@
   import List, {Group, Item, Graphic, Meta, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
   
   const application = window.application;
+  const toggles     = window.toggles;
 
   $: bookmarks = [];
     
@@ -40,37 +41,45 @@
 
   $: deletedItemCount = 0;
   const loadDeletedItemCount = () => window.application.deletedItems.count().then(result => deletedItemCount = result);
+
+  $: uiOptions = {
+    showWeather: toggles.get('show-weather'),
+    showDeleted: toggles.get('show-deleted')
+  }
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 <style>
-  .top-app-bar-container {
-    max-width: 100%;
-    min-width: 480px;
-    overflow: auto;
-    display: block;
+  .toggle {
+    margin-right:5px;
   }
 </style>
 
-{#await loadDeletedItemCount() then _}
-   <div class="top-app-bar-container">
-    <TopAppBar variant="static" prominent=true dense=true color='primary'>
-        <Row>
-          <Section>
-            <IconButton class="material-icons">menu</IconButton>
-            <Title>News</Title>
-          </Section>
-          <Section align="end" toolbar>
-            <IconButton class="material-icons" aria-label="Bookmark this page">delete</IconButton>
-            {deletedItemCount} deleted items
-          </Section>
-        </Row>
-    </TopAppBar>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <span class="navbar-brand">News</span>
+  <div class="custom-control custom-switch toggle">
+    <input checked={uiOptions.showWeather} type="checkbox" class="custom-control-input" id="weatherSwitch" on:click={e => { uiOptions.showWeather = uiOptions.showWeather ? false : true; }}>
+    <label class="custom-control-label" for="weatherSwitch">Weather</label>
   </div>
-{/await}
+  <div class="custom-control custom-switch toggle">
+    <input checked={uiOptions.showDeleted} type="checkbox" class="custom-control-input" id="deletedSwitch" on:click={e => { uiOptions.showDeleted = uiOptions.showDeleted ? false : true; }}>
+    <label class="custom-control-label" for="deletedSwitch">Show deleted</label>
+  </div>
+  <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+    <li class="nav-item">
+      <a class="nav-link =p1" href="/" target="_blank">
+        {#await loadDeletedItemCount() then _}
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
+        </svg> <span>{deletedItemCount}</span>
+        {/await}
+      </a>
+    </li>
+  </ul>
+</nav>
 
-<div style="display: flex; margin-bottom:10px; padding-bottom:15px; border-bottom: 1px dashed silver">
+<div style="display: flex; margin-bottom:10px; padding-bottom:15px;">
     <!-- Column -->
     <div style="
         flex: 1;
@@ -114,13 +123,13 @@
     </div>
 </div>
 
-<div id="weather" style="padding:15px">
+<div id="weather" style="padding:15px; display: {uiOptions.showWeather ? 'block' : 'none'}">
   <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
   <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
   <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>
 </div>
 
-<div id="bookmarks">
+<div id="bookmarks" style="display: flex; padding:15px;">
   <DataTable class="items">
     <Head>
       <Row>

@@ -1,6 +1,7 @@
 <script>
     import { fade, fly } from 'svelte/transition';
     import List, {Group, Item, Graphic, Meta, Label as ListLabel, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
+    import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
 
     export let application      = {};
     export let id               = 'unknown';
@@ -35,65 +36,56 @@
   span.age { margin-right: 5em; }
 </style>
 
-<Group id={id}>
-    <Subheader>{#if icon}<img src={icon.url} alt="{icon.alt}" width={icon.width} height={icon.height}/>{/if}{#if title}{title}{/if} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}</Subheader>
-    <List class="items" dense={false}>
-      {#each source as newsItem, i} <!-- https://svelte.dev/docs#class_name -->
-        <Item 
-          id="news-{newsItem.id}" 
-          class={cssClassFor(newsItem)}>
-            <Text>
-              <PrimaryText>
-                <a href={newsItem.url} class="title" title="{newsItem.title}">{trim(newsItem.title, titleLengthLimit)}</a>
-              </PrimaryText>
-              
-              {#if showAge || showHost}
-                <SecondaryText>
-                  {#if showAge}
-                    <span class="age">{newsItem.ageSince(window.application.now())}</span>
-                  {/if}
-                  {#if showHost}
-                    <span class="host">{newsItem.host}</span>
-                  {/if}
-                </SecondaryText>
-              {/if}
-            </Text>
-            <Meta>
-              {#if allowBookmark}
-                <a
-                    href="javascript:application.bookmarks.add('{newsItem.id}')"
-                    class="bookmark btn">
-                    bookmark
-                </a>
-              {/if}
+<DataTable id={id} style="display:flex">
+  <Head>
+    <Row>
+      <Cell colspan="2">
+        {#if icon}<img src={icon.url} alt="{icon.alt}" width={icon.width} height={icon.height}/>{/if}{#if title}{title}{/if} {#await load()}<span class="loading" transition:fade>Loading...</span>{/await}
+      </Cell>
+    </Row>
+  </Head>
+  <Body class="items">
+    {#each source as newsItem, i}
+      <Row id="news-{newsItem.id}" class={`item ${newsItem.deleted ? 'deleted': ''}`}>
+        <Cell>
+            <a href={newsItem.url} class="title text-truncate" style="display:block">{trim(newsItem.title, titleLengthLimit)}</a>
 
-              {#if allowSnooze}
-                <a
-                    on:click={() => snooze(newsItem.id)} 
-                    href={"#"} 
-                    class="snooze btn"
-                    title="Snooze item with id '{newsItem.id}'">
-                    snooze
-                </a>
-              {:else}
-                <a
-                    href={"#"}
-                    class="snooze btn"
-                    title="Snooze not allowed on this item">
-                    snooze
-                </a>    
-              {/if}
-                    
-              {#if newsItem.deleted == false}
-                <a
-                    href="javascript:application.{useCase}.delete('{newsItem.id}')"
-                    class="del btn"
-                    title="Delete item with id '{newsItem.id}'">
-                    delete
-                </a>
-              {/if}
-            </Meta>
-          </Item>
-      {/each}
-    </List>
-  </Group>
+            {#if showAge}
+              <span class="age">{newsItem.ageSince(window.application.now())}</span>
+            {/if}
+            {#if showHost}
+              <span class="host">{newsItem.host}</span>
+            {/if}
+        </Cell>
+        <Cell>
+          {#if allowBookmark}
+              <a
+                  href="javascript:application.bookmarks.add('{newsItem.id}')"
+                  class="bookmark btn">
+                  bookmark
+              </a>
+          {/if}
+
+          {#if allowSnooze}
+            <a
+                on:click={() => snooze(newsItem.id)} 
+                href={"#"} 
+                class="snooze btn"
+                title="Snooze item with id '{newsItem.id}'">
+                snooze
+            </a>
+          {/if}
+
+          {#if !newsItem.deleted}      
+            <a
+                href="javascript:application.{useCase}.delete('{newsItem.id}')"
+                class="del btn {newsItem.deleted ? 'disabled' : ''}"
+                title={newsItem.deleted ? "Item with id '{newsItem.id}' is already deleted": "Delete item with id '{newsItem.id}'"}>
+                delete
+            </a>
+          {/if}
+        </Cell>
+      </Row>
+    {/each}
+  </Body>
+</DataTable>

@@ -35,9 +35,9 @@ describeFeatured(toggles, '[UI] How it displays lobsters news items', async togg
                 application.lobsters.mustHaveHadListCalled();
             });
 
-            await page.waitForSelector(`${itemsSelector} li`);
+            await page.waitForSelector(`${itemsSelector} .item`);
 
-            const listIds = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.id )));
+            const listIds = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.id )));
 
             expect(listIds).to.eql([ 'news-id-abc' ]);
 
@@ -45,19 +45,19 @@ describeFeatured(toggles, '[UI] How it displays lobsters news items', async togg
 
             expect(listItems).to.eql([ 'Title 1' ]);
 
-            const listLinks = await page.$$eval(`${itemsSelector} li a.title`, items => items.map(it => ( it.href )));
+            const listLinks = await page.$$eval(`${itemsSelector} .item a.title`, items => items.map(it => ( it.href )));
 
             expect(listLinks).to.eql([ 'http://example/1' ]);
 
-            const hosts = await page.$$eval(`${itemsSelector} li span.host`, items => items.map(it => ( it.innerText )));
+            const hosts = await page.$$eval(`${itemsSelector} .item span.host`, items => items.map(it => ( it.innerText )));
 
             expect(hosts).to.eql([ "example" ]);
 
-            const deleteButtons = await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.title )));
+            const deleteButtons = await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.title )));
 
             expect(deleteButtons).to.not.be.empty;
 
-            const cssClasses = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.getAttribute('class') )));
+            const cssClasses = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.getAttribute('class') )));
             
             expect(cssClasses.map(it => it.split(' ')).flat()).to.include( 'item' );
         } 
@@ -95,9 +95,9 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
             window.start();
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
-        await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.click() )));
+        await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.click() )));
 
         await page.evaluate(() => {
             application.lobsters.mustHaveHadDeleteCalled('id-abc-def');
@@ -128,7 +128,7 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
         });
 
         //@todo: this element finding is not very good it returns either null or {}. There must be a better way.
-        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items .item`));
 
         expect(allListItems).to.be.null;
     });
@@ -146,11 +146,11 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
             window.start();
         });
 
-        const cssClasses = await page.$$eval(`${itemsSelector} li`, items => items.map(it => ( it.getAttribute('class') )));
+        const cssClasses = await page.$$eval(`${itemsSelector} .item`, items => items.map(it => ( it.getAttribute('class') )));
         
         expect(cssClasses).to.eql(['item deleted']);
 
-        const deleteButtons = await page.$$eval(`${itemsSelector} li a.del`, items => items.map(it => ( it.title )));
+        const deleteButtons = await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => ( it.title )));
 
         expect(deleteButtons).to.eql([]);
     });
@@ -185,7 +185,7 @@ describeFeatured(toggles, '[UI] Deleting news items', async toggles => {
             );
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
         await consoleMessages.mustHaveNoErrors({ delay: 1000 });
 
@@ -226,7 +226,7 @@ describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters
 
         await page.waitForSelector('#lobsters');
 
-        await page.$$eval(`${itemsSelector} li a.snooze`, items => items.map(it => ( it.click() )));
+        await page.$$eval(`${itemsSelector} .item a.snooze`, items => items.map(it => ( it.click() )));
 
         await page.evaluate(() => {
             application.lobsters.mustHaveHadSnoozeCalled('id-abc-def');
@@ -246,7 +246,7 @@ describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters
             window.start();
         });
 
-        await page.waitForSelector(`${itemsSelector} li`);
+        await page.waitForSelector(`${itemsSelector} .item`);
 
         await page.evaluate(() => {
             application.notify(
@@ -257,9 +257,9 @@ describeFeatured(['use-svelte', 'use-vue', 'use-react'], '[UI] Snoozing lobsters
 
         await delay(500);
 
-        await page.waitForFunction(() => document.querySelector(`#lobsters .items li`) == null, { timeout: 5000})
+        await page.waitForFunction(() => document.querySelector(`#lobsters .items .item`) == null, { timeout: 5000})
 
-        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items li`));
+        const allListItems = await page.evaluate(() => document.querySelector(`#lobsters .items .item`));
 
         expect(allListItems).to.be.null;
     });

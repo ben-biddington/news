@@ -102,6 +102,9 @@
         </div>
 
     </div>
+</div>
+
+<div style="display: flex; margin-bottom:10px; padding-bottom:15px;">
     <!-- Column -->
     <div style="
         flex: 1;

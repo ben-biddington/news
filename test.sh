@@ -17,5 +17,5 @@ if [[ "$@" -ne "" ]]; then
 fi
 
 npm run test.unit $args
-npm run test.integration $args
 npm run test.system
+npm run test.integration $args

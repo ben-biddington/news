@@ -176,13 +176,15 @@ const cached = async (req, res, fn) => {
 }
 
 app.get(/marine-weather/, async (req, res) => {
-    StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
+    return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
+        placeName = req.path.replace('marine-weather/', '');
+
         cached(req, res, async () => {
-            const { wellington }    = require('../marine-weather');
+            const { forecast }      = require('../marine-weather');
             const temp              = require('temp');
             const filePath          = temp.path({suffix: '.png'}); 
 
-            const result = await wellington({ path: filePath });
+            const result = await forecast(placeName.length > 0 ? placeName : 'wellington', { path: filePath });
     
             return readFile(result.path);
         });

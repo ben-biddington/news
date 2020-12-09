@@ -44,8 +44,9 @@
   const loadDeletedItemCount = () => window.application.deletedItems.count().then(result => deletedItemCount = result);
 
   $: uiOptions = {
-    showWeather: toggles.get('show-weather'),
-    showDeleted: toggles.get('show-deleted')
+    showWeather       : toggles.get('show-weather'),
+    showDeleted       : toggles.get('show-deleted'),
+    showMarineWeather : toggles.get('show-marine-weather')
   }
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -53,12 +54,20 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
 <style>
   .toggle {
-    margin-right:5px;
+    margin-right: 15px;
+  }
+
+  .toggle label {
+    font-size: 0.8em;
   }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light">
   <span class="navbar-brand">News</span>
+  <div class="custom-control custom-switch toggle">
+    <input checked={uiOptions.showMarineWeather} type="checkbox" class="custom-control-input" id="marineWeatherSwitch" on:click={e => { uiOptions.showMarineWeather = uiOptions.showMarineWeather ? false : true; }}>
+    <label class="custom-control-label" for="marineWeatherSwitch">Marine weather</label>
+  </div>
   <div class="custom-control custom-switch toggle">
     <input checked={uiOptions.showWeather} type="checkbox" class="custom-control-input" id="weatherSwitch" on:click={e => { uiOptions.showWeather = uiOptions.showWeather ? false : true; }}>
     <label class="custom-control-label" for="weatherSwitch">Weather</label>
@@ -132,7 +141,28 @@
   <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
   <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
   <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>
-  <script src="https://www.windfinder.com/widget/forecast/js/wellington?unit_wave=m&unit_rain=mm&unit_temperature=c&unit_wind=kts&days=4&show_day=0"></script>
+</div>
+
+<div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
+  {#each [ 'wellington', 'titahi-bay', 'opoutama', 'ohope', 'whangamata' ] as name}
+    <DataTable>
+      <Head>
+        <Row>
+          <Cell>
+            {name} 
+          </Cell>
+        </Row>
+      </Head>
+      <Body>
+        <Row>
+            <Cell>
+              <img src="/marine-weather/{name}" alt="Wellington marine weather" />
+            </Cell>
+            </Row>
+      </Body>
+    </DataTable>
+  {/each}
+  <!-- <script src="https://www.windfinder.com/widget/forecast/js/wellington?unit_wave=m&unit_rain=mm&unit_temperature=c&unit_wind=kts&days=4&show_day=0"></script> -->
 </div>
 
 <div id="bookmarks" style="display: flex; margin-bottom:10px; padding-bottom:15px;">

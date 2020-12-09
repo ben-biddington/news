@@ -15,14 +15,24 @@ describe('[UI] renders without error', async () => {
     
     after(async () => await interactor.close());
 
-    [ 'svelte', 'vue', 'react', 'svelet-smui' ].forEach(name => {
+    [ 'svelte', 'vue', 'react', 'svelte-smui' ].forEach(name => {
         const url = `${baseUrl}?&use-${name}`;
+        const timeout = 30*1000;
 
         it(`[${name}] for example -- ${url}`, async () => {
 
             await page.goto(url);
     
-            await page.waitForSelector(applicationSelector, { visible: true, timeout: 10000 });
+            await page.waitForSelector(applicationSelector, { visible: true, timeout });
+
+            consoleMessages.mustHaveNoErrors();
+        });
+
+        it(`[${name}] it renders unplugged -- ${url}`, async () => {
+
+            await page.goto(`${baseUrl}?&use-${name}&unplugged`);
+    
+            await page.waitForSelector(applicationSelector, { visible: true, timeout });
 
             consoleMessages.mustHaveNoErrors();
         });

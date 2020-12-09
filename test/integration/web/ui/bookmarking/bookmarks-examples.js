@@ -1,7 +1,7 @@
 const itemsSelector = '#bookmarks .items';
 
 const { 
-    describeFeatured, toggles, baseUrl, 
+    describeFeatured, toggles, baseUrl, headless,
     expect, WebInteractor, ConsoleListener } = require('../ui-integration-test');
 
 describeFeatured(toggles, '[UI] Bookmarks', async feature => {
@@ -10,6 +10,7 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
     before(async ()  => 
     {
         interactor      = new WebInteractor({ headless: false });
+        interactor      = new WebInteractor({ headless });
         page            = await interactor.page();
         consoleMessages = new ConsoleListener(page);
     });

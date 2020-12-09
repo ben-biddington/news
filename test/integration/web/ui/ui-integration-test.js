@@ -7,6 +7,8 @@ const baseUrl = 'http://localhost:8080/home.html';
 
 const toggles = process.env.TOGGLES ? process.env.TOGGLES.split('&') : [ 'use-svelte-smui', 'use-svelte', 'use-vue', 'use-react', 'use-headless' ];
 
+const headless = !process.env.NO_HEADLESS;
+
 const describeFeatured = (features=[], name, fn) => {
     features.forEach(feature => {
         describe(`[${feature}] ${name}`, () => fn(feature));
@@ -42,5 +44,6 @@ module.exports = {
     delay,
     baseUrl,
     toggles,
+    headless,
     describeFeatured
 }

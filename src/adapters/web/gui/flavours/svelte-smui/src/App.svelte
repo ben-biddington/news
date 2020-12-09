@@ -180,7 +180,7 @@
             /* Take available height */
             flex: 1;
         ">
-          <BookmarkPanel source={window.application.bookmarks.list} />
+          <BookmarkPanel source={() => window.application.bookmarks.list()} />
         </div>
     </div>
 </div>

@@ -9,7 +9,7 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
 
     before(async ()  => 
     {
-        interactor      = new WebInteractor({ headless: true });
+        interactor      = new WebInteractor({ headless: false });
         page            = await interactor.page();
         consoleMessages = new ConsoleListener(page);
     });

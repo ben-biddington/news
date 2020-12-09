@@ -144,7 +144,7 @@
 </div>
 
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
-  {#each [ 'wellington', 'titahi-bay', 'opoutama', 'ohope', 'whangamata' ] as name}
+  {#each [ 'wellington', 'titahi-bay', 'opoutama', 'ohope', 'whangamata', 'piha', 'orewa-beach' ] as name}
     <DataTable>
       <Head>
         <Row>
@@ -156,9 +156,9 @@
       <Body>
         <Row>
             <Cell>
-              <img src="/marine-weather/{name}" alt="Wellington marine weather" />
+              <img src="/marine-weather/{name}" alt="Marine weather" />
             </Cell>
-            </Row>
+        </Row>
       </Body>
     </DataTable>
   {/each}

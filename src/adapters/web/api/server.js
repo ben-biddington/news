@@ -159,7 +159,7 @@ const cached = async (req, res, fn) => {
     const key   = req.path;
     let file    = await cache.get(key);
 
-    if (file != null){
+    if (!process.env.NO_CACHE && file != null) {
         res.status(200).write(file, 'binary');
         res.end();
         return;
@@ -177,14 +177,16 @@ const cached = async (req, res, fn) => {
 
 app.get(/marine-weather/, async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
-        placeName = req.path.replace('marine-weather/', '');
+        const placeName = req.path.substring(req.path.lastIndexOf('/') + 1);
 
-        cached(req, res, async () => {
+        log.info(`${req.path} -> <${placeName}>`);
+
+        return await cached(req, res, async () => {
             const { forecast }      = require('../marine-weather');
             const temp              = require('temp');
             const filePath          = temp.path({suffix: '.png'}); 
 
-            const result = await forecast(placeName.length > 0 ? placeName : 'wellington', { path: filePath });
+            const result = await forecast({ log }, placeName.length > 0 ? placeName : 'wellington', { path: filePath });
     
             return readFile(result.path);
         });

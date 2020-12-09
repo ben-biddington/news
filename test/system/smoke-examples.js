@@ -1,6 +1,6 @@
 const applicationSelector = 'div#application';
 
-const { baseUrl, WebInteractor, ConsoleListener } = require('../integration/web/ui/ui-integration-test');
+const { headless, baseUrl, WebInteractor, ConsoleListener } = require('../integration/web/ui/ui-integration-test');
 
 describe('[UI] renders without error', async () => {
 
@@ -8,7 +8,7 @@ describe('[UI] renders without error', async () => {
 
     before(async ()  => 
     {
-        interactor      = new WebInteractor({ headless: true });
+        interactor      = new WebInteractor({ headless });
         page            = await interactor.page();
         consoleMessages = new ConsoleListener(page);
     });

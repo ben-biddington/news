@@ -9,14 +9,14 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
 
     before(async ()  => 
     {
-        interactor      = new WebInteractor({ headless: false });
+        interactor      = new WebInteractor({ headless });
         interactor      = new WebInteractor({ headless });
         page            = await interactor.page();
         consoleMessages = new ConsoleListener(page);
     });
 
     beforeEach(async () => {
-        await page.goto(`${baseUrl}?unplug=1&disallow-autostart&${feature}`, { waitUntil: 'domcontentloaded' });
+        await page.goto(`${baseUrl}?unplug&show-bookmarks&disallow-autostart&${feature}`, { waitUntil: 'domcontentloaded' });
     });
         
     after(async () => await interactor.close());

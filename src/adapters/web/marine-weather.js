@@ -32,9 +32,10 @@ const wellington = async (opts = {}) => {
     }
 }
 
-const forecast = (name, opts = {}) => get(name, opts);
+const forecast = (ports, name, opts = {}) => get(ports, name, opts);
 
-const get = async (name, opts) => {
+const get = async (ports, name, opts) => {
+    const { log } = ports;
     const options = {
         headless: true,
         ...opts
@@ -44,6 +45,8 @@ const get = async (name, opts) => {
     const page            = await interactor.page();
 
     var fullPath = path.resolve(options.path);
+
+    log.info(`Fetching marine weather for <${name}> saving to file <${fullPath}>`);
 
     try {
         await page.setViewport({ width: 1366, height: 768});

@@ -1,14 +1,13 @@
 <script>
     import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
 
-    export let source = () => Promise.resolve();
+    export let open = false;
+    export let source = [];
 
-    $: bookmarks = [];
-    $: open = false;
+    $: bookmarks = source;
+    $: isOpen = open;
 
-    const load = () => source().then(result => bookmarks = result);
-
-    const toggle = () => open = open ? false : true;
+    const toggle = () => isOpen = isOpen ? false : true;
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700">
@@ -23,25 +22,23 @@
             </Cell>
         </Row>
     </Head>
-    <Body style="display: {open ? 'block' : 'none'};">
-        {#await load() then _}
-            {#each bookmarks as bookmark, i}
-                <Row id="bookmark-{bookmark.id}" class="item">
-                    <Cell>
-                        <div class="text-truncate">
-                        <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
-                        </div>
-                    </Cell>
-                    <Cell>
-                        <a
-                        href="javascript:application.bookmarks.del('{bookmark.id}')"
-                        class="del"
-                        title="Delete item with id '{bookmark.id}'">
-                        delete
-                        </a>
-                    </Cell>
-                </Row>
-            {/each}
-        {/await}
+    <Body style="display: {isOpen ? 'block' : 'none'};">
+        {#each bookmarks as bookmark, i}
+            <Row id="bookmark-{bookmark.id}" class="item">
+                <Cell>
+                    <div class="text-truncate">
+                    <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+                    </div>
+                </Cell>
+                <Cell>
+                    <a
+                    href="javascript:application.bookmarks.del('{bookmark.id}')"
+                    class="del"
+                    title="Delete item with id '{bookmark.id}'">
+                    delete
+                    </a>
+                </Cell>
+            </Row>
+        {/each}
     </Body>
 </DataTable>

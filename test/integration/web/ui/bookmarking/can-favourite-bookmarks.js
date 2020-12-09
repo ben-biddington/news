@@ -16,7 +16,7 @@ describeFeatured(['use-svelte'], '[UI] Bookmarks', async feature => {
     });
 
     beforeEach(async () => {
-        await page.goto(`${baseUrl}?unplug=1&disallow-autostart&${feature}`, { waitUntil: 'domcontentloaded' });
+        await page.goto(`${baseUrl}?unplug=1&show-bookmarks&disallow-autostart&${feature}`, { waitUntil: 'domcontentloaded' });
     });
         
     after(async () => await interactor.close());

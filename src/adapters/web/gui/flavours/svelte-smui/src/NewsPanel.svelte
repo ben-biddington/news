@@ -83,7 +83,7 @@
             </a>
           {/if}
 
-          {#if !newsItem.deleted}      
+          {#if !newsItem.deleted}
             <a
                 href="javascript:application.{useCase}.delete('{newsItem.id}')"
                 class="del btn btn-light {newsItem.deleted ? 'disabled' : ''}"

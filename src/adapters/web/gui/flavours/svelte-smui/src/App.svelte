@@ -4,11 +4,13 @@
   import Checkbox from '@smui/checkbox';
   import FormField from '@smui/form-field';
   import DataTable, {Head, Body, Row, Cell} from '@smui/data-table';
-  import NewsPanel from './NewsPanel.svelte';
-  import BookmarkPanel from './BookmarkPanel.svelte';
   import TopAppBar, {Row as TopAppBarRow, Section, Title} from '@smui/top-app-bar';
   import List, {Group, Item, Graphic, Meta, Separator, Subheader, Text, PrimaryText, SecondaryText} from '@smui/list';
   
+  import NewsPanel from './NewsPanel.svelte';
+  import BookmarkPanel from './BookmarkPanel.svelte';
+  import Image from './Image.svelte';
+
   const application = window.application;
   const toggles     = window.toggles;
 
@@ -34,7 +36,7 @@
   application.on("lobsters-items-loaded"      , e => lobstersNews = e.items);
 
   application.on("hacker-news-items-loaded"   , e => hackerNews = e.items);
-  application.on("hacker-news-item-deleted"   , e           => hackerNews = hackerNews.filter(it => it.id != e.id));
+  application.on("hacker-news-item-deleted"   , e => hackerNews = hackerNews.filter(it => it.id != e.id));
 
   application.on(
       [ "hacker-news-item-deleted", "lobsters-item-deleted" ], 
@@ -46,7 +48,8 @@
   $: uiOptions = {
     showWeather       : toggles.get('show-weather'),
     showDeleted       : toggles.get('show-deleted'),
-    showMarineWeather : toggles.get('show-marine-weather')
+    showMarineWeather : toggles.get('show-marine-weather'),
+    showBookmarks     : toggles.get('show-bookmarks'),
   }
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -89,7 +92,7 @@
   </ul>
 </nav>
 
-<div style="display: flex; margin-bottom:10px; padding-bottom:15px;">
+<div id="application" style="display: flex; margin-bottom:10px; padding-bottom:15px;">
     <!-- Column -->
     <div style="
         flex: 1;
@@ -137,12 +140,6 @@
     </div>
 </div>
 
-<div id="weather" style="padding:15px; display: {uiOptions.showWeather ? 'block' : 'none'}">
-  <img src="/wellington-weather/current" alt="Current weather" style="width:10%; height:auto"/>
-  <img src="/wellington-weather/today" alt="Today's weather" style="width:25%; height:auto"/>
-  <img src="/wellington-weather/week" alt="This week's weather" style="width:25%; height:auto"/>
-</div>
-
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
   {#each [ 'wellington', 'titahi-bay', 'opoutama', 'ohope', 'whangamata', 'piha', 'orewa-beach' ] as name}
     <DataTable>
@@ -156,7 +153,7 @@
       <Body>
         <Row>
             <Cell>
-              <img src="/marine-weather/{name}" alt="Marine weather" />
+              <Image src="/marine-weather/{name}" alt="Marine weather" bind:visible={uiOptions.showMarineWeather} />
             </Cell>
         </Row>
       </Body>
@@ -180,7 +177,9 @@
             /* Take available height */
             flex: 1;
         ">
-          <BookmarkPanel source={() => window.application.bookmarks.list()} />
+          {#await loadBookmarks() then _}
+            <BookmarkPanel bind:source={bookmarks} bind:open={uiOptions.showBookmarks}/>
+          {/await}
         </div>
     </div>
 </div>

@@ -5,7 +5,7 @@ const { MockToggles } = require('../../../support/mock-toggles');
 const { delay } = require('../../support/support');
 const baseUrl = 'http://localhost:8080/home.html';
 
-const toggles = process.env.TOGGLES ? process.env.TOGGLES.split('&') : [ 'use-svelte-smui', 'use-svelte', 'use-vue', 'use-react', 'use-headless' ];
+const toggles = process.env.TOGGLES ? process.env.TOGGLES.split('&') : [ 'use-svelte-smui', 'use-svelte', 'use-vue', 'use-react' ];
 
 const headless = !process.env.NO_HEADLESS;
 

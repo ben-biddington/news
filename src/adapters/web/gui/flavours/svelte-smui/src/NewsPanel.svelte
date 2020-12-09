@@ -53,7 +53,7 @@
   <Body class="items">
     {#each source as newsItem, i}
       <Row id="news-{newsItem.id}" class={`item ${newsItem.deleted ? 'deleted': ''}`}>
-        <Cell>{i+1}</Cell>
+        <Cell width="25">{i+1}</Cell>
         <Cell>
             <a href={newsItem.url} class="title text-truncate" style="display:block">{trim(newsItem.title, titleLengthLimit)}</a>
 

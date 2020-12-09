@@ -141,7 +141,7 @@
 </div>
 
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
-  {#each [ 'wellington', 'titahi-bay', 'opoutama', 'ohope', 'whangamata', 'piha', 'orewa-beach' ] as name}
+  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'opoutama', 'ohope', 'whangamata', 'raglan', 'piha', 'orewa-beach', 'tryphena', 'the-cut', 'kekerengu', 'paturau-river' ] as name}
     <DataTable>
       <Head>
         <Row>

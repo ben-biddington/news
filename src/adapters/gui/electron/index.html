@@ -9,9 +9,10 @@
     </head>
     <body>
         <script>
-            const basUrl = 'http://localhost:8080';
             var toggles     = new real.QueryStringToggles(document.location.search);
             var settings    = new real.QueryStringSettings(document.location.search);
+            
+            settings.set('baseUrl', 'http://localhost:8080');
 
             var view        = new real.UIEvents();
             var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);

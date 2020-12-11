@@ -31,16 +31,18 @@ const internet = new FetchBasedInternet();
 // [i] This is where the real application is bootstrapped from
 //
 const application = (toggles, settings) => {
+    const baseUrl = settings.get('baseUrl');
+
     let applicationPorts = new Ports(
         { 
-            list   : () => lobstersList  ({ get: internet.get, trace: console.log }, { url: '/lobsters/hottest', count: 20 }),
-            delete : id => deleteNews    ({ internet: internet, trace: console.log }, { id }),
+            list   : () => lobstersList  ({ get: internet.get, trace: console.log }, { url: `${baseUrl}/lobsters/hottest`, count: 20 }),
+            delete : id => deleteNews    ({ internet: internet, trace: console.log }, { baseUrl, id }),
         },
         console.log,
         {
             apply: newsItems => {
                 return fetch(
-                    '/lobsters/deleted/sieve', 
+                    `${baseUrl}/lobsters/deleted/sieve`, 
                     { 
                         method: 'post',
                         headers: { 'Content-type': 'application/json', 'Accept': 'application/json' }, 
@@ -50,22 +52,22 @@ const application = (toggles, settings) => {
             }
         },
         { 
-            list   : () => hackerNewsList  ({ get: internet.get , log: new ConsoleLog() }, { url: '/hn', count: 20 }),
-            delete : id => deleteNews      ({ internet: internet, trace: console.log }, { id }),
+            list   : () => hackerNewsList  ({ get: internet.get , log: new ConsoleLog() }, { url: `${baseUrl}/hn`, count: 20 }),
+            delete : id => deleteNews      ({ internet: internet, trace: console.log }, { baseUrl, id }),
         },
         { 
             list   : () => rnzNewsList     ({ get: internet.get , log: new ConsoleLog() }, { url: '/rnz', count: 20 }),
-            delete : id => deleteNews      ({ internet: internet, trace: console.log }, { id }),
+            delete : id => deleteNews      ({ internet: internet, trace: console.log }, { baseUrl, id }),
         });
 
     applicationPorts = applicationPorts.withBookmarks({
-        add: bookmark => addBookmark   ({ post: internet.post }, { trace: console.log }, bookmark),
-        list: ()      => listBookmarks ({ get: internet.get    , trace: console.log }),
-        del: id       => deleteBookmark({ del: internet.delete , trace: console.log }, {}, id)
+        add: bookmark => addBookmark   ({ post: internet.post }, { url: baseUrl }, bookmark),
+        list: ()      => listBookmarks ({ get: internet.get    , trace: console.log }, { url: baseUrl }),
+        del: id       => deleteBookmark({ del: internet.delete , trace: console.log }, { url: baseUrl }, id)
     });
 
     applicationPorts = applicationPorts.withDeletedItems({
-        count: () => deletedCount({ internet }, { baseUrl: '' }),
+        count: () => deletedCount({ internet }, { baseUrl: baseUrl }),
     });
 
     return new Application(applicationPorts, toggles, settings);

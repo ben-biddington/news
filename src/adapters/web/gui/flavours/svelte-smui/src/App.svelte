@@ -13,6 +13,7 @@
 
   const application = window.application;
   const toggles     = window.toggles;
+  const baseUrl     = window.settings.get('baseUrl') || '';
 
   $: bookmarks = [];
     
@@ -110,7 +111,7 @@
           <NewsPanel 
             application={window.application} load={loadLobstersNews} 
             id="lobsters" useCase="lobsters" 
-            icon={{ url: '/lobsters-favicon.ico', width: 16, height: 16, alt: "Lobsters" }} 
+            icon={{ url: `${baseUrl}/lobsters-favicon.ico`, width: 16, height: 16, alt: "Lobsters" }} 
             bind:source={lobstersNews} />
         </div>
 
@@ -133,7 +134,7 @@
             flex: 1;
         ">
           <NewsPanel application={window.application} load={loadHackerNews} id="hackerNews" useCase="hackerNews" 
-          icon={{ url: '/hacker-news-favicon.ico', width: 16, height: 16, alt: "Hacker news" }}  
+          icon={{ url: `${baseUrl}/hacker-news-favicon.ico`, width: 16, height: 16, alt: "Hacker news" }}  
           allowSnooze={false} 
           bind:source={hackerNews} />
         </div>
@@ -153,7 +154,7 @@
       <Body>
         <Row>
             <Cell>
-              <Image src="/marine-weather/{name}" alt="Marine weather" bind:visible={uiOptions.showMarineWeather} />
+              <Image src="{baseUrl}/marine-weather/{name}" alt="Marine weather" bind:visible={uiOptions.showMarineWeather} />
             </Cell>
         </Row>
       </Body>

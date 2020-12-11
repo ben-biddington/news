@@ -1,8 +1,8 @@
 const del = (ports = {}, opts = {}) => {
     const { internet, trace = _ => {} } = ports;
-    const { url = '/news/items', id = 'unknown' } = opts;
+    const { baseUrl = '', id = 'unknown' } = opts;
   
-    return internet.delete(`${url}/${id}`).then(reply => { trace(reply); return reply; });
+    return internet.delete(`${baseUrl}/news/items/${id}`).then(reply => { trace(reply); return reply; });
 }
 
 const listDeleted = (ports = {}, opts = {}) => {

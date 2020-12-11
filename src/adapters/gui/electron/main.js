@@ -9,7 +9,7 @@ function createWindow () {
     }
   })
 
-  win.loadFile('index.html')
+  win.loadURL(`file://${__dirname}/index.html?show-marine-weather`);
 }
 
 app.whenReady().then(createWindow)

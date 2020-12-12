@@ -55,7 +55,7 @@
       <Row id="news-{newsItem.id}" class={`item ${newsItem.deleted ? 'deleted': ''}`}>
         <Cell width="25">{i+1}</Cell>
         <Cell>
-            <a href={newsItem.url} class="title text-truncate" style="display:block">{trim(newsItem.title, titleLengthLimit)}</a>
+            <a href={newsItem.url} class="title text-truncate" style="display:block" out:fade|local="{{duration:500}}">{trim(newsItem.title, titleLengthLimit)}</a>
 
             {#if showAge}
               <span class="age">{newsItem.ageSince(window.application.now())}</span>
@@ -92,6 +92,10 @@
             </a>
           {/if}
         </Cell>
+      </Row>
+    {:else}
+      <Row>
+        <Cell colspan="3">---</Cell>
       </Row>
     {/each}
   </Body>

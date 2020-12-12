@@ -10,6 +10,7 @@
   import NewsPanel from './NewsPanel.svelte';
   import BookmarkPanel from './BookmarkPanel.svelte';
   import Image from './Image.svelte';
+  import Toast from './Toast.svelte';
 
   const application = window.application;
   const toggles     = window.toggles;
@@ -142,7 +143,7 @@
 </div>
 
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
-  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'opoutama', 'ohope', 'whangamata', 'raglan', 'piha', 'orewa-beach', 'tryphena', 'the-cut', 'kekerengu', 'paturau-river' ] as name}
+  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'opoutama', 'blacks', 'ohope', 'whangamata', 'raglan', 'piha', 'orewa-beach', 'tryphena', 'the-cut', 'kekerengu', 'paturau-river' ] as name}
     <DataTable>
       <Head>
         <Row>
@@ -184,3 +185,5 @@
         </div>
     </div>
 </div>
+
+<Toast application={window.application} />

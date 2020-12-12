@@ -31,7 +31,7 @@ const internet = new FetchBasedInternet();
 // [i] This is where the real application is bootstrapped from
 //
 const application = (toggles, settings) => {
-    const baseUrl = settings.get('baseUrl');
+    const baseUrl = settings.get('baseUrl') || '';
 
     let applicationPorts = new Ports(
         { 

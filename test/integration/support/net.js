@@ -24,9 +24,38 @@ class MockInternet {
     return Promise.resolve({ statusCode: 200, body: ''});
   }
 
+  get(url, headers) {
+    this._verb = "GET";
+    this._url = url;
+    this._headers = headers;
+
+    return Promise.resolve({ statusCode: 200, body: ''});
+  }
+
+  post(url, headers, body) {
+    this._verb = "POST";
+    this._url = url;
+    this._headers = headers;
+    this._body = body;
+
+    return Promise.resolve({ statusCode: 200, body: ''});
+  }
+
   mustHaveHadDeleteCalled(expectedUrl) {
     expect(this._verb).to.eql('DELETE');
     expect(this._url).to.eql(expectedUrl);
+  }
+
+  mustHaveHadGetCalled(expectedUrl) {
+    expect(this._verb).to.eql('GET');
+    expect(this._url).to.eql(expectedUrl);
+  }
+
+  mustHaveHadPostCalled(expectedUrl, expectedHeaders={}, expectedBody={}) {
+    expect(this._verb).to.eql('POST');
+    expect(this._url).to.eql(expectedUrl);
+    expect(this._headers).to.eql(expectedHeaders);
+    expect(this._body).to.eql(expectedBody);
   }
 }
 

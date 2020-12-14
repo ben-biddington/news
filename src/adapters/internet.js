@@ -92,4 +92,4 @@ module.exports.del = (url, headers = {}) => {
   });
 };
 
-const convertReply = (reply, body) => ({ statusCode: reply.statusCode, headers: { empty: 'on purpose' }, body });
+const convertReply = (reply, body) => ({ statusCode: reply.statusCode, headers: reply.headers, body });

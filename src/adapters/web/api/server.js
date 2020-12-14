@@ -5,11 +5,11 @@ const { SocketNotifier }          = require('./internal/sockets');
 const { QueryStringToggles }      = require('../toggling/query-string-toggles'); 
 const express                     = require('express')
 
-const { Deleted }   = require('../../database/deleted');
-const { Bookmarks } = require('../../database/bookmarks');
-const { Cache }     = require('../../database/cache');
-const { Timespan }  = require('../../../core/dist/timespan');
-const { add: savedIo, getCredential: getSavedIoCredential } = require('../../saved.io');
+const { Deleted }       = require('../../database/deleted');
+const { Bookmarks }     = require('../../database/bookmarks');
+const { Cache }         = require('../../database/cache');
+const { Timespan }      = require('../../../core/dist/timespan');
+const { addBookmark }   = require('../../news-adapters');
 
 const app = express();
 const io  = new SocketNotifier(1080);
@@ -23,7 +23,6 @@ const cache         = new Cache('./cache.db');
 const log           = console.log;
 const fs            = require('fs');
 const util          = require('util');
-const { Internet }  = require('../../internet');
 
 const readFile = util.promisify(fs.readFile);
 
@@ -111,20 +110,10 @@ app.post(/bookmarks/, async (req, res) => {
     StructuredLog.around(req, res, { prefix: 'bookmarks' }, async log => {
 
         const toggles = new QueryStringToggles(req.url);
-
-        log.info(`Adding <${JSON.stringify(req.body)}>`);
-
         const bookmark = req.body;
 
-        const savedIoCredential =  getSavedIoCredential();
+        await addBookmark({ log, toggles }, req.body);
 
-        await Promise.all([
-            bookmarks.add(bookmark),
-            (false && savedIoCredential && false == toggles.get('disallow-saved-io')) 
-                ? savedIo({ internet: new Internet() }, getSavedIoCredential(), bookmark) 
-                : Promise.resolve()
-        ]);
-  
         res.status(200).json(bookmark);
     });
 });

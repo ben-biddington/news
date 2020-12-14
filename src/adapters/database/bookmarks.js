@@ -45,7 +45,11 @@ class Bookmarks {
     }
 
     async del(id) {
-        return this._database.ex('run', `DELETE FROM ${this._tableName} WHERE id=?`, id);
+        return this._database.ex('run', `DELETE FROM ${this._tableName} WHERE id=? OR id is NULL`, id);
+    }
+
+    async close() {
+        await this._database.close();
     }
 }
 

@@ -3,20 +3,30 @@ const expect = require('chai').expect;
 class MockBookMarks {
     constructor() {
         this._bookmarks = this._deletes = [];
+        this._addCalls = [];
     }
 
     add(bookmark) {
+        this._addCalls.push(bookmark);
         this._bookmarks.push(bookmark);
         return Promise.resolve();
     }
 
     list() {
-        Promise.resolve(this._bookmarks);
+        return Promise.resolve(this._bookmarks);
     }
 
     del(id) {
         this._deletes.push(id);
-        Promise.resolve();
+        return Promise.resolve();
+    }
+
+    clear() {
+        this._bookmarks = this._deletes = [];
+    }
+
+    resetCalls() {
+        this._addCalls = [];
     }
 
     mustHaveBeenAskedToAdd(expected) {
@@ -29,6 +39,10 @@ class MockBookMarks {
 
     mustHaveHadDeleteCalled(id) {
         expect(this._deletes).to.contain(id);
+    }
+
+    mustNotHaveBeenAskedToAddAnything() {
+        expect(this._addCalls).to.be.empty;
     }
 }
 

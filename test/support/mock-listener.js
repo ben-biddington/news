@@ -9,6 +9,10 @@ class MockListener {
         });
     }
 
+    clear() {
+        this._notifications = [];
+    }
+
     mustHaveAtLeast(expectedNotification, times=1) {
         const matches = this._notifications.filter(it => JSON.stringify(it) == JSON.stringify(expectedNotification));
 
@@ -30,6 +34,10 @@ class MockListener {
         const isMissing = false == this._notifications.some(it => it.type == type);
 
         expect(isMissing, `Expected\n\n${JSON.stringify(this._notifications)}\n\n NOT to contain type <${type}>`).to.be.true;
+    }
+
+    mustBeEmpty() {
+        expect(this._notifications).to.be.empty;
     }
 }
 

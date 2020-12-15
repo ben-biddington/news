@@ -27,7 +27,7 @@
             <Row id="bookmark-{bookmark.id}" class="item">
                 <Cell>
                     <div class="text-truncate">
-                    <a href={bookmark.url} class="title col text-truncate" style="display:inline-block">{bookmark.title}</a>
+                    <a href={bookmark.url} class="title col text-truncate" style="display:inline-block" target="_blank">{bookmark.title}</a>
                     </div>
                 </Cell>
                 <Cell>

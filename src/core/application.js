@@ -122,9 +122,15 @@ class Application {
                 
                 const bookmark = new Bookmark(newsItem.id, newsItem.title, newsItem.url, '');
 
-                await this._ports.bookmarks.add(bookmark);
+                const all = await this._ports.bookmarks.list() || [];
 
-                this._events.emit('bookmark-added', bookmark);
+                const alreadyExists = all.some(it => it.id === bookmarkId);
+
+                if (! alreadyExists) {
+                    await this._ports.bookmarks.add(bookmark);
+
+                    this._events.emit('bookmark-added', bookmark);
+                }
             },
             list: () => {
                 return this._ports.bookmarks.list();

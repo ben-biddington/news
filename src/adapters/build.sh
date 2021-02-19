@@ -8,6 +8,10 @@ function build {
     webpack --config $config
 }
 
+if [ ! -d 'node_modules' ]; then
+    npm install    
+fi
+
 echo -e "Building at <$PWD>\n"
 
 echo -e "Compiling typescript\n"

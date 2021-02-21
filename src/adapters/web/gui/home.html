@@ -89,6 +89,13 @@
                 addScript({ src: '/assets/dist/adapters.web.react.bundle.js' });
                 document.title += " -- React";
             }
+            else if (window.toggles.get('use-mint')) {
+                const div = document.createElement('div');
+                div.setAttribute('id', 'application');
+                document.body.appendChild(div);
+                addScript({ src: '/assets/dist/adapters.web.mint.bundle.js' });
+                document.title += " -- Mint";
+            }
             else
             {
                 vanilla.render(document, application);

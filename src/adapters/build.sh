@@ -8,6 +8,16 @@ function build {
     webpack --config $config
 }
 
+function buildMint {
+    cd src/adapters/web/gui/flavours/mint
+
+    mint build --skip-service-worker --skip-icons
+
+    cp ./dist/index.js ../../assets/dist/adapters.web.mint.bundle.js
+
+    cd - 
+}
+
 if [ ! -d 'node_modules' ]; then
     npm install    
 fi
@@ -21,6 +31,8 @@ npx tsc -p src/core/tsconfig.json --listEmittedFiles
 echo ""
 
 echo -e "Packing\n"
+
+buildMint
 
 build 'core'        ./src/adapters/build/webpack.config.js
 build 'mocks'       ./src/adapters/build/webpack.mocks.config.js

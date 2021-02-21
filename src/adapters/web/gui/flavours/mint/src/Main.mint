@@ -3,6 +3,12 @@ component Main {
   state toggles     : Object = `window.toggles`
   state baseUrl     : String = `window.settings.get('baseUrl') || ''`
 
+/*
+  There is going to be an interop issue here when we need to react to application events.
+
+  For example, in order to bind to a list of news items, how would we connect the javascript data structures? 
+*/
+
   fun connect {
     
     `

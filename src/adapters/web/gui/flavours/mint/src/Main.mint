@@ -1,15 +1,27 @@
 component Main {
   state application : Object = `window.application`
   state toggles     : Object = `window.toggles`
-  state baseUrl     : Object = `window.settings.get('baseUrl') || ''`
-  /*
-  
-  const toggles     = window.toggles;
-  const baseUrl     = window.settings.get('baseUrl') || '';
-  */
+  state baseUrl     : String = `window.settings.get('baseUrl') || ''`
+
+  fun connect {
+    
+    `
+    (() => {
+      window.application.hackerNews.list()
+      application.on("hacker-news-items-loaded", console.log)
+    })()
+    `
+  }
+
+  fun componentDidMount : Promise(Never, Void) {
+    connect()
+  }
 
   fun render : Html {
-    <button>
+    <button 
+      onClick={(event : Html.Event) : String {
+        Debug.log(`window.toggles`)
+      }}>
       "Click ME!"
     </button>
   }

@@ -143,7 +143,7 @@
 </div>
 
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
-  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'ohope', 'whangamata', 'raglan', 'piha', 'robin-hood', 'the-cut', 'kekerengu', 'paturau-river' ] as name}
+  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'ohope', 'whangamata', 'raglan', 'robin-hood', 'the-cut', 'kekerengu' ] as name}
     <DataTable>
       <Head>
         <Row>
@@ -162,6 +162,10 @@
     </DataTable>
   {/each}
   <!-- <script src="https://www.windfinder.com/widget/forecast/js/wellington?unit_wave=m&unit_rain=mm&unit_temperature=c&unit_wind=kts&days=4&show_day=0"></script> -->
+</div>
+
+<div id="webcam" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
+  <Image src="http://www.gw.govt.nz/assets/WebCam/BeaconHill/beacon1.jpg" alt="Web cam" bind:visible={uiOptions.showMarineWeather} />
 </div>
 
 <div id="bookmarks" style="display: flex; margin-bottom:10px; padding-bottom:15px;">

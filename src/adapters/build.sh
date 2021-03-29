@@ -42,3 +42,4 @@ build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.conf
 build 'svelte'      ./src/adapters/build/webpack.svelte.config.js
 build 'vue'         ./src/adapters/build/webpack.vue.config.js
 build 'react'       ./src/adapters/build/webpack.react.config.js
+build 'ficus'       ./src/adapters/web/gui/flavours/ficus/src/webpack.config.js

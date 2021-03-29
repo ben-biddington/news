@@ -96,6 +96,15 @@
                 addScript({ src: '/assets/dist/adapters.web.mint.bundle.js' });
                 document.title += " -- Mint";
             }
+            else if (window.toggles.get('use-ficus')) {
+                const div = document.createElement('ficus-application');
+                div.setAttribute('id', 'application');
+                document.body.appendChild(div);
+
+                addScript({ src: '/assets/dist/adapters.web.ficus.bundle.js' });
+                
+                document.title += " -- Ficus";
+            }
             else
             {
                 vanilla.render(document, application);

@@ -97,7 +97,7 @@ createComponent('ficus-application', {
     return html`
       <div id="application">
         <div id="news">
-          <ul>
+          <ol>
             ${this.news().map(
               (newsItem, i) => html`
                 <li class=${'item' + i}>
@@ -130,7 +130,7 @@ createComponent('ficus-application', {
                 </li>
                 `
             )}
-          </ul>
+          </ol>
         </div>
       </div>
 

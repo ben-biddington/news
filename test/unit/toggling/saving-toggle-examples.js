@@ -4,9 +4,9 @@ const {
 
 describe('Saving a toggle value', async () => {
   it("notifies with toggle changed", async () => {
-      const toggles = new Ports(new MockLobsters(), log, new MockSeive()).withToggles(new MockToggles());
+      const ports = new Ports(new MockLobsters(), log, new MockSeive());
 
-      const application = new Application(toggles,  new MockToggles());
+      const application = new Application(ports,  new MockToggles());
 
       const notifications = new MockListener(application);
 

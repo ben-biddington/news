@@ -22,7 +22,10 @@
 
   $: lobstersNews = [];
 
-  const loadLobstersNews = () => window.application.lobsters.list().then(result => lobstersNews = result);
+  const loadLobstersNews = () => window.application.lobsters.list().then(result => {
+    lobstersNews = result;
+    console.log(result[0].ageSince);
+  });
 
   $: hackerNews = [];
 

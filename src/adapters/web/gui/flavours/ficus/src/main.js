@@ -1,25 +1,4 @@
-// https://docs.ficusjs.org/docs/installation/
-import {
-  // components
-  createComponent,
-  withStateTransactions,
-  withStore,
-  withEventBus,
-  withStyles,
-
-  // event bus
-  createEventBus,
-  getEventBus,
-
-  // stores
-  createPersist,
-  createStore,
-  getStore,
-
-  // modules
-  use
-} from 'ficusjs'
-
+import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } from 'ficusjs' 
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
 
 /* [i] withStyles fails with:
@@ -44,17 +23,13 @@ Uncaught TypeError: this._processStyle(...).then is not a function
 createComponent('ficus-application', {
   renderer,
   props: {
-    personName: {
-      type: String,
-      required: false
-    },
     baseUrl : '' 
   },
   state () {
     return { 
       lobstersNews: [],
       hackerNews: [],
-      uiOptions: {}
+      uiOptions: {},
     }
   },
   styles () {
@@ -93,14 +68,13 @@ createComponent('ficus-application', {
   },
   // [i] https://github.com/WebReflection/uhtml
   render () {
-    console.log('[ficus] rendering');
     return html`
       <div id="application">
         <div id="news">
           <ol>
             ${this.news().map(
               (newsItem, i) => html`
-                <li class=${'item' + i}>
+                <li class="news">
                   <a href="javascript:void(0)" onclick=${() => this.delete(newsItem.id)} title=${'delete ' + newsItem.title} class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
@@ -134,26 +108,31 @@ createComponent('ficus-application', {
         </div>
       </div>
 
-      ${[ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name => {
-        if (this.state.uiOptions.showMarineWeather) {
-          return html`
-            <div class="mdc-data-table" style="margin:10px">
-              <table class="mdc-data-table__table">
-                <thead>
-                  <tr class="mdc-data-table__header-row">
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">${name}</th>
-                  </tr>
-                </thead>
-                <tbody class="mdc-data-table__content">
-                  <tr class="mdc-data-table__row">
-                    <td class="mdc-data-table__cell"><img src=${'/marine-weather/' + name}  alt="Marine weather"></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          `
-        }})}
+      ${this.marineWeather()}
     `
+  },
+  marineWeather() {
+    if (false === this.state.uiOptions.showMarineWeather)
+      return null;
+    
+      return [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name =>
+        html`
+          <div class="mdc-data-table" style="margin:10px">
+            <table class="mdc-data-table__table">
+              <thead>
+                <tr class="mdc-data-table__header-row">
+                  <th class="mdc-data-table__header-cell" role="columnheader" scope="col">${name}</th>
+                </tr>
+              </thead>
+              <tbody class="mdc-data-table__content">
+                <tr class="mdc-data-table__row">
+                  <td class="mdc-data-table__cell"><img src=${'/marine-weather/' + name}  alt="Marine weather"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `
+      )
   },
   news() {
     const result = this.state.lobstersNews.concat(this.state.hackerNews);
@@ -188,7 +167,7 @@ createComponent('ficus-application', {
     window.application.on(
       [ "hacker-news-item-deleted", "hacker-news-item-snoozed" ], 
       e => {
-        this.setState(state => ({...state, hackersNews: state.hackersNews.filter(it => it.id != e.id) }));
+        this.setState(state => ({...state, hackerNews: state.hackerNews.filter(it => it.id != e.id) }));
       }
     );
 

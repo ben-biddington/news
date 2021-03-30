@@ -13,7 +13,7 @@ const feed = (ports = {}, opts = {}) => {
         then(reply => 
             parser.
                 parseString(reply.body).
-                catch(e => { throw new Error(`Failed to parse the following as rss feed from <${feedUrl}>:\n${reply.body}`);})
+                catch(e => { throw new Error(`Failed to parse the following text as rss feed from <${feedUrl}>:\n${reply.body}`);})
         ).
         then((rss) => rss.items);
 };

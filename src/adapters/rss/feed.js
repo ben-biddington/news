@@ -10,13 +10,11 @@ const feed = (ports = {}, opts = {}) => {
 
     return get(feedUrl, { Accept: "text/xml" }).
         then(reply => { log.trace(reply.body); return reply; }).
-        then(reply => {
-            try {
-                return parser.parseString(reply.body);
-            } catch (e) {
-                throw new Error(`Failed to parse the following as rss feed from <${feedUrl}>:\n${reply.body}`);
-            }
-        }).
+        then(reply => 
+            parser.
+                parseString(reply.body).
+                catch(e => { throw new Error(`Failed to parse the following as rss feed from <${feedUrl}>:\n${reply.body}`);})
+        ).
         then((rss) => rss.items);
 };
 

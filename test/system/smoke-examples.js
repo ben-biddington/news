@@ -15,7 +15,7 @@ describe('[UI] renders without error', async () => {
     
     after(async () => await interactor.close());
 
-    [ 'svelte', 'vue', 'react', 'svelte-smui' ].forEach(name => {
+    [ 'svelte', 'vue', 'react', 'svelte-smui', 'ficus' ].forEach(name => {
         const url = `${baseUrl}?&use-${name}`;
         const timeout = 30*1000;
 

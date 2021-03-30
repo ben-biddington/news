@@ -24,7 +24,6 @@
 
   const loadLobstersNews = () => window.application.lobsters.list().then(result => {
     lobstersNews = result;
-    console.log(result[0].ageSince);
   });
 
   $: hackerNews = [];
@@ -146,7 +145,7 @@
 </div>
 
 <div id="marine-weather" style="padding:15px; display: {uiOptions.showMarineWeather ? 'block' : 'none'}">
-  {#each [ 'wellington', 'titahi-bay', 'riversdale-beach', 'ohope', 'whangamata', 'raglan', 'robin-hood', 'the-cut', 'kekerengu' ] as name}
+  {#each [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'ohope', 'whangamata', 'raglan', 'robin-hood', 'the-cut', 'kekerengu' ] as name}
     <DataTable>
       <Head>
         <Row>

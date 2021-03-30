@@ -1,5 +1,7 @@
 a.icon { color: black }
 
+li.news { padding: 5px }
+
 .mdc-data-table {
   background-color: #fff;
   background-color: var(--mdc-theme-surface, #fff);

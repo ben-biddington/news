@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "bash ./src/adapters/build.sh $@",
-    "test.unit": "mocha \"test/unit/**/*-examples.js\"       --timeout  5000",
+    "test.unit": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/unit/**/*-examples.{j,t}s\" --timeout  5000",
     "test.integration": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/integration/**/*examples.{j,t}s\" \"test/integration/**/can-*.{j,t}s\" --timeout 10000",
     "test.system": "mocha \"test/system/**/*examples.js\"      --timeout 10000",
     "server-simple": "http-server ./src/adapters/web/vanilla",

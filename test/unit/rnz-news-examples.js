@@ -1,18 +1,8 @@
 const expect = require('chai').expect;
 
-const { Application, Ports } = require('../../src/core/application');
+const { Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles, log } = require('./application-unit-test');
 
 const { NewsItem } = require('../../src/core/dist/news-item');
-
-const { MockLobsters } = require('../support/mock-lobsters');
-
-const { MockListener } = require('../support/mock-listener');
-
-const { MockSeive } = require('../support/mock-seive');
-
-const { MockToggles } = require('../support/mock-toggles');
-
-const { log } = require('../support/mock-log');
 
 describe('Viewing rnz news', async () => {
     it('can list news', () => {

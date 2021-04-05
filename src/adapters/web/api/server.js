@@ -220,7 +220,7 @@ app.get('/wellington-weather/today', async (req, res) => {
 
 app.get('/wellington-weather/week', async (req, res) => {
     StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, async log => {
-        const { sevenDays }     = require('../../dist/metservice');
+        const { sevenDays }     = require('../../dist/adapters/web/metservice');
         const { get }           = require('../../internet');
 
         res.status(200).json(await sevenDays({ get, log: console.log }));

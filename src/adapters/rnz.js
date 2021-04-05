@@ -1,5 +1,5 @@
 const { feed } = require('./rss/feed');
-const { DevNullLog } = require('../core/logging/log');
+const { DevNullLog } = require('../core/dist/logging/log');
 
 // [i] https://www.rnz.co.nz/rss/national.xml
 const list = (ports = {}, opts = {}) => {

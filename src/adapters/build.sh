@@ -39,8 +39,8 @@ build 'core'        ./src/adapters/build/webpack.config.js
 build 'mocks'       ./src/adapters/build/webpack.mocks.config.js
 build 'adapters'    ./src/adapters/build/webpack.adapters.config.js
 
-build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
-build 'svelte'      ./src/adapters/build/webpack.svelte.config.js
-build 'vue'         ./src/adapters/build/webpack.vue.config.js
-build 'react'       ./src/adapters/build/webpack.react.config.js
+#build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
+#build 'svelte'      ./src/adapters/build/webpack.svelte.config.js
+#build 'vue'         ./src/adapters/build/webpack.vue.config.js
+#build 'react'       ./src/adapters/build/webpack.react.config.js
 build 'ficus'       ./src/adapters/web/gui/flavours/ficus/src/webpack.config.js

@@ -1,6 +1,8 @@
 const expect = require('chai').expect;
 
-const { Application, Ports } = require('../../src/core/application');
+const { Application } = require('../../src/core/application');
+
+const { Ports } = require('../../src/core/ports');
 
 const { NewsItem } = require('../../src/core/dist/news-item');
 
@@ -13,6 +15,10 @@ const { MockSeive } = require('../support/mock-seive');
 const { MockToggles } = require('../support/mock-toggles');
 
 const { MockDeletedItems} = require('../support/mock-deleted-items');
+
+const { MockSettings } = require('../support/mock-settings');
+
+const { MockBookMarks } = require('../support/mock-bookmarks');
 
 const { log } = require('../support/mock-log');
 
@@ -28,5 +34,7 @@ module.exports.MockListener = MockListener;
 module.exports.MockSeive = MockSeive;
 module.exports.MockToggles = MockToggles;
 module.exports.MockDeletedItems = MockDeletedItems;
+module.exports.MockSettings = MockSettings;
+module.exports.MockBookMarks = MockBookMarks;
 module.exports.mockLog = log;
 module.exports.delay = delay;

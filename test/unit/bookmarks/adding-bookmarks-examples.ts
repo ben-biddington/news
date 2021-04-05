@@ -1,13 +1,8 @@
-const { Application, Ports } = require('../../../src/core/application');
+import { MockBookMarks, MockSeive, MockLobsters, MockListener, Application, Ports, MockSettings, MockToggles } from '../application-unit-test';
 const { NewsItem } = require('../../../src/core/dist/news-item')
-const { MockLobsters } = require('../../support/mock-lobsters');
-const { MockListener } = require('../../support/mock-listener');
-const { MockSeive } = require('../../support/mock-seive');
-const { MockToggles } = require('../../support/mock-toggles');
-const { MockBookMarks } = require('../../support/mock-bookmarks');
 const { log } = require('../../support/mock-log');
 const { Bookmark } = require('../../../src/core/dist/bookmark');
-const mockPorts = () => new Ports(new MockLobsters(), log, new MockSeive(), new MockLobsters());
+const mockPorts = () => new Ports(new MockLobsters(), log, new MockSeive(), new MockLobsters(), null);
 
 describe('Bookmarking news items', async () => {
     let bookmarks, notifications, application = null;

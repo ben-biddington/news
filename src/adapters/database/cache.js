@@ -1,5 +1,5 @@
 const { Database } = require('./internal/database');
-const { DevNullLog } = require('../../core/logging/log');
+const { DevNullLog } = require('../../core/dist/logging/log');
 
 class Cache {
     constructor(fileName, log = new DevNullLog()) {

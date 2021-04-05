@@ -27,12 +27,13 @@ echo -e "Building at <$PWD>\n"
 echo -e "Compiling typescript\n"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
+npx tsc -p src/adapters/tsconfig.json --listEmittedFiles
 
 echo ""
 
 echo -e "Packing\n"
 
-buildMint
+#buildMint
 
 build 'core'        ./src/adapters/build/webpack.config.js
 build 'mocks'       ./src/adapters/build/webpack.mocks.config.js

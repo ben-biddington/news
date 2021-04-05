@@ -174,18 +174,18 @@
         "left-major": {
           "modules": [
             {
-              "asAt": "2021-04-05T15:00:00+12:00",
+              "asAt": "2021-04-05T16:30:00+12:00",
               "attribution": {
                 "text": "Observations brought to you by MetService"
               },
-              "issuedAt": "2021-04-05T15:00:00+12:00",
+              "issuedAt": "2021-04-05T16:30:00+12:00",
               "layout": {
                 "hideWhen": "1-column"
               },
               "name": "current-conditions/1",
               "observations": {
                 "temperature": {
-                  "current": 17.8,
+                  "current": 17.5,
                   "feelsLike": "18",
                   "high": "20",
                   "low": "13"
@@ -1519,21 +1519,21 @@
               "items": [
                 {
                   "icon": "temp-high",
-                  "text": "Christchurch (City)",
+                  "text": "Blenheim",
                   "title": "Highest",
-                  "value": "28.3°C"
+                  "value": "25.6°C"
                 },
                 {
                   "icon": "temp-low",
-                  "text": "Gore",
+                  "text": "Nugget Point",
                   "title": "Lowest",
-                  "value": "13.0°C"
+                  "value": "12.1°C"
                 },
                 {
                   "icon": "windy",
-                  "text": "Nugget Point",
+                  "text": "Castlepoint",
                   "title": "Windiest",
-                  "value": "72km/h"
+                  "value": "78km/h"
                 },
                 {
                   "icon": "cloud-rain",

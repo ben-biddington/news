@@ -1,7 +1,10 @@
 // https://www.metservice.com/publicData/webdata/weather-station-location/93437/wellington-central
-export const sevenDays = async (get: any) : Promise<Array<WeatherForecast>> => {
-  const reply = await get('http:///wrong-on-purpose').then(reply => JSON.parse(reply.body));
+export const sevenDays = async (ports) : Promise<Array<WeatherForecast>> => {
+  const { get, log = () => {} } = ports;
   
+  const reply = await get('https://www.metservice.com/publicData/webdata/towns-cities/locations/wellington/7-days').
+    then(reply => JSON.parse(reply.body));
+
   const days = reply.layout.primary.slots.main.modules[0].days
 
   return days.map(it => ({

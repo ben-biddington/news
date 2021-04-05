@@ -12,7 +12,7 @@ describe.only('Seven day forecast', () => {
   it('parses reply as expected', async () => {
     const get = fakeGet(`${__dirname}/sample.json`);
 
-    const result = await sevenDays(get);
+    const result = await sevenDays({ get });
 
     expect(result.length).to.eql(7);
 

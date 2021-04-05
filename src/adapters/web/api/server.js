@@ -220,15 +220,10 @@ app.get('/wellington-weather/today', async (req, res) => {
 
 app.get('/wellington-weather/week', async (req, res) => {
     StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, async log => {
-        cached(req, res, async () => {
-            const { week }          = require('../wellington-weather');
-            const temp              = require('temp');
-            const filePath          = temp.path({suffix: '.png'}); 
-    
-            const result = await week({ log }, { path: filePath });
+        const { sevenDays }     = require('../../dist/metservice');
+        const { get }           = require('../../internet');
 
-            return readFile(result.path);
-        });
+        res.status(200).json(await sevenDays({ get, log: console.log }));
     });
 });
 

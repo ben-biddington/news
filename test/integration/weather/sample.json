@@ -1,0 +1,1890 @@
+{
+  "_usage": "This data is restricted and may only be used with explicit permission from MetService NZ. Contact dataenquiries@metservice.com",
+  "advertising": {
+    "bannerConfig": {
+      "adUnitPath": "/9734223/BigBanner_NewSite",
+      "fuseTag": "21816210109",
+      "targeting": [],
+      "unit": "bigBanner"
+    },
+    "interstitial": {
+      "adUnitPath": "/9734223/NewSite_Interstitial_V2",
+      "fuseTag": "21833606848",
+      "targeting": [],
+      "unit": "interstitial"
+    },
+    "leftSkin": {
+      "adUnitPath": "/9734223/LeftSkin_NewSite_V2",
+      "fuseTag": "21827479023",
+      "targeting": [],
+      "unit": "leftSkin"
+    },
+    "mapTakeover": {
+      "adUnitPath": "/9734223/HPBackground_NewSite_V2",
+      "fuseTag": "21825811305",
+      "targeting": [],
+      "unit": "mapTakeover"
+    },
+    "rightSkin": {
+      "adUnitPath": "/9734223/RightSkin_NewSite_V2",
+      "fuseTag": "21827479038",
+      "targeting": [],
+      "unit": "rightSkin"
+    },
+    "targeting": [
+      {
+        "key": "bravecto",
+        "location": "any",
+        "value": "true"
+      },
+      {
+        "key": "hawkesbay",
+        "value": "PARTLY CLOUDY"
+      },
+      {
+        "key": "whakataneThreshold",
+        "value": true
+      },
+      {
+        "key": "whakataneTemperature",
+        "value": "25"
+      },
+      {
+        "key": "apiKey",
+        "value": "wellington"
+      },
+      {
+        "key": "type",
+        "value": "urban"
+      },
+      {
+        "key": "island",
+        "value": "towns-north-island"
+      },
+      {
+        "key": "location",
+        "value": "towns-wellington"
+      },
+      {
+        "key": "forecast24",
+        "value": "WINDY"
+      },
+      {
+        "key": "forecast48",
+        "value": "PARTLY CLOUDY"
+      },
+      {
+        "key": "forecastDay1",
+        "value": "WINDY"
+      },
+      {
+        "key": "forecastDay2",
+        "value": "PARTLY CLOUDY"
+      },
+      {
+        "key": "forecastDay3",
+        "value": "PARTLY CLOUDY"
+      },
+      {
+        "key": "forecastDay4",
+        "value": "PARTLY CLOUDY"
+      },
+      {
+        "key": "forecastDay5",
+        "value": "FEW SHOWERS"
+      },
+      {
+        "key": "minTemp24",
+        "value": "13"
+      },
+      {
+        "key": "maxTemp24",
+        "value": "20"
+      },
+      {
+        "key": "maxTemp48",
+        "value": "19"
+      },
+      {
+        "key": "satFrcst",
+        "value": "Showers"
+      },
+      {
+        "key": "sunFrcst",
+        "value": "Few showers"
+      },
+      {
+        "key": "bbqIndex",
+        "value": "1"
+      },
+      {
+        "key": "page",
+        "value": "towns-7-days"
+      },
+      {
+        "key": "site",
+        "value": "production"
+      }
+    ]
+  },
+  "isSkiSeason": "false",
+  "layout": {
+    "last": {
+      "modules": [
+        {
+          "name": "app-promo/1",
+          "type": "module"
+        }
+      ]
+    },
+    "name": "five-up/1",
+    "navigation": {
+      "links": [
+        {
+          "label": "Next 48 Hours",
+          "url": "/towns-cities/locations/wellington"
+        },
+        {
+          "label": "7 Days",
+          "url": "/towns-cities/locations/wellington/7-days"
+        },
+        {
+          "label": "Extended",
+          "url": "/towns-cities/locations/wellington/extended"
+        },
+        {
+          "label": "Water Activities",
+          "url": "/towns-cities/locations/wellington/water-activities"
+        },
+        {
+          "label": "Nearby Forecasts",
+          "url": "/towns-cities/locations/wellington/nearby-forecasts"
+        },
+        {
+          "label": "Past Weather",
+          "url": "/towns-cities/locations/wellington/past-weather"
+        }
+      ]
+    },
+    "primary": {
+      "slots": {
+        "first": {
+          "modules": []
+        },
+        "left-major": {
+          "modules": [
+            {
+              "asAt": "2021-04-05T15:00:00+12:00",
+              "attribution": {
+                "text": "Observations brought to you by MetService"
+              },
+              "issuedAt": "2021-04-05T15:00:00+12:00",
+              "layout": {
+                "hideWhen": "1-column"
+              },
+              "name": "current-conditions/1",
+              "observations": {
+                "temperature": {
+                  "current": 17.8,
+                  "feelsLike": "18",
+                  "high": "20",
+                  "low": "13"
+                }
+              },
+              "source": "Wellington Kelburn (93434)",
+              "title": "Current Conditions",
+              "type": "module",
+              "weatherStationUrl": "/weather-station-location/93437/wellington-central"
+            }
+          ]
+        },
+        "left-minor": {
+          "modules": [
+            {
+              "image": "/dynamic/feeds/thumbnails/370x210_thumb_rain-forecast-3day.jpg",
+              "link": {
+                "label": "3 Day Rain Forecast",
+                "url": "/maps-radar/rain/forecast/3-days"
+              },
+              "name": "image-tile/1",
+              "title": "3 Day Rain Forecast",
+              "type": "module"
+            },
+            {
+              "name": "sun-and-pollen",
+              "pollenEnabled": "false",
+              "pollenEndOfSeasonMessage": "Pollen forecast is finished for the season",
+              "pollenLevels": [],
+              "sponsorImage": "",
+              "sponsorURL": "",
+              "sunProtection": [
+                {
+                  "icon": "uv-risk-high",
+                  "uvAlertLevel": "Not dangerous until tomorrow",
+                  "uvEndTime": "2:50 PM",
+                  "uvHasAlert": true,
+                  "uvMessage": [
+                    "Protection required",
+                    "10:05 AM - 2:35 PM tomorrow.",
+                    "Even on cloudy days."
+                  ],
+                  "uvProvider": "Data provided by NIWA",
+                  "uvProviderURL": "https://www.niwa.co.nz/our-services/online-services/uv-ozone",
+                  "uvStartTime": "9:55 AM",
+                  "uvTitle": "CURRENT UV LEVEL LOW"
+                }
+              ],
+              "title": "Sun Protection",
+              "type": "module",
+              "uvEnabled": "true",
+              "uvEndOfSeasonMessage": "Sun protection forecast is finished for the season"
+            }
+          ]
+        },
+        "main": {
+          "modules": [
+            {
+              "days": [
+                {
+                  "breakdown": {
+                    "afternoon": {
+                      "condition": "windy"
+                    },
+                    "evening": {
+                      "condition": "partly-cloudy"
+                    },
+                    "morning": {
+                      "condition": "windy"
+                    },
+                    "overnight": {
+                      "condition": "windy"
+                    }
+                  },
+                  "condition": "windy",
+                  "date": "2021-04-05T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "20",
+                      "lowTemp": "13",
+                      "statement": "Cloudy at times. Chance of a shower in Upper Hutt. Strong northwesterlies, gale at times, easing this evening.",
+                      "sunrise": "2021-04-05T06:38:00+12:00",
+                      "sunset": "2021-04-05T18:08:00+12:00"
+                    }
+                  ],
+                  "highTemp": "20",
+                  "issuedAt": "2021-04-05T13:48:00+12:00",
+                  "lowTemp": "13"
+                },
+                {
+                  "breakdown": {
+                    "afternoon": {
+                      "condition": "fine"
+                    },
+                    "evening": {
+                      "condition": "fine"
+                    },
+                    "morning": {
+                      "condition": "partly-cloudy"
+                    },
+                    "overnight": {
+                      "condition": "cloudy"
+                    }
+                  },
+                  "condition": "partly-cloudy",
+                  "date": "2021-04-06T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "19",
+                      "lowTemp": "12",
+                      "statement": "Cloudy to start, then becoming fine. Light winds and afternoon southeast breezes.",
+                      "sunrise": "2021-04-06T06:39:00+12:00",
+                      "sunset": "2021-04-06T18:07:00+12:00"
+                    }
+                  ],
+                  "highTemp": "19",
+                  "issuedAt": "2021-04-05T11:24:00+12:00",
+                  "lowTemp": "12"
+                },
+                {
+                  "breakdown": {
+                    "afternoon": {
+                      "condition": "partly-cloudy"
+                    },
+                    "evening": {
+                      "condition": "partly-cloudy"
+                    },
+                    "morning": {
+                      "condition": "fine"
+                    },
+                    "overnight": {
+                      "condition": "fine"
+                    }
+                  },
+                  "condition": "partly-cloudy",
+                  "date": "2021-04-07T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "19",
+                      "lowTemp": "12",
+                      "statement": "Fine, but a few afternoon and evening clouds. Light winds, but southerly breezes in the afternoon.",
+                      "sunrise": "2021-04-07T06:40:00+12:00",
+                      "sunset": "2021-04-07T18:05:00+12:00"
+                    }
+                  ],
+                  "highTemp": "19",
+                  "issuedAt": "2021-04-05T11:24:00+12:00",
+                  "lowTemp": "12"
+                },
+                {
+                  "condition": "partly-cloudy",
+                  "date": "2021-04-08T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "19",
+                      "lowTemp": "14",
+                      "rainFall1": 3,
+                      "rainFall10": 0,
+                      "statement": "Partly cloudy. Northerlies developing.",
+                      "sunrise": "2021-04-08T06:41:00+12:00",
+                      "sunset": "2021-04-08T18:03:00+12:00"
+                    }
+                  ],
+                  "highTemp": "19",
+                  "issuedAt": "2021-04-05T10:02:00+12:00",
+                  "lowTemp": "14"
+                },
+                {
+                  "condition": "few-showers",
+                  "date": "2021-04-09T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "19",
+                      "lowTemp": "15",
+                      "rainFall1": 45,
+                      "rainFall10": 0,
+                      "statement": "A few showers. Northerlies.",
+                      "sunrise": "2021-04-09T06:42:00+12:00",
+                      "sunset": "2021-04-09T18:02:00+12:00"
+                    }
+                  ],
+                  "highTemp": "19",
+                  "issuedAt": "2021-04-05T10:02:00+12:00",
+                  "lowTemp": "15"
+                },
+                {
+                  "condition": "showers",
+                  "date": "2021-04-10T12:00:00+12:00",
+                  "forecasts": [
+                    {
+                      "highTemp": "20",
+                      "lowTemp": "15",
+                      "rainFall1": 94,
+                      "rainFall10": 32,
+                      "statement": "Rain developing. Northerlies.",
+                      "sunrise": "2021-04-10T06:44:00+12:00",
+                      "sunset": "2021-04-10T18:00:00+12:00"
+                    }
+                  ],
+                  "highTemp": "20",
+                  "issuedAt": "2021-04-05T10:02:00+12:00",
+                  "lowTemp": "15"
+                },
+                {
+                  "condition": "few-showers",
+                  "date": "2021-04-11T12:00:00+12:00",
+                  "forecastDayTakeover": {
+                    "banner": {
+                      "advert": [
+                        {
+                          "image": "/creative/police-feb-2021/police_buyback-desktop.png",
+                          "responsive": true,
+                          "showWhen": "3-column"
+                        },
+                        {
+                          "hideWhen": "3-column",
+                          "image": "/creative/police-feb-2021/police_buyback-mobile.png"
+                        }
+                      ],
+                      "tracking": {
+                        "action": "Click",
+                        "category": "Police Gun Buyback Feb-Apr 2021",
+                        "label": "label"
+                      },
+                      "url": "https://www.police.govt.nz/advice-services/firearms-and-safety/what-do-i-need-know/new-firearms-laws-and-what-they-mean/amnesty?utm_source=metservice&utm_medium=display&utm_campaign=_firearms-amnesty&utm_content=display_fixed-banner "
+                    }
+                  },
+                  "forecasts": [
+                    {
+                      "highTemp": "19",
+                      "lowTemp": "16",
+                      "rainFall1": 49,
+                      "rainFall10": 10,
+                      "statement": "One or two showers. Northwesterlies.",
+                      "sunrise": "2021-04-11T06:45:00+12:00",
+                      "sunset": "2021-04-11T17:59:00+12:00"
+                    }
+                  ],
+                  "highTemp": "19",
+                  "issuedAt": "2021-04-05T11:30:00+12:00",
+                  "lowTemp": "16"
+                }
+              ],
+              "disclaimer": "",
+              "information": [
+                {
+                  "icon": "temp-high",
+                  "key": "maxTemp",
+                  "link": "",
+                  "text": "High: Forecast for the calendar day. Usually occurs in the afternoon."
+                },
+                {
+                  "icon": "temp-low",
+                  "key": "minTemp",
+                  "link": "",
+                  "text": "Low: Forecast between noon on the calendar day and noon the following day.  Usually occurs around dawn."
+                },
+                {
+                  "icon": "",
+                  "key": "periods",
+                  "link": "https://about.metservice.com/our-company/learning-centre/weather-icons-explained",
+                  "text": "Forecast times: Overnight: Midnight - 6am, Morning: 6am - Noon, Afternoon: Noon - 6pm, Evening: 6pm - Midnight."
+                }
+              ],
+              "name": "city-forecast/tabs/1",
+              "type": "module"
+            },
+            {
+              "content": [
+                {
+                  "heading": "Main",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-main.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/advice/garden/download-the-new-mykiwicare-app/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-main.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/advice/garden/download-the-new-mykiwicare-app/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "Autumn brings a change in both weather and the pests and diseases that affect people in the their homes and gardens. Numbers of insect pests decline, but rodents begin to seek shelter and alternative food sources in homes, while weeds grow actively in gardens and lawns. Kiwicare will help you identify the pests and find solutions. For further advice, visit Kiwicare.co.nz or download the MyKiwicare app."
+                },
+                {
+                  "heading": "Veges",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-veges.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/problems/garden-problems/growing/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-veges.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/problems/garden-problems/growing/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "Get rid of weeds in your vegetable patch and start sowing your winter vegetables; broad beans, beetroot, celery,  cabbage, carrots, cauliflower, spinach, onions, lettuce, garlic, leeks, parsnips, peas, turnips, parsnips and parsley."
+                },
+                {
+                  "heading": "Flowers",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-main.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/products/garden-products/plant-health/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-main.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/products/garden-products/plant-health/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "Remove the dead and dying leaves and collapsed stems of herbaceous perennials. Leave any stems that have attractive seed heads for birds to feed on. Remove weeds, then spread compost or well-rotted manure on top of the soil to insulate plant roots – the earthworms will work it into the soil over winter. Plant your spring flowering bulbs as soon as the weather cools."
+                },
+                {
+                  "heading": "Fruits",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-fruit.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/problems/garden-problems/growing/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-fruit.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/problems/garden-problems/growing/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "Lift any fallen fruit and keep areas under fruit trees and vines clear, to reduce the risk of pests and diseases lurking in the soil over winter.  When in dormancy your fruit trees should be given their winter spray programme to clean away pest eggs and disease spores. See the Winter Spay Programme on Kiwicare.co.nz"
+                },
+                {
+                  "heading": "Pests",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-pests.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/problems/home-pest-problems/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-pests.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/problems/home-pest-problems/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "As the weather cools and natural food sources dwindle, rats and mice seek food and shelter in homes and other buildings. Check around your home for places rodents might gain entry and seal the entry points. If rodents gain entry, or you find evidence around your house, go to Kiwicare.co.nz to find information on how to safely and effectively protect your family from rats and mice."
+                },
+                {
+                  "heading": "Lawn",
+                  "sponsor": [
+                    {
+                      "height": 76,
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-lawn.jpg",
+                      "responsive": true,
+                      "showWhen": "3-column",
+                      "url": "https://www.kiwicare.co.nz/problems/lawn-problems/",
+                      "width": 908
+                    },
+                    {
+                      "height": 76,
+                      "hideWhen": "3-column",
+                      "image": "/creative/gardening-guide-sponsorship/kiwicare-lawn.jpg",
+                      "responsive": true,
+                      "url": "https://www.kiwicare.co.nz/problems/lawn-problems/",
+                      "width": 908
+                    }
+                  ],
+                  "text": "Autumn is a great time to get rid of weeds in your lawn, and to sow new lawns or to thicken up existing lawns by over-sowing and fertilising. Use the Kiwicare Problem Solver on the Kiwicare website or MyKiwicare App to identify your lawn weeds, get advice on how to get rid of them, and prepare your lawn for winter."
+                }
+              ],
+              "name": "tabbed-html-renderer/1",
+              "tabLayout": [
+                {
+                  "height": 97,
+                  "showWhen": "3-column"
+                },
+                {
+                  "height": 97,
+                  "showWhen": "2-column"
+                },
+                {
+                  "height": 97,
+                  "showWhen": "1-column"
+                }
+              ],
+              "title": "Kiwicare Gardening Guide",
+              "tracking": {
+                "action": "Click",
+                "category": "Gardening Guide Sponsorship - Kiwicare",
+                "label": "label"
+              },
+              "type": "module"
+            }
+          ]
+        },
+        "right": {
+          "modules": [
+            {
+              "adUnitPath": "/9734223/SideBanner_NewSite_V2",
+              "fuseTag": "21816204874",
+              "layout": {
+                "hideWhen": "2-column"
+              },
+              "name": "advert/1",
+              "targeting": [],
+              "type": "module",
+              "unit": "sideBanner1"
+            }
+          ]
+        }
+      }
+    },
+    "search": [
+      {
+        "items": [
+          {
+            "children": [
+              {
+                "label": "Dargaville",
+                "url": "/towns-cities/locations/dargaville"
+              },
+              {
+                "label": "Kaikohe",
+                "url": "/rural/regions/northland/locations/kaikohe"
+              },
+              {
+                "label": "Kaitaia",
+                "url": "/towns-cities/locations/kaitaia"
+              },
+              {
+                "label": "Kaitaia Airport",
+                "url": "/towns-cities/locations/kaitaia-airport"
+              },
+              {
+                "label": "Kerikeri",
+                "url": "/towns-cities/locations/kerikeri"
+              },
+              {
+                "label": "Paihia",
+                "url": "/towns-cities/locations/paihia"
+              },
+              {
+                "label": "Whangārei",
+                "url": "/towns-cities/locations/whangarei"
+              }
+            ],
+            "heading": {
+              "label": "Northland"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Auckland Central",
+                "url": "/towns-cities/locations/auckland"
+              },
+              {
+                "label": "Hunua",
+                "url": "/towns-cities/regions/auckland/locations/hunua"
+              },
+              {
+                "label": "Kumeu",
+                "url": "/rural/regions/auckland/locations/kumeu"
+              },
+              {
+                "label": "Manukau",
+                "url": "/towns-cities/regions/auckland/locations/manukau"
+              },
+              {
+                "label": "North Shore",
+                "url": "/towns-cities/regions/auckland/locations/north-shore"
+              },
+              {
+                "label": "Pukekohe",
+                "url": "/rural/regions/auckland/locations/pukekohe"
+              },
+              {
+                "label": "Waiheke Island",
+                "url": "/towns-cities/locations/waiheke-island"
+              },
+              {
+                "label": "Waitakere",
+                "url": "/towns-cities/regions/auckland/locations/waitakere"
+              },
+              {
+                "label": "Warkworth",
+                "url": "/rural/regions/auckland/locations/warkworth"
+              }
+            ],
+            "heading": {
+              "label": "Auckland"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Hamilton",
+                "url": "/towns-cities/locations/hamilton"
+              },
+              {
+                "label": "Matamata",
+                "url": "/rural/regions/waikato/locations/matamata"
+              },
+              {
+                "label": "Paeroa",
+                "url": "/rural/regions/waikato/locations/paeroa"
+              },
+              {
+                "label": "Te Awamutu",
+                "url": "/rural/regions/waikato/locations/te-awamutu"
+              },
+              {
+                "label": "Tokoroa",
+                "url": "/towns-cities/locations/tokoroa"
+              }
+            ],
+            "heading": {
+              "label": "Waikato"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Te Kuiti",
+                "url": "/towns-cities/locations/te-kuiti"
+              }
+            ],
+            "heading": {
+              "label": "Waitomo"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Thames",
+                "url": "/towns-cities/locations/thames"
+              },
+              {
+                "label": "Whitianga",
+                "url": "/towns-cities/locations/whitianga"
+              }
+            ],
+            "heading": {
+              "label": "Coromandel"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Rotorua",
+                "url": "/towns-cities/locations/rotorua"
+              }
+            ],
+            "heading": {
+              "label": "Rotorua"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Tauranga",
+                "url": "/towns-cities/locations/tauranga"
+              },
+              {
+                "label": "Te Puke",
+                "url": "/rural/regions/bay-of-plenty/locations/te-puke"
+              },
+              {
+                "label": "Whakatāne",
+                "url": "/towns-cities/locations/whakatane"
+              }
+            ],
+            "heading": {
+              "label": "Bay of Plenty"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Taupō",
+                "url": "/towns-cities/locations/taupo"
+              },
+              {
+                "label": "Taupō Airport",
+                "url": "/towns-cities/locations/taupo-airport"
+              }
+            ],
+            "heading": {
+              "label": "Taupō"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Gisborne",
+                "url": "/towns-cities/locations/gisborne"
+              },
+              {
+                "label": "Ruatoria",
+                "url": "/rural/regions/gisborne/locations/ruatoria"
+              }
+            ],
+            "heading": {
+              "label": "Gisborne"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Eastern Rangitaiki",
+                "url": "/rural/regions/hawkes-bay/locations/eastern-rangitaiki"
+              },
+              {
+                "label": "Hastings",
+                "url": "/towns-cities/locations/hastings"
+              },
+              {
+                "label": "Mahia",
+                "url": "/rural/regions/hawkes-bay/locations/mahia"
+              },
+              {
+                "label": "Napier",
+                "url": "/towns-cities/locations/napier"
+              },
+              {
+                "label": "Napier Airport",
+                "url": "/towns-cities/locations/napier-airport"
+              },
+              {
+                "label": "Waipukurau",
+                "url": "/rural/regions/hawkes-bay/locations/waipukurau"
+              },
+              {
+                "label": "Wairoa",
+                "url": "/rural/regions/hawkes-bay/locations/wairoa"
+              }
+            ],
+            "heading": {
+              "label": "Hawke's Bay"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Hāwera",
+                "url": "/rural/regions/taranaki/locations/hawera"
+              },
+              {
+                "label": "New Plymouth",
+                "url": "/towns-cities/locations/new-plymouth"
+              },
+              {
+                "label": "New Plymouth Airport",
+                "url": "/towns-cities/locations/new-plymouth-airport"
+              }
+            ],
+            "heading": {
+              "label": "Taranaki"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Taumarunui",
+                "url": "/towns-cities/locations/taumarunui"
+              }
+            ],
+            "heading": {
+              "label": "Taumarunui"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Waiouru",
+                "url": "/rural/regions/taihape/locations/waiouru"
+              }
+            ],
+            "heading": {
+              "label": "Taihape"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Whanganui",
+                "url": "/towns-cities/locations/wanganui"
+              },
+              {
+                "label": "Whanganui Airport",
+                "url": "/towns-cities/locations/wanganui-airport"
+              }
+            ],
+            "heading": {
+              "label": "Whanganui"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Ohakea",
+                "url": "/rural/regions/manawatu/locations/ohakea"
+              },
+              {
+                "label": "Palmerston North",
+                "url": "/towns-cities/locations/palmerston-north"
+              },
+              {
+                "label": "Palmerston North Airport",
+                "url": "/towns-cities/locations/palmerston-north-airport"
+              }
+            ],
+            "heading": {
+              "label": "Manawatu"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Castlepoint",
+                "url": "/rural/regions/wairarapa/locations/castlepoint"
+              },
+              {
+                "label": "Dannevirke",
+                "url": "/towns-cities/locations/dannevirke"
+              },
+              {
+                "label": "Martinborough",
+                "url": "/rural/regions/wairarapa/locations/martinborough"
+              },
+              {
+                "label": "Masterton",
+                "url": "/towns-cities/locations/masterton"
+              }
+            ],
+            "heading": {
+              "label": "Wairarapa"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Levin",
+                "url": "/towns-cities/locations/levin"
+              },
+              {
+                "label": "Paraparaumu",
+                "url": "/towns-cities/locations/paraparaumu"
+              },
+              {
+                "label": "Te Horo",
+                "url": "/rural/regions/kapiti-horowhenua/locations/te-horo"
+              },
+              {
+                "label": "Waikanae",
+                "url": "/towns-cities/locations/waikanae"
+              },
+              {
+                "label": "Ōtaki",
+                "url": "/rural/regions/kapiti-horowhenua/locations/otaki"
+              }
+            ],
+            "heading": {
+              "label": "Kapiti-Horowhenua"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Judgeford",
+                "url": "/rural/regions/wellington/locations/judgeford"
+              },
+              {
+                "label": "Lower Hutt",
+                "url": "/towns-cities/regions/wellington/locations/lower-hutt"
+              },
+              {
+                "label": "Lyall Bay",
+                "url": "/towns-cities/regions/wellington/locations/lyall-bay"
+              },
+              {
+                "label": "Ohariu Valley",
+                "url": "/rural/regions/wellington/locations/ohariu-valley"
+              },
+              {
+                "label": "Porirua",
+                "url": "/towns-cities/regions/wellington/locations/porirua"
+              },
+              {
+                "label": "Upper Hutt",
+                "url": "/towns-cities/regions/wellington/locations/upper-hutt"
+              },
+              {
+                "label": "Wainuiomata",
+                "url": "/towns-cities/regions/wellington/locations/wainuiomata"
+              },
+              {
+                "label": "Wellington Central",
+                "url": "/towns-cities/locations/wellington"
+              }
+            ],
+            "heading": {
+              "label": "Wellington"
+            }
+          }
+        ],
+        "title": "North Island"
+      },
+      {
+        "items": [
+          {
+            "children": [
+              {
+                "label": "Blenheim",
+                "url": "/towns-cities/locations/blenheim"
+              },
+              {
+                "label": "Kaikōura",
+                "url": "/towns-cities/locations/kaikoura"
+              },
+              {
+                "label": "Kaikōura Airport",
+                "url": "/towns-cities/locations/kaikoura-airport"
+              },
+              {
+                "label": "Picton",
+                "url": "/rural/regions/marlborough/locations/picton"
+              }
+            ],
+            "heading": {
+              "label": "Marlborough"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Motueka",
+                "url": "/towns-cities/locations/motueka"
+              },
+              {
+                "label": "Nelson",
+                "url": "/towns-cities/locations/nelson"
+              },
+              {
+                "label": "Takaka",
+                "url": "/rural/regions/nelson/locations/takaka"
+              }
+            ],
+            "heading": {
+              "label": "Nelson"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Reefton",
+                "url": "/towns-cities/locations/reefton"
+              },
+              {
+                "label": "Westport",
+                "url": "/towns-cities/locations/westport"
+              }
+            ],
+            "heading": {
+              "label": "Buller"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Franz Josef",
+                "url": "/rural/regions/westland/locations/franz-josef"
+              },
+              {
+                "label": "Greymouth",
+                "url": "/towns-cities/locations/greymouth"
+              },
+              {
+                "label": "Haast",
+                "url": "/rural/regions/westland/locations/haast"
+              },
+              {
+                "label": "Hokitika",
+                "url": "/towns-cities/locations/hokitika"
+              }
+            ],
+            "heading": {
+              "label": "Westland"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Ashburton",
+                "url": "/towns-cities/locations/ashburton"
+              },
+              {
+                "label": "Darfield",
+                "url": "/rural/regions/canterbury-plains/locations/darfield"
+              },
+              {
+                "label": "Methven",
+                "url": "/rural/regions/canterbury-plains/locations/methven"
+              },
+              {
+                "label": "Rakaia",
+                "url": "/rural/regions/canterbury-plains/locations/rakaia"
+              },
+              {
+                "label": "Timaru",
+                "url": "/towns-cities/locations/timaru"
+              },
+              {
+                "label": "Waipara",
+                "url": "/rural/regions/canterbury-plains/locations/waipara"
+              }
+            ],
+            "heading": {
+              "label": "Canterbury Plains"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Culverden",
+                "url": "/rural/regions/canterbury-high-country/locations/culverden"
+              },
+              {
+                "label": "Mount Cook",
+                "url": "/towns-cities/locations/mount-cook"
+              },
+              {
+                "label": "Omarama",
+                "url": "/rural/regions/canterbury-high-country/locations/omarama"
+              },
+              {
+                "label": "Twizel",
+                "url": "/rural/regions/canterbury-high-country/locations/twizel"
+              }
+            ],
+            "heading": {
+              "label": "Canterbury High Country"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Banks Peninsula",
+                "url": "/towns-cities/regions/christchurch/locations/banks-peninsula"
+              },
+              {
+                "label": "Christchurch Central",
+                "url": "/towns-cities/locations/christchurch"
+              },
+              {
+                "label": "Eastern Suburbs",
+                "url": "/towns-cities/regions/christchurch/locations/eastern-suburbs"
+              },
+              {
+                "label": "Hilltop",
+                "url": "/rural/regions/christchurch/locations/hill-top"
+              },
+              {
+                "label": "Lincoln",
+                "url": "/rural/regions/christchurch/locations/lincoln"
+              },
+              {
+                "label": "Marshland",
+                "url": "/rural/regions/christchurch/locations/marshlands"
+              },
+              {
+                "label": "Port Hills",
+                "url": "/towns-cities/regions/christchurch/locations/port-hills"
+              }
+            ],
+            "heading": {
+              "label": "Christchurch"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Oamaru",
+                "url": "/towns-cities/locations/oamaru"
+              },
+              {
+                "label": "Oamaru Airport",
+                "url": "/towns-cities/locations/oamaru-airport"
+              }
+            ],
+            "heading": {
+              "label": "North Otago"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Alexandra",
+                "url": "/towns-cities/locations/alexandra"
+              }
+            ],
+            "heading": {
+              "label": "Central Otago"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Dunedin",
+                "url": "/towns-cities/locations/dunedin"
+              },
+              {
+                "label": "Middlemarch",
+                "url": "/rural/regions/dunedin/locations/middlemarch"
+              },
+              {
+                "label": "Mosgiel",
+                "url": "/towns-cities/locations/mosgiel"
+              },
+              {
+                "label": "Waitati",
+                "url": "/rural/regions/dunedin/locations/waitati"
+              }
+            ],
+            "heading": {
+              "label": "Dunedin"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Nugget Point",
+                "url": "/rural/regions/clutha/locations/nugget-point"
+              }
+            ],
+            "heading": {
+              "label": "Clutha"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Queenstown",
+                "url": "/towns-cities/locations/queenstown"
+              },
+              {
+                "label": "Wanaka",
+                "url": "/towns-cities/locations/wanaka"
+              }
+            ],
+            "heading": {
+              "label": "Southern Lakes"
+            }
+          },
+          {
+            "children": [
+              {
+                "label": "Gore",
+                "url": "/towns-cities/locations/gore"
+              },
+              {
+                "label": "Invercargill",
+                "url": "/towns-cities/locations/invercargill"
+              },
+              {
+                "label": "Lumsden",
+                "url": "/rural/regions/southland/locations/lumsden"
+              },
+              {
+                "label": "Milford Sound",
+                "url": "/towns-cities/locations/milford-sound"
+              },
+              {
+                "label": "Stewart Island",
+                "url": "/rural/regions/southland/locations/stewart-island"
+              },
+              {
+                "label": "Te Anau",
+                "url": "/rural/regions/southland/locations/te-anau"
+              }
+            ],
+            "heading": {
+              "label": "Southland"
+            }
+          }
+        ],
+        "title": "South Island"
+      }
+    ],
+    "secondary": {
+      "slots": {
+        "major": {
+          "modules": [
+            {
+              "iconName": "map-light",
+              "items": [
+                {
+                  "image": "/dynamic/feeds/thumbnails/370x210_thumb_rain-forecast-3day.jpg",
+                  "title": "3 day rain forecast",
+                  "url": "/maps-radar/rain/forecast/3-days"
+                },
+                {
+                  "image": "/dynamic/feeds/thumbnails/370x210_thumb_tasman_surface-pressure.jpg",
+                  "title": "Tasman surface pressure",
+                  "url": "/maps-radar/surface-pressure/tasman-sea-new-zealand"
+                },
+                {
+                  "image": "/files/images/weather-stations-belt-central.png",
+                  "title": "Your weather",
+                  "url": "/maps-radar/weather-stations/wellington"
+                },
+                {
+                  "image": "/dynamic/feeds/thumbnails/370x210_thumb_rain-radar-wellington.jpg",
+                  "title": "Rain radar",
+                  "url": "/maps-radar/rain/radar/wellington"
+                }
+              ],
+              "itemsMobile": [
+                {
+                  "image": "/files/images/your-weather-static.png",
+                  "title": "Your weather",
+                  "url": "/maps-radar/weather-stations/wellington"
+                },
+                {
+                  "image": "/dynamic/feeds/thumbnails/140x140_thumb_rain-radar-wellington.jpg",
+                  "title": "Rain radar",
+                  "url": "/maps-radar/rain/radar/wellington"
+                },
+                {
+                  "image": "/dynamic/feeds/thumbnails/140x140_thumb_rain-forecast-3day.jpg",
+                  "title": "3 day rain forecast",
+                  "url": "/maps-radar/rain/forecast/3-days"
+                }
+              ],
+              "link": {
+                "label": "View all maps & radar",
+                "url": "/maps-radar/rain/radar"
+              },
+              "name": "belt",
+              "title": "Wellington Central Maps & Radar",
+              "type": "module",
+              "urlSlug": "maps-and-radar"
+            },
+            {
+              "locations": [
+                {
+                  "link": "/marine/regions/kapiti-wellington/tides/locations/wellington",
+                  "name": "Wellington",
+                  "tidesData": [
+                    {
+                      "height": "0.5",
+                      "time": "05:26",
+                      "type": "LOW"
+                    },
+                    {
+                      "height": "1.7",
+                      "time": "11:27",
+                      "type": "HIGH"
+                    },
+                    {
+                      "height": "0.5",
+                      "time": "17:39",
+                      "type": "LOW"
+                    },
+                    {
+                      "height": "1.8",
+                      "time": "23:57",
+                      "type": "HIGH"
+                    }
+                  ]
+                },
+                {
+                  "link": "/marine/regions/kapiti-wellington/tides/locations/cape-palliser",
+                  "name": "Cape Palliser",
+                  "tidesData": [
+                    {
+                      "height": "0.4",
+                      "time": "05:36",
+                      "type": "LOW"
+                    },
+                    {
+                      "height": "1.4",
+                      "time": "11:37",
+                      "type": "HIGH"
+                    },
+                    {
+                      "height": "0.4",
+                      "time": "17:49",
+                      "type": "LOW"
+                    }
+                  ]
+                },
+                {
+                  "link": "/marine/regions/kapiti-wellington/tides/locations/mana",
+                  "name": "Mana / Porirua Harbour",
+                  "tidesData": [
+                    {
+                      "height": "1.4",
+                      "time": "02:18",
+                      "type": "HIGH"
+                    },
+                    {
+                      "height": "0.9",
+                      "time": "07:51",
+                      "type": "LOW"
+                    },
+                    {
+                      "height": "1.3",
+                      "time": "15:22",
+                      "type": "HIGH"
+                    },
+                    {
+                      "height": "0.9",
+                      "time": "20:42",
+                      "type": "LOW"
+                    }
+                  ]
+                }
+              ],
+              "name": "tile-table/1",
+              "title": "Wellington Central Tides Overview",
+              "type": "module",
+              "types": [
+                "tides"
+              ],
+              "urlSlug": "tides"
+            },
+            {
+              "errorMessage": "Video is not currently available. Please try again later",
+              "iconName": "tv-light",
+              "link": {
+                "label": "See more video forecasts",
+                "url": "/video-forecasts"
+              },
+              "name": "video-summary/1",
+              "showDate": false,
+              "title": "Video Forecast",
+              "type": "module",
+              "urlSlug": "video-forecast",
+              "videos": [
+                {
+                  "key": "SEVERE",
+                  "playlistId": "5136251235001",
+                  "title": "Severe Weather Warning"
+                },
+                {
+                  "key": "EVENT 1",
+                  "playlistId": "5225808053001",
+                  "title": "Event"
+                },
+                {
+                  "key": "EVENT 2",
+                  "playlistId": "5226523914001",
+                  "title": "Tutorials"
+                },
+                {
+                  "key": "WELLINGTON",
+                  "playlistId": "5110202542001",
+                  "title": "Southern North Island"
+                }
+              ]
+            },
+            {
+              "iconName": "sun-moon-light",
+              "moonPhases": [
+                {
+                  "date": "12 Apr",
+                  "dateISO": "2021-04-12T14:45:45+12:00",
+                  "phase": "NEW"
+                },
+                {
+                  "date": "20 Apr",
+                  "dateISO": "2021-04-20T18:34:34+12:00",
+                  "phase": "FIRST"
+                },
+                {
+                  "date": "27 Apr",
+                  "dateISO": "2021-04-27T15:48:22+12:00",
+                  "phase": "FULL"
+                },
+                {
+                  "date": "4 May",
+                  "dateISO": "2021-05-04T07:57:02+12:00",
+                  "phase": "LAST"
+                }
+              ],
+              "name": "sun-and-moon",
+              "riseSet": {
+                "moonSet": "2:50pm",
+                "sunRise": "6:38am",
+                "sunSet": "6:08pm"
+              },
+              "title": "Sun & Moon",
+              "type": "module",
+              "urlSlug": "sun-and-moon"
+            },
+            {
+              "iconName": "extremes-light",
+              "items": [
+                {
+                  "icon": "temp-high",
+                  "text": "Christchurch (City)",
+                  "title": "Highest",
+                  "value": "28.3°C"
+                },
+                {
+                  "icon": "temp-low",
+                  "text": "Gore",
+                  "title": "Lowest",
+                  "value": "13.0°C"
+                },
+                {
+                  "icon": "windy",
+                  "text": "Nugget Point",
+                  "title": "Windiest",
+                  "value": "72km/h"
+                },
+                {
+                  "icon": "cloud-rain",
+                  "text": "Currently dry in all centres",
+                  "title": "Wettest"
+                }
+              ],
+              "name": "icon-list/1",
+              "title": "Current Extremes",
+              "type": "module",
+              "urlSlug": "current-extremes"
+            },
+            {
+              "iconName": "extremes-light",
+              "name": "yesterdays-extremes/1",
+              "tabs": [
+                {
+                  "description": "Rank of the locations with the highest air temperature recorded yesterday. Prev is the previous day's rank for the location. The arrow shows if the current rank is higher or lower than that for the previous day. Max of 5 locations plus current town/city shown.",
+                  "headers": [
+                    "Rank",
+                    "Location",
+                    "Max Temp",
+                    "Prev",
+                    "Up/down"
+                  ],
+                  "keys": [
+                    "rank",
+                    "location",
+                    "value",
+                    "prev",
+                    "upDown"
+                  ],
+                  "name": "Hottest",
+                  "values": [
+                    {
+                      "location": "Timaru Airport",
+                      "prev": 41,
+                      "rank": 1,
+                      "town": "/towns-cities/locations/timaru",
+                      "upDown": 40,
+                      "value": "30.6"
+                    },
+                    {
+                      "location": "Ashburton Airport",
+                      "prev": 28,
+                      "rank": 2,
+                      "town": "/towns-cities/locations/ashburton",
+                      "upDown": 26,
+                      "value": "30.3"
+                    },
+                    {
+                      "location": "Kaikōura Airport",
+                      "prev": 38,
+                      "rank": 3,
+                      "town": "/towns-cities/locations/kaikoura-airport",
+                      "upDown": 35,
+                      "value": "30.1"
+                    },
+                    {
+                      "location": "Cooptown",
+                      "prev": 53,
+                      "rank": 4,
+                      "town": "/towns-cities/regions/christchurch/locations/banks-peninsula",
+                      "upDown": 49,
+                      "value": "29.0"
+                    },
+                    {
+                      "location": "Christchurch Airport",
+                      "prev": 54,
+                      "rank": 5,
+                      "town": "/towns-cities/locations/christchurch",
+                      "upDown": 49,
+                      "value": "28.2"
+                    },
+                    {
+                      "location": "Kelburn",
+                      "prev": 67,
+                      "rank": 72,
+                      "town": "/rural/regions/wellington/locations/ohariu-valley",
+                      "upDown": -5,
+                      "value": "17.5"
+                    }
+                  ]
+                },
+                {
+                  "description": "Rank of the locations with the lowest air temperature recorded yesterday. Prev is the previous day's rank for the location. The arrow shows if the current rank is higher or lower than that for the previous day. Max of 5 locations plus current town/city shown",
+                  "headers": [
+                    "Rank",
+                    "Location",
+                    "Min Temp",
+                    "Prev",
+                    "Up/down"
+                  ],
+                  "keys": [
+                    "rank",
+                    "location",
+                    "value",
+                    "prev",
+                    "upDown"
+                  ],
+                  "name": "Coldest",
+                  "values": [
+                    {
+                      "location": "Waiouru",
+                      "prev": 7,
+                      "rank": 1,
+                      "town": "/rural/regions/taihape/locations/waiouru",
+                      "upDown": 6,
+                      "value": "0.4"
+                    },
+                    {
+                      "location": "Taumarunui",
+                      "prev": 27,
+                      "rank": 2,
+                      "town": "/towns-cities/locations/taumarunui",
+                      "upDown": 25,
+                      "value": "3.3"
+                    },
+                    {
+                      "location": "Takapau Plains",
+                      "prev": 14,
+                      "rank": 3,
+                      "town": "/towns-cities/locations/dannevirke",
+                      "upDown": 11,
+                      "value": "3.6"
+                    },
+                    {
+                      "location": "Masterton Airport",
+                      "prev": 21,
+                      "rank": 4,
+                      "town": "/rural/regions/wairarapa/locations/martinborough",
+                      "upDown": 17,
+                      "value": "3.6"
+                    },
+                    {
+                      "location": "Hastings",
+                      "prev": 35,
+                      "rank": 5,
+                      "town": "/towns-cities/locations/hastings",
+                      "upDown": 30,
+                      "value": "4.4"
+                    },
+                    {
+                      "location": "Kelburn",
+                      "prev": 59,
+                      "rank": 70,
+                      "town": "/rural/regions/wellington/locations/ohariu-valley",
+                      "upDown": -11,
+                      "value": "14.5"
+                    }
+                  ]
+                },
+                {
+                  "description": "Rank of the locations with the most rainfall recorded yesterday. Prev is the previous day's rank for the location. The arrow shows if the current rank is higher or lower than that for the previous day. Max of 5 locations plus current town/city shown.",
+                  "headers": [
+                    "Rank",
+                    "Location",
+                    "Rainfall",
+                    "Prev",
+                    "Up/down"
+                  ],
+                  "keys": [
+                    "rank",
+                    "location",
+                    "value",
+                    "prev",
+                    "upDown"
+                  ],
+                  "name": "Wettest",
+                  "values": [
+                    {
+                      "location": "Milford Sound Airport",
+                      "prev": 49,
+                      "rank": 1,
+                      "town": "/towns-cities/locations/milford-sound",
+                      "upDown": 48,
+                      "value": "108.6"
+                    },
+                    {
+                      "location": "Secretary Island",
+                      "prev": 30,
+                      "rank": 2,
+                      "town": "/maps-radar/weather-stations/nz",
+                      "upDown": 28,
+                      "value": "21.6"
+                    },
+                    {
+                      "location": "Hokitika Airport",
+                      "prev": 8,
+                      "rank": 3,
+                      "town": "/towns-cities/locations/hokitika",
+                      "upDown": 5,
+                      "value": "5.0"
+                    },
+                    {
+                      "location": "Te Anau",
+                      "prev": 68,
+                      "rank": 4,
+                      "town": "/rural/regions/southland/locations/te-anau",
+                      "upDown": 64,
+                      "value": "4.6"
+                    },
+                    {
+                      "location": "Haast",
+                      "prev": 31,
+                      "rank": 5,
+                      "town": "/rural/regions/westland/locations/franz-josef",
+                      "upDown": 26,
+                      "value": "3.2"
+                    },
+                    {
+                      "location": "Kelburn",
+                      "prev": 55,
+                      "rank": 55,
+                      "town": "/rural/regions/wellington/locations/ohariu-valley",
+                      "upDown": 0,
+                      "value": "0.0"
+                    }
+                  ]
+                },
+                {
+                  "description": "Rank of the locations with the strongest wind gust recorded yesterday. Prev is the previous day's rank for the location. The arrow shows if the current rank is higher or lower than that for the previous day. Max of 5 locations plus current town/city shown.",
+                  "headers": [
+                    "Rank",
+                    "Location",
+                    "Max Gust",
+                    "Prev",
+                    "Up/down"
+                  ],
+                  "keys": [
+                    "rank",
+                    "location",
+                    "value",
+                    "prev",
+                    "upDown"
+                  ],
+                  "name": "Windiest",
+                  "values": [
+                    {
+                      "location": "Castlepoint",
+                      "prev": 6,
+                      "rank": 1,
+                      "town": "/rural/regions/wairarapa/locations/castlepoint",
+                      "upDown": 5,
+                      "value": "146"
+                    },
+                    {
+                      "location": "Gore",
+                      "prev": 1,
+                      "rank": 2,
+                      "town": "/towns-cities/locations/gore",
+                      "upDown": -1,
+                      "value": "117"
+                    },
+                    {
+                      "location": "Kelburn",
+                      "prev": 13,
+                      "rank": 3,
+                      "town": "/rural/regions/wellington/locations/ohariu-valley",
+                      "upDown": 10,
+                      "value": "111"
+                    },
+                    {
+                      "location": "Nugget Point",
+                      "prev": 15,
+                      "rank": 4,
+                      "town": "/rural/regions/clutha/locations/nugget-point",
+                      "upDown": 11,
+                      "value": "109"
+                    },
+                    {
+                      "location": "Secretary Island",
+                      "prev": 3,
+                      "rank": 5,
+                      "town": "/maps-radar/weather-stations/nz",
+                      "upDown": -2,
+                      "value": "102"
+                    }
+                  ]
+                }
+              ],
+              "title": "Yesterday's Extremes",
+              "type": "module",
+              "urlSlug": "yesterdays-extremes"
+            },
+            {
+              "content": "<div><a href='https://about.metservice.com/homepagerss/' target='_blank'><b>Calm after the storm for Easter Weekend</b></a></div><div class=\"u-mT-xs u-mB-xs fineprint u-textGrey\">Issued: <span>12:17pm Thursday 1 Apr 2021</span><br></div>After a soggy and thundery week for many, MetService forecasts relatively settled weather for Easter weekend...",
+              "layout": {
+                "isExpanded": true
+              },
+              "name": "html-renderer",
+              "title": "Weather News",
+              "type": "module",
+              "urlSlug": "weather-news"
+            },
+            {
+              "articleCount": 1,
+              "attribution": "More from ",
+              "attributionUrl": "https://blog.metservice.com/",
+              "attributionUrlLabel": "blog.metservice.com",
+              "dataUrl": "/whatsOnRss/Blog",
+              "name": "rss-feed",
+              "sponsorImage": "",
+              "sponsorUrl": "",
+              "title": "Latest Blog Post",
+              "type": "module",
+              "urlSlug": "latest-blog-post"
+            }
+          ]
+        },
+        "minor": {
+          "modules": []
+        },
+        "right": {
+          "modules": [
+            {
+              "adUnitPath": "/9734223/SideBanner2_NewSite_V2",
+              "fuseTag": "21816129188",
+              "name": "advert/1",
+              "targeting": [],
+              "type": "module",
+              "unit": "sideBanner2"
+            }
+          ]
+        }
+      }
+    },
+    "type": "layout"
+  },
+  "location": {
+    "favouriteKey": "wellington",
+    "favouriteType": "urban",
+    "key": "wellington",
+    "label": "Wellington Central",
+    "type": "urban",
+    "websiteLocation": "wellington",
+    "websiteSection": "urban"
+  },
+  "metadata": {
+    "appleItunesApp": "app-id=525900888",
+    "author": "MetService",
+    "canonicalUrl": "https://www.metservice.com/towns-cities/locations/wellington/7-days",
+    "description": "Wellington Central  7 day weather forecast, rain maps, rain radar and current conditions. MetService is New Zealand’s national weather authority, providing accurate town, city and rural forecasts across the country.",
+    "googlePlayApp": "app-id=com.metservice.phone.android",
+    "image": null,
+    "keywords": "New Zealand,Zealand,New Zealand weather,NZ,NZ Weather,weather forecast,weather conditions,weather information,Urban,Rural,Town,City, Suburban,Humidity,Pressure,temperature,current temperature,rain,rainfall,raining,wind,windy,gale,gusts,historic weather,past weather,maps,weather maps,radar,rain radar,tides, sun, pollen, UV",
+    "siteName": "MetService",
+    "title": "Wellington Central 7 Day Weather Forecast and Observations - MetService New Zealand",
+    "twitterSite": "@metservicenz"
+  },
+  "searchLabel": "Wellington Central - 7 Days",
+  "type": "screen",
+  "url": "/towns-cities/locations/wellington/7-days"
+}

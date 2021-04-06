@@ -27,7 +27,8 @@ icons['partly-cloudy'] = html`
       </symbol>
     </use>
   </svg>
-  `
+`;
+
 icons['few-showers'] = html`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
     <use xlink:href="#condition-few-showers">
@@ -53,7 +54,7 @@ icons['few-showers'] = html`
       </symbol>
     </use>
   </svg>
-`
+`;
 
 icons['showers'] = html`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -75,10 +76,23 @@ icons['showers'] = html`
       </symbol>
     </use>
   </svg>
-`
+`;
+
+icons['fine'] = html`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <use xlink:href="#condition-fine">
+      <symbol id="condition-fine" viewBox="0 0 32 32">
+        <g fill="none" fill-rule="evenodd">
+          <path d="m12.142 6 4-4 4 4h5.858v5.858l4.284 4.284-4.284 4.284v5.574h-5.574l-4.284 4.284-4.284-4.284h-5.858v-5.858l-4-4 4-4v-6.142z" fill="#eea80e"></path>
+          <circle cx="16" cy="16" fill="#fec157" r="10"></circle>
+        </g>
+      </symbol>
+    </use>
+  </svg>
+`;
 
 icons['missing'] = html`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
     <circle r="50"/>
   </svg>
-`
+`;

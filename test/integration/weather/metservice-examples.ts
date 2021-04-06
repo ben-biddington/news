@@ -3,7 +3,7 @@ import { fakeGet }          from '../support/net';
 import { sevenDays }        from '../../../src/adapters/web/metservice';
 import { WeatherForecast }  from '../../../src/core/weather';
 
-describe.only('Seven day forecast', () => {
+describe('Seven day forecast', () => {
   it('parses reply as expected', async () => {
     const get = fakeGet(`${__dirname}/sample.json`);
 

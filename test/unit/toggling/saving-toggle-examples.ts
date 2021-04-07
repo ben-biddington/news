@@ -1,12 +1,10 @@
-const { 
+import { 
   Application, Ports,
-  mockLog: log, MockToggles, MockSeive, MockListener, MockLobsters } = require('../application-unit-test');
+  MockToggles, MockListener } from '../application-unit-test';
 
-describe('Saving a toggle value', async () => {
+describe.only('Saving a toggle value', async () => {
   it("notifies with toggle changed", async () => {
-      const ports = new Ports(new MockLobsters(), log, new MockSeive());
-
-      const application = new Application(ports,  new MockToggles());
+      const application = new Application(Ports.blank(),  new MockToggles(), null);
 
       const notifications = new MockListener(application);
 

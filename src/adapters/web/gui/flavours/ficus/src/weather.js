@@ -18,7 +18,7 @@ createComponent('ficus-weather', {
   },
   render() {
     return html`
-      <div id="weather">
+      <div id="weather" style="display: inline-block;">
         ${this.props.weather.map(forecast => {
           return html`
             <div style="float:left; display:inline-block; margin:5" title=${moment(forecast.date).format('dddd') + ' -- ' + forecast.text}>

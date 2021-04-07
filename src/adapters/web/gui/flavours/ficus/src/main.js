@@ -1,6 +1,7 @@
 import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } from 'ficusjs' 
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
 import './weather';
+import './bin';
 
 /* [i] withStyles fails with:
 
@@ -31,6 +32,9 @@ createComponent('ficus-application', {
       lobstersNews: [],
       hackerNews: [],
       weather: [],
+      deletedItems: {
+        count: 0
+      },
       uiOptions: {},
     }
   },
@@ -74,7 +78,10 @@ createComponent('ficus-application', {
 
     return html`
       <div id="application">
-        <ficus-weather weather=${weatherProps}></ficus-weather>
+        <div id="header">
+          <ficus-weather weather=${weatherProps} />
+          <ficus-bin count=${this.state.deletedItems.count} />
+        </div>
         <div id="news">
           <ol>
             ${this.news().map(
@@ -182,6 +189,14 @@ createComponent('ficus-application', {
       }
     );
 
+    window.application.on(
+      [ "hacker-news-item-deleted", "lobsters-item-deleted" ], 
+      async _ => {
+        const deletedCount = await window.application.deletedItems.count();
+        this.setState(state => ({...state, deletedItems: { count: deletedCount } } ));
+      }
+    );
+
     this.props.baseUrl = window.settings.get('baseUrl') || '';
 
     this.setState(state => {
@@ -209,7 +224,12 @@ createComponent('ficus-application', {
           this.setState(state => {
             return {...state, hackerNews: result.map(it => it.clone(item => item.label = 'hn')) };
           });
-        })
+        }),
+      window.application.deletedItems.count().then(count => {
+        this.setState(state => {
+          return {...state, deletedItems: { count } };
+        });
+      })
     ]);
   },
   pop() {

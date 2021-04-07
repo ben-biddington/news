@@ -1,8 +1,7 @@
-import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
+import { html /* [i] https://github.com/WebReflection/uhtml */ } from '@ficusjs/renderers'
 
 export const symbol = name => {
   const result = icons[name] || icons['missing']; 
-  console.log(`Returning svg for name <${name}> ${result}`);
   return result;
 }
 

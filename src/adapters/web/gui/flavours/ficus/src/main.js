@@ -1,7 +1,6 @@
 import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } from 'ficusjs' 
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
-import { symbol } from './icons';
-import moment from 'moment';
+import './weather';
 
 /* [i] withStyles fails with:
 
@@ -71,9 +70,11 @@ createComponent('ficus-application', {
   },
   // [i] https://github.com/WebReflection/uhtml
   render () {
+    const weatherProps = JSON.stringify(this.state.weather, null, 2); /* https://github.com/ficusjs/ficusjs/blob/master/src/component.js#L182 */
+
     return html`
       <div id="application">
-        ${this.weather()}
+        <ficus-weather weather=${weatherProps}></ficus-weather>
         <div id="news">
           <ol>
             ${this.news().map(
@@ -135,26 +136,7 @@ createComponent('ficus-application', {
             </table>
           </div>
         `
-      )
-  },
-  weather() {
-    console.log(JSON.stringify(this.state.weather, null, 2) );
-    return html`
-      <div id="weather">
-        ${this.state.weather.map(forecast => {
-          return html`
-            <div style="float:left; display:inline-block; margin:5" title=${moment(forecast.date).format('dddd') + ' -- ' + forecast.text}>
-              <span>${moment(forecast.date).format('ddd')}</span>
-              <div style="width:32; height:40;">
-                ${symbol(forecast.condition)}
-              </div>
-              <span title=${'high:' + forecast.temperature.high + ', low: ' + forecast.temperature.low}>${forecast.temperature.high}</span>
-            </div>
-          `
-        })}
-        <div style="clear: both;"></div>
-      </div>
-      `
+      );
   },
   news() {
     const result = this.state.lobstersNews.concat(this.state.hackerNews);

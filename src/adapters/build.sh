@@ -2,10 +2,19 @@
 set -e 
 
 function build {
-    name="$1"
-    config="$2"
-    echo -e "[webpack] Building $1 \t\t<$2>"
-    webpack --config $config
+  only=$ONLY
+  name="$1"
+  config="$2"
+
+  if [ -n "$only" ]; then
+    if [ "$name" != "$only" ]; then
+      echo "Skipping <$name> because it is not <$only>"
+      return
+    fi
+  fi
+  
+  echo -e "[webpack] Building $1 \t\t<$2>"
+  webpack --config $config
 }
 
 function buildMint {

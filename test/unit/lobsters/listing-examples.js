@@ -12,7 +12,7 @@ describe('Listing lobsters news', async () => {
             new NewsItem('id-1', 'Title 1', 'http://xyz')
         ]);
 
-        application.lobsters.list();
+        await application.lobsters.list();
 
         lobsters.listReturns([
             new NewsItem('id-1', 'Title 1', 'http://abc'),

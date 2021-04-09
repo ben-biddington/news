@@ -55,27 +55,23 @@ const application = (toggles, settings) => {
       }
     },
     {
-      list: () => hackerNewsList({ get: internet.get, log: new ConsoleLog() }, { url: `${baseUrl}/hn`, count: 20 }),
+      list:   () => hackerNewsList({ get: internet.get, log: new ConsoleLog() }, { url: `${baseUrl}/hn`, count: 20 }),
       delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
     },
     {
-      list: () => rnzNewsList({ get: internet.get, log: new ConsoleLog() }, { url: '/rnz', count: 20 }),
+      list:   () => rnzNewsList({ get: internet.get, log: new ConsoleLog() }, { url: '/rnz', count: 20 }),
       delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
-    });
+    }).
+    withToggles(toggles).
+    withBookmarks({
+      add:  bookmark => addBookmark({ post: internet.post }, { url: baseUrl }, bookmark),
+      list: () => listBookmarks({ get: internet.get, trace: console.log }, { url: baseUrl }),
+      del:  id => deleteBookmark({ del: internet.delete, trace: console.log }, { url: baseUrl }, id)
+    }).
+    withDeletedItems({count: () => deletedCount({ internet }, { baseUrl: baseUrl }),}).
+    with(new MetserviceWeatherQuery({ get: internet.get }));
 
-  applicationPorts = applicationPorts.withBookmarks({
-    add: bookmark => addBookmark({ post: internet.post }, { url: baseUrl }, bookmark),
-    list: () => listBookmarks({ get: internet.get, trace: console.log }, { url: baseUrl }),
-    del: id => deleteBookmark({ del: internet.delete, trace: console.log }, { url: baseUrl }, id)
-  });
-
-  applicationPorts = applicationPorts.withDeletedItems({
-    count: () => deletedCount({ internet }, { baseUrl: baseUrl }),
-  });
-
-  applicationPorts = applicationPorts.with(new MetserviceWeatherQuery({ get: internet.get }));
-
-  return new Application(applicationPorts, toggles, settings);
+  return new Application(applicationPorts, settings);
 }
 
 const { QueryStringToggles } = require('../web/toggling/query-string-toggles');

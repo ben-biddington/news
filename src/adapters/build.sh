@@ -37,6 +37,7 @@ echo -e "Compiling typescript\n"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
 npx tsc -p src/adapters/tsconfig.json --listEmittedFiles
+npx tsc -p test/tsconfig.json --listEmittedFiles
 
 echo ""
 

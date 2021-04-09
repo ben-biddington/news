@@ -13,7 +13,6 @@
   import Toast from './Toast.svelte';
 
   const application = window.application;
-  const toggles     = window.toggles;
   const baseUrl     = window.settings.get('baseUrl') || '';
 
   $: bookmarks = [];
@@ -50,10 +49,10 @@
   const loadDeletedItemCount = () => window.application.deletedItems.count().then(result => deletedItemCount = result);
 
   $: uiOptions = {
-    showWeather       : toggles.get('show-weather'),
-    showDeleted       : toggles.get('show-deleted'),
-    showMarineWeather : toggles.get('show-marine-weather'),
-    showBookmarks     : toggles.get('show-bookmarks'),
+    showWeather       : application.toggles.get('show-weather'),
+    showDeleted       : application.toggles.get('show-deleted'),
+    showMarineWeather : application.toggles.get('show-marine-weather'),
+    showBookmarks     : application.toggles.get('show-bookmarks'),
   }
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

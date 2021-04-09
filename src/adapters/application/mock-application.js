@@ -129,7 +129,7 @@ class MockDeletedItemsUseCase {
 //
 // The idea here is to maintain strict abstract separation between the UI and the application.
 const events  = require('events');
-const { MockToggles } = require('../../../test/support/mock-toggles');
+const { MockToggles } = require('../../../test/dist/test/support/mock-toggles');
 const { MockSettings } = require('../../../test/support/mock-settings');
 
 class Application {

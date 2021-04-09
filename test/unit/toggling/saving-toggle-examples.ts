@@ -1,21 +1,37 @@
-import { 
+import { MockToggles } from '../../support/mock-toggles';
+import {
   Application, Ports,
-  MockToggles, MockListener } from '../application-unit-test';
+  MockListener, expect
+} from '../application-unit-test';
 
-describe.only('Saving a toggle value', async () => {
-  it("notifies with toggle changed", async () => {
-      const application = new Application(Ports.blank(),  new MockToggles(), null);
+describe('Saving a toggle value', async () => {
+  it("notifies with toggle saved", async () => {
+    const application = new Application(Ports.blank(), {}, null);
 
-      const notifications = new MockListener(application);
+    const notifications = new MockListener(application);
 
-      application.toggles.save({ 'example-toggle': true });
+    await application.toggles.save({ name: 'example-toggle', isOn: true });
 
-      notifications.mustHaveAtLeast({
-          type: 'toggle-saved',
-          toggle: { 'example-toggle': true }
-        }
-      );
+    notifications.mustHaveAtLeast({
+        type: 'toggle-saved',
+        toggle: { name: 'example-toggle', isOn: true }
+      }
+    );
   });
 
-  it('persists the toggle');
+  it("[special] can update marine weather", async () => {
+    const application = new Application(Ports.blank(), {}, null);
+
+    await application.toggles.save({ name: 'show-marine-weather', isOn: true });
+
+    let newValue = await application.toggles.list();
+
+    expect(newValue.showMarineWeather).to.eql({ name: 'show-marine-weather', isOn: true });
+
+    await application.toggles.save({ name: 'show-marine-weather', isOn: false });
+
+    newValue = await application.toggles.list();
+
+    expect(newValue.showMarineWeather).to.eql({ name: 'show-marine-weather', isOn: false });
+  });
 });

@@ -2,6 +2,7 @@ import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } fro
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
 import './weather';
 import './bin';
+import './menu';
 
 /* [i] withStyles fails with:
 
@@ -79,6 +80,7 @@ createComponent('ficus-application', {
     return html`
       <div id="application">
         <div id="header">
+          <ficus-menu />
           <ficus-weather weather=${weatherProps} />
           <ficus-bin count=${this.state.deletedItems.count} />
         </div>
@@ -153,7 +155,7 @@ createComponent('ficus-application', {
     return result;
   },
   connectedCallback() {},
-  created () {
+  async created () {
     window.application.on("lobsters-items-loaded", e => {
       this.setState(state => {
         return {...state, lobstersNews: e.items.map(it => it.clone(item => item.label = 'lobsters')) };
@@ -197,21 +199,19 @@ createComponent('ficus-application', {
       }
     );
 
+    window.application.on(
+      [ "toggle-saved" ], 
+      async e => {
+        await this.loadToggles();
+        console.log('Reloaded toggles', JSON.stringify(e, null, 2));
+        console.log(JSON.stringify(this.state.uiOptions, null, 2));
+      }
+    );
+
     this.props.baseUrl = window.settings.get('baseUrl') || '';
 
-    this.setState(state => {
-        return {
-        ...state, 
-        uiOptions: {
-          showWeather       : toggles.get('show-weather'),
-          showDeleted       : toggles.get('show-deleted'),
-          showMarineWeather : toggles.get('show-marine-weather'),
-          showBookmarks     : toggles.get('show-bookmarks'),
-        } 
-      };
-    });
-
     return Promise.all([
+      this.loadToggles(),
       window.application.weather.sevenDays(),
       window.application.lobsters.list().
         then(result => {
@@ -231,6 +231,21 @@ createComponent('ficus-application', {
         });
       })
     ]);
+  },
+  async loadToggles() {
+    const toggles = await window.application.toggles.list();
+    
+    console.log('[loadToggles]', JSON.stringify(toggles, null, 2));
+
+    this.setState(state => {
+        return {
+        ...state, 
+        uiOptions: {
+          showDeleted       : toggles.showDeleted.isOn,
+          showMarineWeather : toggles.showMarineWeather.isOn
+        } 
+      };
+    });
   },
   pop() {
     this.setState(state => ({...state, clicks: state.clicks + 1 }));

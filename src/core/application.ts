@@ -1,10 +1,12 @@
-const events = require('events');
 const { NewsItems } = require('./news-items');
 const { list: listNews } = require('./internal/use-cases/news/list');
 import { EventEmitter } from 'events';
 import { Ports } from './ports';
 const { Bookmark } = require('./bookmark');
 import { WeatherQuery, WeatherForecast } from './weather';
+import { Toggle } from './toggle';
+import { Toggles } from './toggles';
+import { ToggleSource } from './toggle-source';
 
 export class Application {
   _ports: Ports;
@@ -12,20 +14,25 @@ export class Application {
   _log: any;
   _settings: any;
   _newsItems: any;
-  _toggles: any;
-  _toggleSource: any;
+  _toggles: Toggles;
+  _togglesLoaded: boolean =false;
+  _toggleSource: ToggleSource;
   _pollingTask: any;
 
-  constructor(ports: Ports, toggles, settings) {
+  constructor(ports: Ports, settings) {
     this._ports = ports;
     this._events = new CustomEventEmitter(ports.log);
     this._log = ports.log;
     this._settings = settings;
     this._newsItems = new NewsItems();
 
-    /* @todo: consolidate the `toggles` arg and `ports.toggles` */
-    this._toggles = toggles;
-    this._toggleSource = ports.toggles;
+    this._toggles = {  
+      showDeleted:        { name: 'show-deleted'        , isOn: false },
+      showBookmarks:      { name: 'show-bookmarks'      , isOn: false },
+      showMarineWeather:  { name: 'show-marine-weather' , isOn: false }
+    };
+
+    this._toggleSource = ports.toggles; // This fetches toggles from somewhere external
   }
 
   pollEvery(milliseconds) {
@@ -46,7 +53,7 @@ export class Application {
   get lobsters() {
     return {
       list: async () => {
-        const newsItems = await listNews(() => this._ports.lobsters.list(), this._ports.seive, this._toggles);
+        const newsItems = await listNews(() => this._ports.lobsters.list(), this._ports.seive, await this.togglesList());
 
         this._newsItems.missing(newsItems).forEach(item => item.new = true);
 
@@ -72,7 +79,7 @@ export class Application {
   get hackerNews() {
     return {
       list: async () => {
-        const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._toggles);
+        const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, await this.togglesList());
 
         this._save(newsItems);
 
@@ -92,8 +99,8 @@ export class Application {
 
   get rnzNews() {
     return {
-      list: () => {
-        return listNews(() => this._ports.rnzNews.list(), this._ports.seive, this._toggles).
+      list: async () => {
+        return listNews(() => this._ports.rnzNews.list(), this._ports.seive, await this.togglesList()).
           then(results => results.sort((a, b) => b.date - a.date));
       },
 
@@ -147,9 +154,23 @@ export class Application {
 
   get toggles() {
     return {
-      save: toggle => {
+      save: async (toggle: Toggle) => {
+        await this.ensureTogglesLoaded();
+
+        const key = Object.keys(this._toggles).find(k => this._toggles[k].name === toggle.name) || toggle.name;
+        
+        this._toggles[key] = toggle;
+
         this._events.emit('toggle-saved', { toggle: toggle });
-        return Promise.resolve();
+      },
+      list: async () : Promise<Toggles> => {
+        await this.ensureTogglesLoaded();
+
+        return Promise.resolve(this._toggles);
+      },
+      get: async (name: string) : Promise<boolean> => {
+        await this.ensureTogglesLoaded();
+        return this.toggle(name).isOn;
       }
     }
   }
@@ -159,7 +180,29 @@ export class Application {
   now() { return new Date(); }
 
   isToggledOn(toggleName) {
-    return this._toggles.get(toggleName);
+    return this.toggle(toggleName).isOn;
+  }
+
+  private toggle(name: string) : Toggle {
+    return { name: name, isOn: this._toggleSource.get(name) };
+  }
+
+  private async togglesList() : Promise<Toggles> {
+    await this.ensureTogglesLoaded();
+
+    return this._toggles; 
+  }
+
+  private async ensureTogglesLoaded() {
+    if (!this._togglesLoaded) {
+      const list = await this._toggleSource.list();
+      
+      if (list) {
+        this._toggles = list;
+      }
+
+      this._togglesLoaded = true;
+    }
   }
 
   setting(name) {
@@ -172,6 +215,7 @@ export class Application {
 
     names.forEach(n => this._events.on(n, handler));
   }
+
   notify(id, data) {
     this._events.emit(id, data);
   }

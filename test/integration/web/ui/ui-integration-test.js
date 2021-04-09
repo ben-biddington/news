@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const { WebInteractor } = require('../../../../src/adapters/web/web-interactor');
 const { ConsoleListener } = require('../../../support/console-listener');
-const { MockToggles } = require('../../../support/mock-toggles');
+const { MockToggles } = require('../../../dist/test/support/mock-toggles');
 const { delay } = require('../../support/support');
 const baseUrl = 'http://localhost:8080/home.html';
 

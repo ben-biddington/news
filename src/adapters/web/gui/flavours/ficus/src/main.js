@@ -235,8 +235,6 @@ createComponent('ficus-application', {
   async loadToggles() {
     const toggles = await window.application.toggles.list();
     
-    console.log('[loadToggles]', JSON.stringify(toggles, null, 2));
-
     this.setState(state => {
         return {
         ...state, 

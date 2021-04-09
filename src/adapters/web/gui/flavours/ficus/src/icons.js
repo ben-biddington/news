@@ -1,8 +1,12 @@
 import { html /* [i] https://github.com/WebReflection/uhtml */ } from '@ficusjs/renderers'
 
+// https://www.metservice.com/towns-cities/locations/wellington/7-days
 export const symbol = name => {
-  const result = icons[name] || icons['missing']; 
-  return result;
+  if (!icons[name]) {
+    console.log(`Unable to find symbol for name <${name}>`);
+  }
+
+  return icons[name] || icons['missing']; ;
 }
 
 const icons = {};
@@ -90,6 +94,21 @@ icons['fine'] = html`
   </svg>
 `;
 
+icons['cloudy'] = html`
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <use xlink:href="#condition-cloudy">
+      <symbol id="condition-cloudy" viewBox="0 0 32 32">
+      <g fill="none" fill-rule="evenodd">
+        <path d="m20.542 13h3.958a6.5 6.5 0 1 1 0 13h-13c-.075 0-.15-.001-.223-.004-.092.004-.184.004-.277.004-5.523 0-10-4.477-10-10s4.477-10 10-10c4.478 0 8.268 2.943 9.542 7z" fill="#f2f4f4"></path>
+        <g fill="#aaa" fill-rule="nonzero">
+          <path d="m24.5 14h-4.692l-.22-.7a9.004 9.004 0 0 0 -8.588-6.3 9 9 0 1 0 .31 17.997l.19.003h13a5.5 5.5 0 0 0 0-11zm-3.958-1h3.958a6.5 6.5 0 1 1 0 13h-13c-.075 0-.15-.001-.223-.004-.092.004-.184.004-.277.004-5.523 0-10-4.477-10-10s4.477-10 10-10c4.478 0 8.268 2.943 9.542 7z"></path>
+          <path d="m11 26v-1a9 9 0 1 1 9-9c0 .94-.144 1.86-.424 2.738l.953.304c.306-.96.471-1.981.471-3.042 0-5.523-4.477-10-10-10s-10 4.477-10 10 4.477 10 10 10z"></path>
+        </g>
+      </g>
+      </symbol>
+    </use>
+  </svg>
+` 
 icons['missing'] = html`
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
     <circle r="50"/>

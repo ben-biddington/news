@@ -42,7 +42,7 @@ const application = (toggles, settings) => {
       delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
     },
     console.log,
-    {
+    { // seive
       apply: newsItems => {
         return fetch(
           `${baseUrl}/lobsters/deleted/sieve`,

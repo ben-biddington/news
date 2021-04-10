@@ -1,3 +1,5 @@
+import { MockBlockedHosts } from "../../support/mock-blocked-hosts";
+
 const {
   expect,
   Application, Ports, NewsItem,
@@ -14,7 +16,7 @@ describe('Seiving lobsters news', async () => {
       },
       {
         id: 'B',
-        title: 'item B'
+        title: 'item B',
       },
       {
         id: 'C',
@@ -41,6 +43,27 @@ describe('Seiving lobsters news', async () => {
         new: true
       },
     ]);
+  });
+
+  it('marks news items with blocked hosts with a flag', async () => {
+    const lobsters = new MockLobsters();
+    const blockedHosts = new MockBlockedHosts();
+
+    await blockedHosts.add('www.bbc.com');
+
+    lobsters.listReturns([
+      new NewsItem('A', '', 'https://a'),
+      new NewsItem('B', 'Prince Philip: Gun salutes planned across UK after Duke of Edinburgh dies aged 99', 'https://www.bbc.com/news/uk-56698794'),
+      new NewsItem('C', '', 'https://c')
+    ]);
+
+    const application = new Application(Ports.blank().withLobsters(lobsters).withBlockedHosts(blockedHosts), null);
+
+    const result = await application.lobsters.list();
+    
+    expect(result.find(it => it.id === 'A').hostIsBlocked).to.be.false;
+    expect(result.find(it => it.id === 'B').hostIsBlocked).to.be.true;
+    expect(result.find(it => it.id === 'C').hostIsBlocked).to.be.false;
   });
 
   it('can be opted-out, and marked deleted instead', async () => {

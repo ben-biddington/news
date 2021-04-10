@@ -1,59 +1,64 @@
 import { Cloneable } from './cloneable';
 
 export class NewsItem extends Cloneable {
-    id: string = '';
-    title: string = '';
-    url: string = '';
-    date: Date = null;
-    deleted: boolean = false;
-    new: boolean = false;
+  id: string = '';
+  title: string = '';
+  url: string = '';
+  date: Date = null;
+  deleted: boolean = false;
+  new: boolean = false;
+  hostIsBlocked: boolean = false;
+  
+  static blank(): NewsItem {
+    return new NewsItem('', '', '', new Date());
+  }
 
-    static blank() : NewsItem {
-        return new NewsItem('', '', '', new Date());
-    }
+  static keys() {
+    return Object.keys(new NewsItem());
+  }
 
-    static keys() {
-        return Object.keys(new NewsItem());
-    }
+  constructor(id?: string, title?: string, url?: string, date?: Date) {
+    super();
 
-    constructor(id?: string, title?: string, url?: string, date?: Date) {
-        super();
+    this.id = id;
+    this.title = title;
+    this.url = url;
+    this.date = date;
+    this.deleted = false;
+    this.new = false
+  }
 
-        this.id = id;
-        this.title = title;
-        this.url = url;
-        this.date = date;
-        this.deleted = false;
-        this.new = false
-    }
+  get host() { return require('url').parse(this.url || '').hostname || ''; }
 
-    get host()  { return require('url').parse(this.url || '').hostname || ''; }
+  withUrl(url) {
+    return this.clone(it => it.url = url);
+  }
 
-    withUrl(url) {
-        return this.clone(it => it.url = url);
-    }
+  withBlockedHost(blocked: boolean) : NewsItem {
+    return this.clone(it => it.hostIsBlocked = blocked);
+  }
 
-    dated(date) {
-        return this.clone(it => it.date = date);
-    }
+  dated(date) {
+    return this.clone(it => it.date = date);
+  }
 
-    ageSince(when) {
-        const moment = require('moment');
-        
-        const difference = moment.duration(moment(when).diff(moment(this.date)));
+  ageSince(when) {
+    const moment = require('moment');
 
-        return difference.humanize();
-    }
+    const difference = moment.duration(moment(when).diff(moment(this.date)));
 
-    thatIsDeleted() {
-        const result = new NewsItem(this.id, this.title, this.url, this.date);
+    return difference.humanize();
+  }
 
-        result.deleted = true;
+  thatIsDeleted() {
+    const result = new NewsItem(this.id, this.title, this.url, this.date);
 
-        return result;
-    }
+    result.deleted = true;
 
-    thatIsNew() {
-        return this.clone(it => it.new = true);
-    }
+    return result;
+  }
+
+  thatIsNew() {
+    return this.clone(it => it.new = true);
+  }
 }

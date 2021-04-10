@@ -49,10 +49,10 @@
   const loadDeletedItemCount = () => window.application.deletedItems.count().then(result => deletedItemCount = result);
 
   $: uiOptions = {
-    showWeather       : application.toggles.get('show-weather'),
-    showDeleted       : application.toggles.get('show-deleted'),
-    showMarineWeather : application.toggles.get('show-marine-weather'),
-    showBookmarks     : application.toggles.get('show-bookmarks'),
+    showWeather       : application.toggles.get('show-weather').isOn,
+    showDeleted       : application.toggles.get('show-deleted').isOn,
+    showMarineWeather : application.toggles.get('show-marine-weather').isOn,
+    showBookmarks     : application.toggles.get('show-bookmarks').isOn,
   }
 </script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

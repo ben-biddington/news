@@ -88,7 +88,7 @@ createComponent('ficus-application', {
           <ol>
             ${this.news().map(
               (newsItem, i) => html`
-                <li class="news">
+                <li class="news item">
                   <a href="javascript:void(0)" onclick=${() => this.delete(newsItem.id)} title=${'delete ' + newsItem.title} class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
@@ -103,7 +103,7 @@ createComponent('ficus-application', {
                   <a href="${newsItem.url}">${newsItem.title}</a>
                   <div>
                     <span class="age">${newsItem.ageSince(window.application.now())}</span>
-                    <span class="host">${newsItem.host}</span>
+                    <span class="host"><a href="javascript:void(0)" onclick=${() => this.block(newsItem.host)}>${newsItem.host}</a></span>
                     <span class="source">${newsItem.label}</span>
                     <!-- https://maketext.io/ -->
                     <!--
@@ -123,6 +123,10 @@ createComponent('ficus-application', {
         ${this.marineWeather()}
       </div>
     `
+  },
+  block(host) { 
+    console.log(`Blocking host <${host}>`);
+    return window.application.news.block(host);
   },
   marineWeather() {
     if (false === this.state.uiOptions.showMarineWeather)

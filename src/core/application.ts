@@ -7,6 +7,7 @@ import { WeatherQuery, WeatherForecast } from './weather';
 import { Toggle } from './toggle';
 import { Toggles } from './toggles';
 import { ToggleSource } from './toggle-source';
+import { BlockedHosts } from './blocked-hosts';
 
 export class Application {
   _ports: Ports;
@@ -50,10 +51,16 @@ export class Application {
     clearInterval(this._pollingTask);
   }
 
+  get news(): NewsUseCases { return new NewsUseCases(this._ports.blockedHosts, this._events); }
+
   get lobsters() {
     return {
       list: async () => {
-        const newsItems = await listNews(() => this._ports.lobsters.list(), this._ports.seive, await this.togglesList());
+        const newsItems = await listNews(
+          () => this._ports.lobsters.list(), 
+          this._ports.seive, 
+          this._ports.blockedHosts, 
+          await this.togglesList());
 
         this._newsItems.missing(newsItems).forEach(item => item.new = true);
 
@@ -79,7 +86,7 @@ export class Application {
   get hackerNews() {
     return {
       list: async () => {
-        const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, await this.togglesList());
+        const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
 
         this._save(newsItems);
 
@@ -100,7 +107,7 @@ export class Application {
   get rnzNews() {
     return {
       list: async () => {
-        return listNews(() => this._ports.rnzNews.list(), this._ports.seive, await this.togglesList()).
+        return listNews(() => this._ports.rnzNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList()).
           then(results => results.sort((a, b) => b.date - a.date));
       },
 
@@ -263,5 +270,21 @@ class WeatherUseCases {
     this.events.emit('weather-loaded', { weather });
 
     return weather;
+  }
+}
+
+class NewsUseCases {
+  private events: EventEmitter;
+  private blockedHostList: BlockedHosts;
+
+  constructor(blockedHostList: BlockedHosts, events: EventEmitter) {
+    this.events = events;
+    this.blockedHostList = blockedHostList;
+  }
+
+  async block(host: String): Promise<void> {
+    // Save somewhere
+    await this.blockedHostList.add(host);
+    this.events.emit('news-host-blocked', { host });
   }
 }

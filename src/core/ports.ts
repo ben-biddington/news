@@ -1,6 +1,9 @@
 import { Cloneable } from './cloneable';
 import { WeatherQuery } from './weather';
 import { ToggleSource, DevNullToggleSource } from './toggle-source';
+import { BlockedHosts } from './blocked-hosts';
+import { DevNullSeive } from './dev-null-seive';
+import { DevNullBlockedHosts } from './dev-null-blocked-hosts';
 
 export class Ports extends Cloneable {
   lobsters: any;
@@ -12,13 +15,14 @@ export class Ports extends Cloneable {
   deletedItems: any;
   toggles: ToggleSource;
   weather: WeatherQuery;
+  blockedHosts: BlockedHosts = new DevNullBlockedHosts();
 
   constructor(lobsters, log, seive, hackerNews, rnzNews) {
     super();
 
     this.lobsters = lobsters;
     this.log = log || console.log;
-    this.seive = seive;
+    this.seive = seive || new DevNullSeive();
     this.hackerNews = hackerNews;
     this.rnzNews = rnzNews;
     this.bookmarks = null;
@@ -34,4 +38,6 @@ export class Ports extends Cloneable {
   withDeletedItems(deletedItems) { return this.clone(it => it.deletedItems = deletedItems); }
   withToggles(toggles: ToggleSource) { return this.clone(it => it.toggles = toggles); }
   with(weather: WeatherQuery) { return this.clone(it => it.weather = weather); }
+  withBlockedHosts(blockedHosts: BlockedHosts) { return this.clone(it => it.blockedHosts = blockedHosts); }
+  withSeive(seive) { return this.clone(it => it.seive = seive); }
 }

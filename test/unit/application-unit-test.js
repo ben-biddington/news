@@ -4,7 +4,7 @@ const { Application } = require('../../src/core/application');
 
 const { Ports } = require('../../src/core/ports');
 
-const { NewsItem } = require('../../src/core/dist/news-item');
+const { NewsItem } = require('../../src/core/news-item');
 
 const { MockLobsters } = require('../support/mock-lobsters');
 

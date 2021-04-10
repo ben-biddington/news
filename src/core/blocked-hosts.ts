@@ -1,4 +1,4 @@
 export abstract class BlockedHosts {
-  abstract add(host:String): Promise<void>;
-  abstract has(host:String): Promise<boolean>;
+  abstract add(host: string): Promise<void>;
+  abstract has(host: string): Promise<boolean>;
 }

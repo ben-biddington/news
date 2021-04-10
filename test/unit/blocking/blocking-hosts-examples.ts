@@ -24,6 +24,4 @@ describe('Blocking a host', async () => {
   it('adds it to the blocked hosts list', () => {
     blockedHosts.mustHave('bbc.co.uk');
   });
-
-  it('marks news items with some flag meaning they are blocked');
 });

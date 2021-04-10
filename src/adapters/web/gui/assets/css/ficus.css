@@ -55,3 +55,5 @@ li.news { padding: 5px }
   letter-spacing: 0.0178571429em;
   text-transform: inherit;
 }
+
+.blocked { background-color:silver; opacity: 30% }

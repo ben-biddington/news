@@ -8,6 +8,7 @@ const { list: hackerNewsList }          = require('../hn');
 const { list: rnzNewsList }             = require('../rnz');
 const { del: deleteNews, deletedCount } = require('../news');
 const { MetserviceWeatherQuery }        = require('../dist/adapters/metservice-weather-query');
+const { LocalStorageBlockedHosts }      = require('../dist/adapters/web/local-storage-blocked-hosts');
 
 const { add: addBookmark, list: listBookmarks, del: deleteBookmark } = require('../bookmarks');
 
@@ -69,7 +70,8 @@ const application = (toggles, settings) => {
       del:  id => deleteBookmark({ del: internet.delete, trace: console.log }, { url: baseUrl }, id)
     }).
     withDeletedItems({count: () => deletedCount({ internet }, { baseUrl: baseUrl }),}).
-    with(new MetserviceWeatherQuery({ get: internet.get }));
+    with(new MetserviceWeatherQuery({ get: internet.get })).
+    withBlockedHosts(new LocalStorageBlockedHosts(window));
 
   return new Application(applicationPorts, settings);
 }

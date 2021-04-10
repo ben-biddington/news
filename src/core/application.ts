@@ -282,8 +282,7 @@ class NewsUseCases {
     this.blockedHostList = blockedHostList;
   }
 
-  async block(host: String): Promise<void> {
-    // Save somewhere
+  async block(host: string): Promise<void> {
     await this.blockedHostList.add(host);
     this.events.emit('news-host-blocked', { host });
   }

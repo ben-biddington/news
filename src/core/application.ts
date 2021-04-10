@@ -286,4 +286,8 @@ class NewsUseCases {
     await this.blockedHostList.add(host);
     this.events.emit('news-host-blocked', { host });
   }
+
+  async unblock(host: string): Promise<void> {
+    await this.blockedHostList.remove(host);
+  }
 }

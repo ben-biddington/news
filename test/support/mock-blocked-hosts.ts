@@ -9,11 +9,20 @@ export class MockBlockedHosts extends BlockedHosts {
     return Promise.resolve();
   }
 
+  remove(host: string): Promise<void> {
+    this.blockedList = this.blockedList.filter(it => it != host);
+    return Promise.resolve();
+  }
+
   has(host: String): Promise<boolean> {
     return Promise.resolve(this.blockedList.includes(host));
   }
 
   mustHave(expected: String): void {
     expect(this.blockedList).to.contain(expected);
+  }
+
+  mustNotHave(expected: String): void {
+    expect(this.blockedList).to.not.contain(expected);
   }
 }

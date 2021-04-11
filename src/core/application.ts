@@ -1,4 +1,4 @@
-const { NewsItems } = require('./news-items');
+import { NewsItems } from './news-items';
 const { list: listNews } = require('./internal/use-cases/news/list');
 import { EventEmitter } from 'events';
 import { Ports } from './ports';
@@ -8,13 +8,14 @@ import { Toggle } from './toggle';
 import { Toggles } from './toggles';
 import { ToggleSource } from './toggle-source';
 import { BlockedHosts } from './blocked-hosts';
+import { NewsItem } from './news-item';
 
 export class Application {
   _ports: Ports;
   _events: CustomEventEmitter;
   _log: any;
   _settings: any;
-  _newsItems: any;
+  private _state: State;
   _toggles: Toggles;
   _togglesLoaded: boolean =false;
   _toggleSource: ToggleSource;
@@ -25,7 +26,7 @@ export class Application {
     this._events = new CustomEventEmitter(ports.log);
     this._log = ports.log;
     this._settings = settings;
-    this._newsItems = new NewsItems();
+    this._state = new State();
 
     this._toggles = {  
       showDeleted:        { name: 'show-deleted'        , isOn: false },
@@ -51,20 +52,22 @@ export class Application {
     clearInterval(this._pollingTask);
   }
 
-  get news(): NewsUseCases { return new NewsUseCases(this._ports.blockedHosts, this._events); }
+  get news(): NewsUseCases { return new NewsUseCases(this._state, this._ports.blockedHosts, this._events); }
 
   get lobsters() {
     return {
       list: async () => {
-        const newsItems = await listNews(
+        let newsItems = await listNews(
           () => this._ports.lobsters.list(), 
           this._ports.seive, 
           this._ports.blockedHosts, 
           await this.togglesList());
 
-        this._newsItems.missing(newsItems).forEach(item => item.new = true);
+        newsItems = newsItems.map(it => it.labelled('lobsters'));
 
-        this._save(newsItems);
+        this._state.lobstersNewsItems.missing(newsItems).forEach(item => item.new = true);
+
+        this._state.lobstersNewsItems.merge(newsItems);
 
         this._events.emit('lobsters-items-loaded', { items: newsItems });
 
@@ -73,6 +76,8 @@ export class Application {
       delete: async id => {
 
         await this._ports.lobsters.delete(id);
+
+        //@todo: consider removing from state, too? What are the implications for `show-deleted`, though.
 
         this._events.emit('lobsters-item-deleted', { id });
       },
@@ -86,9 +91,11 @@ export class Application {
   get hackerNews() {
     return {
       list: async () => {
-        const newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
+        let newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
 
-        this._save(newsItems);
+        newsItems = newsItems.map(it => it.labelled('hn'));
+
+        this._state.hackerNewsItems.merge(newsItems);
 
         this._events.emit('hacker-news-items-loaded', { items: newsItems });
 
@@ -98,6 +105,8 @@ export class Application {
       delete: async id => {
 
         await this._ports.hackerNews.delete(id);
+
+        //@todo: consider removing from state, too? What are the implications for `show-deleted`, though.
 
         this._events.emit('hacker-news-item-deleted', { id });
       }
@@ -122,7 +131,7 @@ export class Application {
   get bookmarks() {
     return {
       add: async bookmarkId => {
-        const newsItem = this._newsItems.get(bookmarkId);
+        const newsItem = this._state.hackerNewsItems.get(bookmarkId) || this._state.lobstersNewsItems.get(bookmarkId);
 
         const bookmark = new Bookmark(newsItem.id, newsItem.title, newsItem.url, '');
 
@@ -226,10 +235,6 @@ export class Application {
   notify(id, data) {
     this._events.emit(id, data);
   }
-
-  _save(newsItems) {
-    this._newsItems.addAll(newsItems);
-  }
 }
 
 // https://stackoverflow.com/questions/5178869/listen-to-all-emitted-events-in-node-js
@@ -255,6 +260,16 @@ class CustomEventEmitter extends EventEmitter {
   }
 }
 
+class State {
+  lobstersNewsItems: NewsItems = new NewsItems();
+  hackerNewsItems: NewsItems = new NewsItems();
+  newsItems(): NewsItems {
+    const result = new NewsItems(this.lobstersNewsItems.list());
+    result.addAll(this.hackerNewsItems.list());
+    return result;
+  }
+}
+
 class WeatherUseCases {
   private weatherQuery: WeatherQuery;
   private events: EventEmitter;
@@ -273,21 +288,36 @@ class WeatherUseCases {
   }
 }
 
+import { apply as block } from './internal/use-cases/news/block'
+
 class NewsUseCases {
   private events: EventEmitter;
   private blockedHostList: BlockedHosts;
+  private state: State;
 
-  constructor(blockedHostList: BlockedHosts, events: EventEmitter) {
-    this.events = events;
-    this.blockedHostList = blockedHostList;
+  constructor(state: State, blockedHostList: BlockedHosts, events: EventEmitter) {
+    this.state            = state;
+    this.events           = events;
+    this.blockedHostList  = blockedHostList;
   }
 
   async block(host: string): Promise<void> {
     await this.blockedHostList.add(host);
+    
     this.events.emit('news-host-blocked', { host });
+    
+    return this.update();
   }
 
   async unblock(host: string): Promise<void> {
     await this.blockedHostList.remove(host);
+    return this.update();
+  }
+
+  private async update() {
+    this.state.lobstersNewsItems.set(await block(this.state.lobstersNewsItems.list(), this.blockedHostList));
+    this.state.hackerNewsItems.set  (await block(this.state.hackerNewsItems.list()  , this.blockedHostList));
+
+    this.events.emit('news-items-modified', { items: [ ...this.state.hackerNewsItems.list(), ...this.state.lobstersNewsItems.list()] });
   }
 }

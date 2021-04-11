@@ -8,7 +8,8 @@ export class NewsItem extends Cloneable {
   deleted: boolean = false;
   new: boolean = false;
   hostIsBlocked: boolean = false;
-  
+  label: string = '';
+
   static blank(): NewsItem {
     return new NewsItem('', '', '', new Date());
   }
@@ -60,5 +61,9 @@ export class NewsItem extends Cloneable {
 
   thatIsNew() {
     return this.clone(it => it.new = true);
+  }
+
+  labelled(label: string) {
+    return this.clone(it => it.label = label);
   }
 }

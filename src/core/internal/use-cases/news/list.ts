@@ -1,15 +1,9 @@
 import { BlockedHosts } from "../../../blocked-hosts";
-import { NewsItem } from "../../../news-item";
 import { Toggles } from "../../../toggles";
+import { apply as block } from "./block";
 
 export const list = async (list, seive, blockedHosts: BlockedHosts, toggles: Toggles) => {
-  let fullList : NewsItem[] = await list();
-
-  fullList = await Promise.all(fullList.map(
-    async (item: NewsItem) => {
-      const isBlocked = await blockedHosts.has(item.host);
-      return isBlocked ? item.withBlockedHost(true) : item;
-    }));
+  const fullList = await block(await list(), blockedHosts);
 
   const theIdsToReturn = await seive.apply(fullList);
 

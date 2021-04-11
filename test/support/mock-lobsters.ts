@@ -1,13 +1,15 @@
+import { NewsItem } from '../../src/core/news-item';
+
 //@todo: rename to `MockNewsSource`
-class MockLobsters {
+export class MockLobsters {
+  private _list: NewsItem[];
+  private _listWasCalled: boolean;
+  private _deletedArticleId: any;
+
   constructor(block = _ => { }) {
     this._list = [
-      {
-        title: 'One'
-      },
-      {
-        title: 'Two'
-      }
+      new NewsItem('', 'One'),
+      new NewsItem('', 'Two'),
     ];
     this._listWasCalled = false;
     block(this);

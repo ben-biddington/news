@@ -13,11 +13,15 @@ class MockListener {
     this._notifications = [];
   }
 
+  get(notificationType) {
+    return this._notifications.filter(it => it.type === notificationType);
+  }
+
   mustHaveAtLeast(expectedNotification, times = 1) {
     const matches = this._notifications.filter(it => JSON.stringify(it) == JSON.stringify(expectedNotification));
 
     expect(matches.length >= times,
-      `Expected\n\n${JSON.stringify(this._notifications)}\n\nto contain\n\n${JSON.stringify(expectedNotification)}\n\n` +
+      `Expected\n\n${JSON.stringify(this._notifications, null, 2)}\n\nto contain\n\n${JSON.stringify(expectedNotification, null, 2)}\n\n` +
       `at least ${times} times. ` +
       `Got <${matches.length}>`).to.be.true;
   }
@@ -26,7 +30,7 @@ class MockListener {
     const matches = this._notifications.filter(it => JSON.stringify(it) == JSON.stringify(expectedNotification));
 
     expect(matches.length === times,
-      `Expected\n\n${JSON.stringify(this._notifications)}\n\nto contain\n\n${JSON.stringify(expectedNotification)}\n\n${times} times. ` +
+      `Expected\n\n${JSON.stringify(this._notifications, null, 2)}\n\nto contain\n\n${JSON.stringify(expectedNotification, null, 2)}\n\n${times} times. ` +
       `Got <${matches.length}>`).to.be.true;
   }
 

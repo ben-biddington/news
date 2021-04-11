@@ -25,6 +25,15 @@ export class LocalStorageBlockedHosts extends BlockedHosts {
     this.set(current);
   }
 
+  async remove(host: string): Promise<void> {
+    if (false === (await this.has(host)))
+      return;
+
+      const current = this.get();
+    
+      this.set(current.filter(it => it !== host));
+  }
+
   has(host: string): Promise<boolean> { return Promise.resolve(this.get().includes(host)); }
 
   private set(value: string[]) {

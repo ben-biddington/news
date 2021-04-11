@@ -10,18 +10,9 @@ describe('Seiving lobsters news', async () => {
     const lobsters = new MockLobsters();
 
     const fullList = [
-      {
-        id: 'A',
-        title: 'item A'
-      },
-      {
-        id: 'B',
-        title: 'item B',
-      },
-      {
-        id: 'C',
-        title: 'item C'
-      }
+      new NewsItem('A', 'item A').thatIsNew(),
+      new NewsItem('B', 'item B').thatIsNew(),
+      new NewsItem('C', 'item C').thatIsNew(),
     ];
 
     lobsters.listReturns(fullList);
@@ -36,13 +27,14 @@ describe('Seiving lobsters news', async () => {
     lobsters.mustHaveHadListCalled();
     seive.mustHaveHadApplyCalled(fullList);
 
-    expect(seivedResult).to.eql([
+    // https://masteringjs.io/tutorials/mocha/chai
+    expect(seivedResult[0]).to.deep.include(
       {
         id: 'B',
         title: 'item B',
         new: true
-      },
-    ]);
+      }
+    );
   });
 
   it('marks news items with blocked hosts with a flag', async () => {

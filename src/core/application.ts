@@ -1,25 +1,23 @@
-import { NewsItems } from './news-items';
-const { list: listNews } = require('./internal/use-cases/news/list');
-import { EventEmitter } from 'events';
-import { Ports } from './ports';
-const { Bookmark } = require('./bookmark');
-import { WeatherQuery, WeatherForecast } from './weather';
-import { Toggle } from './toggle';
-import { Toggles } from './toggles';
-import { ToggleSource } from './toggle-source';
-import { BlockedHosts } from './blocked-hosts';
-import { NewsItem } from './news-item';
+import { State }          from './internal/state';
+import { EventEmitter }   from 'events';
+import { Ports }          from './ports';
+import { Bookmark }       from './bookmark';
+import { Toggle }         from './toggle';
+import { Toggles }        from './toggles';
+import { ToggleSource }   from './toggle-source';
+import { WeatherUseCases} from './internal/use-cases/weather-use-cases';
+import { NewsUseCases }   from './internal/use-cases/news/news';
 
 export class Application {
-  _ports: Ports;
-  _events: CustomEventEmitter;
-  _log: any;
-  _settings: any;
+  private _ports: Ports;
+  private _events: CustomEventEmitter;
+  private _log: any;
+  private _settings: any;
   private _state: State;
-  _toggles: Toggles;
-  _togglesLoaded: boolean =false;
-  _toggleSource: ToggleSource;
-  _pollingTask: any;
+  private _toggles: Toggles;
+  private _togglesLoaded: boolean = false;
+  private _toggleSource: ToggleSource;
+  private _pollingTask: any;
 
   constructor(ports: Ports, settings) {
     this._ports = ports;
@@ -57,7 +55,7 @@ export class Application {
   get lobsters() {
     return {
       list: async () => {
-        let newsItems = await listNews(
+        let newsItems = await this.news.list(
           () => this._ports.lobsters.list(), 
           this._ports.seive, 
           this._ports.blockedHosts, 
@@ -91,7 +89,7 @@ export class Application {
   get hackerNews() {
     return {
       list: async () => {
-        let newsItems = await listNews(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
+        let newsItems = await this.news.list(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
 
         newsItems = newsItems.map(it => it.labelled('hn'));
 
@@ -113,22 +111,7 @@ export class Application {
     }
   }
 
-  get rnzNews() {
-    return {
-      list: async () => {
-        return listNews(() => this._ports.rnzNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList()).
-          then(results => results.sort((a, b) => b.date - a.date));
-      },
-
-      delete: async id => {
-        await this._ports.rnzNews.delete(id);
-
-        this._events.emit('rnz-news-item-deleted', { id });
-      }
-    }
-  }
-
-  get bookmarks() {
+ get bookmarks() {
     return {
       add: async bookmarkId => {
         const newsItem = this._state.hackerNewsItems.get(bookmarkId) || this._state.lobstersNewsItems.get(bookmarkId);
@@ -257,67 +240,5 @@ class CustomEventEmitter extends EventEmitter {
     } catch (error) {
       this._log(error);
     }
-  }
-}
-
-class State {
-  lobstersNewsItems: NewsItems = new NewsItems();
-  hackerNewsItems: NewsItems = new NewsItems();
-  newsItems(): NewsItems {
-    const result = new NewsItems(this.lobstersNewsItems.list());
-    result.addAll(this.hackerNewsItems.list());
-    return result;
-  }
-}
-
-class WeatherUseCases {
-  private weatherQuery: WeatherQuery;
-  private events: EventEmitter;
-
-  constructor(weatherQuery: WeatherQuery, events: EventEmitter) {
-    this.weatherQuery = weatherQuery;
-    this.events = events;
-  }
-
-  async sevenDays(): Promise<Array<WeatherForecast>> {
-    const weather = await this.weatherQuery.sevenDays();
-
-    this.events.emit('weather-loaded', { weather });
-
-    return weather;
-  }
-}
-
-import { apply as block } from './internal/use-cases/news/block'
-
-class NewsUseCases {
-  private events: EventEmitter;
-  private blockedHostList: BlockedHosts;
-  private state: State;
-
-  constructor(state: State, blockedHostList: BlockedHosts, events: EventEmitter) {
-    this.state            = state;
-    this.events           = events;
-    this.blockedHostList  = blockedHostList;
-  }
-
-  async block(host: string): Promise<void> {
-    await this.blockedHostList.add(host);
-    
-    this.events.emit('news-host-blocked', { host });
-    
-    return this.update();
-  }
-
-  async unblock(host: string): Promise<void> {
-    await this.blockedHostList.remove(host);
-    return this.update();
-  }
-
-  private async update() {
-    this.state.lobstersNewsItems.set(await block(this.state.lobstersNewsItems.list(), this.blockedHostList));
-    this.state.hackerNewsItems.set  (await block(this.state.hackerNewsItems.list()  , this.blockedHostList));
-
-    this.events.emit('news-items-modified', { items: [ ...this.state.hackerNewsItems.list(), ...this.state.lobstersNewsItems.list()] });
   }
 }

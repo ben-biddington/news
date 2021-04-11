@@ -37,6 +37,7 @@ createComponent('ficus-application', {
         count: 0
       },
       uiOptions: {},
+      stats: {}
     }
   },
   styles () {
@@ -81,7 +82,7 @@ createComponent('ficus-application', {
       <div id="application">
         <div id="header">
           <ficus-menu />
-          <ficus-weather weather=${weatherProps} />
+          <ficus-weather weather=${weatherProps}/>
           <ficus-bin count=${this.state.deletedItems.count} />
         </div>
         <div id="news">
@@ -167,6 +168,17 @@ createComponent('ficus-application', {
   },
   connectedCallback() {},
   async created () {
+    window.application.on([ "stats-xxx" ], e => {
+      console.log('stats', JSON.stringify(e, null, 2));
+      this.setState(state => {
+        return {...state, stats: e };
+      });
+    });
+
+    window.application.onAny(e => {
+      console.log('[notification]', JSON.stringify(e, null, 2));
+    });
+
     window.application.on([ "news-items-modified" ], e => {
       this.setState(state => {
         return {

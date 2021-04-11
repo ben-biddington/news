@@ -47,7 +47,20 @@ export class NewsUseCases {
     this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
     this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
 
-    this.events.emit('news-items-modified', { items: [ ...this.state.hackerNewsItems.list(), ...this.state.lobstersNewsItems.list()] });
+    const allNews = [ 
+      ...this.state.hackerNewsItems.list(), 
+      ...this.state.lobstersNewsItems.list() 
+    ]
+
+    this.events.emit(
+      'news-items-modified', 
+      { 
+        items: this.FilterDeleted(allNews)
+      });
+  }
+
+  private FilterDeleted(items: NewsItem[]) {
+    return items.filter(it => false === it.deleted);
   }
 
   private async markBlocked(list: NewsItem[], blockedHosts: BlockedHosts): Promise<NewsItem[]> {

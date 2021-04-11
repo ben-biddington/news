@@ -4,11 +4,12 @@ import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
 describe('Blocking a host', async () => {
   let application: Application;
   let listener;
+  let ports;
   let blockedHosts: MockBlockedHosts;
 
   beforeEach(async () => {
     blockedHosts  = new MockBlockedHosts();
-    const ports   = Ports.blank().
+    ports   = Ports.blank().
       withBlockedHosts(blockedHosts).
       withLobsters(new MockLobsters(it => it.listReturns([ new NewsItem('id', 'title', 'https://bbc.co.uk/example')])));
     application   = new Application(ports, new MockSettings());
@@ -38,16 +39,51 @@ describe('Blocking a host', async () => {
   it('adds it to the blocked hosts list', () => {
     blockedHosts.mustHave('bbc.co.uk');
   });
+
+  it('it filters out deleted items from <news-items-modified> notification', async () => {
+    ports = ports.
+      withLobsters(new MockLobsters(it => it.listReturns(
+        [ 
+          new NewsItem('a', 'A', 'https://bbc.co.uk/example'),
+          new NewsItem('b', 'B', 'https://b').thatIsDeleted(),
+        ])));
+    
+    const application = new Application(ports, new MockSettings());
+
+    listener.use(application);
+
+    await application.lobsters.list();
+    
+    listener.clear();
+
+    await application.news.block('bbc.co.uk');
+    
+    listener.mustHave({
+      type: "news-items-modified",
+      items: [
+        {
+          "id": "a",
+          "title": "A",
+          "url": "https://bbc.co.uk/example",
+          "deleted": false,
+          "new": true,
+          "hostIsBlocked": true,
+          "label": "lobsters"
+        }
+      ]  
+    });
+  });
 });
 
 describe('Unblocking a host', async () => {
   let application: Application;
   let listener;
+  let ports;
   let blockedHosts: MockBlockedHosts;
 
   beforeEach(async () => {
     blockedHosts  = new MockBlockedHosts();
-    const ports   = Ports.blank().
+    ports   = Ports.blank().
       withBlockedHosts(blockedHosts).
       withLobsters(new MockLobsters(it => it.listReturns([ new NewsItem('id', 'title', 'https://bbc.co.uk/example')])));
     application   = new Application(ports, new MockSettings());

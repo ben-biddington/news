@@ -1,12 +1,14 @@
-const expect = require('chai').expect;
+import { expect } from 'chai';
+import { Application } from '../../src/core/application';
+import { Notification } from '../../src/core/notification';
 
-class MockListener {
+export class MockListener {
+  _notifications: Notification[];
+  _application: Application;
+
   constructor(application) {
     this._notifications = [];
-    this._application = application;
-    this._application.onAny(notification => {
-      this._notifications.push(notification);
-    });
+    this.use(application);
   }
 
   clear() {
@@ -43,6 +45,11 @@ class MockListener {
   mustBeEmpty() {
     expect(this._notifications).to.be.empty;
   }
-}
 
-module.exports.MockListener = MockListener;
+  use(application) {
+    this._application = application;
+    this._application.onAny(notification => {
+      this._notifications.push(notification);
+    });
+  }
+}

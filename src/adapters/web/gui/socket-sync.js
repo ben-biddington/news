@@ -21,7 +21,7 @@ class SocketSync {
       console.log(`[socket] data:${m.data}`);
 
       if (message.verb === 'delete') {
-        //@todo: bit heavy handed?
+        //@todo: bit heavy handed? Yes.
         console.log(`[socket] message is a delete, reloading`);
 
         await application.lobsters.list();

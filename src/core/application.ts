@@ -8,6 +8,10 @@ import { ToggleSource }   from './toggle-source';
 import { WeatherUseCases} from './internal/use-cases/weather-use-cases';
 import { NewsUseCases }   from './internal/use-cases/news-use-cases';
 
+export interface Statistics {
+  lastUpdateAt?: Date
+}
+
 export class Application {
   private _ports: Ports;
   private _events: CustomEventEmitter;
@@ -17,7 +21,9 @@ export class Application {
   private _toggles: Toggles;
   private _togglesLoaded: boolean = false;
   private _toggleSource: ToggleSource;
-  private _pollingTask: any;
+  private _pollingTask: NodeJS.Timeout;
+  private _statsTask: NodeJS.Timeout
+  private _stats: Statistics;
 
   constructor(ports: Ports, settings) {
     this._ports = ports;
@@ -25,6 +31,7 @@ export class Application {
     this._log = ports.log;
     this._settings = settings;
     this._state = new State();
+    this._stats = {};
 
     this._toggles = {  
       showDeleted:        { name: 'show-deleted'        , isOn: false },
@@ -32,7 +39,11 @@ export class Application {
       showMarineWeather:  { name: 'show-marine-weather' , isOn: false }
     };
 
-    this._toggleSource = ports.toggles; // This fetches toggles from somewhere external
+    this._toggleSource = ports.toggles;
+
+    this._statsTask = setInterval(async () => {
+      this._events.emit('stats', this._stats);
+    }, 5*1000);
   }
 
   pollEvery(milliseconds) {
@@ -43,6 +54,7 @@ export class Application {
         this.lobsters.list(),
         this.hackerNews.list()
       ]);
+      
     }, milliseconds);
   }
 
@@ -68,6 +80,8 @@ export class Application {
         this._state.lobstersNewsItems.merge(newsItems);
 
         this._events.emit('lobsters-items-loaded', { items: newsItems });
+
+        this._stats.lastUpdateAt = new Date();
 
         return newsItems;
       },
@@ -96,6 +110,8 @@ export class Application {
         this._state.hackerNewsItems.merge(newsItems);
 
         this._events.emit('hacker-news-items-loaded', { items: newsItems });
+
+        this._stats.lastUpdateAt = new Date();
 
         return newsItems;
       },

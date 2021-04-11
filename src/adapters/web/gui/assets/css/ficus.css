@@ -4,6 +4,9 @@ li.news { padding: 5px }
 
 li.news:hover { background-color: #f0f0f0; opacity:100% }
 
+span.hn { color: orange }
+span.lobsters { color: darkred }
+
 .mdc-data-table {
   background-color: #fff;
   background-color: var(--mdc-theme-surface, #fff);

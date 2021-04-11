@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
-import { BlockedHosts } from '../../../blocked-hosts';
-import { State } from '../../state';
-import { Toggles } from "../../../toggles";
-import { NewsItem } from '../../../news-item';
+import { BlockedHosts } from '../../blocked-hosts';
+import { State } from '../state';
+import { Toggles } from "../../toggles";
+import { NewsItem } from '../../news-item';
 
 export class NewsUseCases {
   private events: EventEmitter;

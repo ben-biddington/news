@@ -6,7 +6,7 @@ import { Toggle }         from './toggle';
 import { Toggles }        from './toggles';
 import { ToggleSource }   from './toggle-source';
 import { WeatherUseCases} from './internal/use-cases/weather-use-cases';
-import { NewsUseCases }   from './internal/use-cases/news/news';
+import { NewsUseCases }   from './internal/use-cases/news-use-cases';
 
 export class Application {
   private _ports: Ports;

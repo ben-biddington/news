@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
-import { apply as block } from './block'
 import { BlockedHosts } from '../../../blocked-hosts';
 import { State } from '../../state';
 import { Toggles } from "../../../toggles";
+import { NewsItem } from '../../../news-item';
 
 export class NewsUseCases {
   private events: EventEmitter;
@@ -29,7 +29,7 @@ export class NewsUseCases {
   }
 
   async list(list, seive, blockedHosts: BlockedHosts, toggles: Toggles) {
-    const fullList = await block(await list(), blockedHosts);
+    const fullList = await this.markBlocked(await list(), blockedHosts);
 
     const theIdsToReturn = await seive.apply(fullList);
 
@@ -44,9 +44,17 @@ export class NewsUseCases {
   }
 
   private async update() {
-    this.state.lobstersNewsItems.set(await block(this.state.lobstersNewsItems.list(), this.blockedHostList));
-    this.state.hackerNewsItems.set  (await block(this.state.hackerNewsItems.list()  , this.blockedHostList));
+    this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
+    this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
 
     this.events.emit('news-items-modified', { items: [ ...this.state.hackerNewsItems.list(), ...this.state.lobstersNewsItems.list()] });
+  }
+
+  private async markBlocked(list: NewsItem[], blockedHosts: BlockedHosts): Promise<NewsItem[]> {
+    return Promise.all(list.map(
+      async (item: NewsItem) => {
+        const isBlocked = await blockedHosts.has(item.host);
+        return item.withBlockedHost(isBlocked);
+      }));
   }
 }

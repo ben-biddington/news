@@ -21,11 +21,25 @@ createComponent('ficus-weather', {
       <table id="weather">
         <tr>
         ${this.props.weather.map(forecast => {
-          const title=`${moment(forecast.date).format('dddd')} -- ${forecast.text} -- ${forecast.temperature.high}C`;
+          const tooltip = `
+            <p><strong>${moment(forecast.date).format('dddd')}</strong> ${forecast.temperature.high}°C</p>
+            <p>
+              ${forecast.text}
+            </p>
+          `;
 
           return html`
             <td>
-              <span style="display:inline-block; width:32px">${symbol(forecast.condition)}</span>
+              <a 
+                href="javascript:void(0)"
+                role="button" 
+                data-toggle="popover"
+                data-html="true"  
+                data-content=${tooltip}
+                data-trigger="focus" 
+                data-placement="bottom">
+                <span style="display:inline-block; width:32px">${symbol(forecast.condition)}</span>
+              </a>
             </td>
           `
         })}
@@ -33,8 +47,19 @@ createComponent('ficus-weather', {
       </table>
       `
   },
-  connectedCallback() {},
+  connectedCallback() {
+    
+  },
+  updated() {
+    $(function () {
+      const count = $('[data-toggle="popover"]').length 
+
+      console.log(`Enabling popovers on <${count}> elements`);
+
+      $('[data-toggle="popover"]').popover();
+    });
+  },
   created () {
-    console.log('[ficus-weather] Created');
+    
   }
 });

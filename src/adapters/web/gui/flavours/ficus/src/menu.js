@@ -39,7 +39,10 @@ createComponent('ficus-menu', {
     
     return html`
       <div id="menu">
-        <button aria-pressed=${this.state.showMarineWeather.isOn} data-toggle="button" class=${cssClasses} onclick=${() => this.toggle(this.state.showMarineWeather)}>marine weather</button>
+        <button 
+          aria-pressed=${this.state.showMarineWeather.isOn} 
+          data-toggle="button" 
+          class=${cssClasses} onclick=${() => this.toggle(this.state.showMarineWeather)}>marine weather</button>
         <div class="dropdown" style="display:none">
           <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Options

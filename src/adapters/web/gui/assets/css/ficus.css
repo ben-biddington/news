@@ -8,6 +8,7 @@ span.hn { color: orange }
 span.lobsters { color: darkred }
 
 #news { border: 0px solid silver; padding:1px }
+#news .age { min-width: 75; display:inline-block; text-align: center; }
 div#application { padding:50px; }
 #marine-weather { padding:50px; text-align: center; }
 #marine-weather .marine-weather { margin:1px; float: left; }

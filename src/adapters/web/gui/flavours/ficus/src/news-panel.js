@@ -1,6 +1,10 @@
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
 
 export const render = (news, notifications) => {
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+
   return renderBootstrapList(news, notifications);
 }
 
@@ -18,7 +22,11 @@ const renderBootstrapList = (news = [], n) => {
         <table class="table table-hover">
           <tbody>
             <tr>
-              <td colspan="2" align="center">--- No news ---</td>
+              <td colspan="2" align="center">
+              <div class="alert alert-primary" role="alert">
+                No news
+              </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -51,8 +59,12 @@ const renderBootstrapList = (news = [], n) => {
                   <span class=${'source' + ' ' + newsItem.label} title=${newsItem.label + ' article'}> ${newsItem.label == 'hn' ? '🄷' : '🅻'} <!-- https://fsymbols.com/generators/smallcaps/ --></span>
                   <span class="age">${newsItem.ageSince(window.application.now())}</span>
                   <span class="host">
-                    <a href="javascript:void(0)" onclick=${() => onBlock(newsItem.host)}>${newsItem.host}</a>
-                    <a href="javascript:void(0)" style=${newsItem.hostIsBlocked ? '': 'display:none'} onclick=${() => onUnblock(newsItem.host)}>unblock</a>
+                    <a href="javascript:void(0)" 
+                      data-toggle="tooltip" 
+                      data-placement="top" 
+                      title=${(newsItem.hostIsBlocked ? 'unblock': 'block') + ' ' + newsItem.host} 
+                      class="badge badge-danger" 
+                      onclick=${newsItem.hostIsBlocked ? () => onUnblock(newsItem.host): () => onBlock(newsItem.host)}>${newsItem.hostIsBlocked ? 'unblock': 'block'} ${newsItem.host}</a>
                   </span>
                 </div>
               </td>

@@ -3,26 +3,7 @@ import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from 
 import './weather';
 import './bin';
 import './menu';
-import { render } from './news-panel';
-
-/* [i] withStyles fails with:
-
-Uncaught TypeError: this._processStyle(...).then is not a function
-    _injectStyles webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    created webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    _init webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    _checkInit webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    connectedCallback webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    createComponent webpack://[name]/./node_modules/ficusjs/dist/index.js?:13
-    <anonymous> webpack://[name]/./src/adapters/web/gui/flavours/ficus/src/main.js?:9
-    js http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:131
-    __webpack_require__ http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:30
-    <anonymous> http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:94
-    <anonymous> http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:97
-    webpackUniversalModuleDefinition http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:9
-    <anonymous> http://localhost:8080/assets/dist/adapters.web.ficus.bundle.js:10
-
-*/
+import { render as renderNews } from './news-panel';
 
 createComponent('ficus-application', {
   renderer,
@@ -42,43 +23,21 @@ createComponent('ficus-application', {
       progress: []
     }
   },
-  styles () {
-    console.log('Applying style');
-    return `
-      .mdc-data-table {
-        background-color: #fff;
-        background-color: var(--mdc-theme-surface, #fff);
-        border-radius: 4px;
-        border-width: 1px;
-        border-style: solid;
-        border-color: rgba(0, 0, 0, 0.12);
-        display: inline-flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        overflow-x: auto;
-      }
-
-      .mdc-data-table__header-cell {
-        color: rgba(0, 0, 0, 0.87);
-      }
-
-      .mdc-data-table__table {
-        white-space: nowrap;
-        border-collapse: collapse;
-      }
-      .mdc-data-table__cell {
-        font-family: Roboto, sans-serif;
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        font-weight: 400;
-        letter-spacing: 0.0178571429em;
-        text-transform: inherit;
-      }
-      `
-  },
   // [i] https://github.com/WebReflection/uhtml
   // [i] https://getbootstrap.com/docs/5.0/examples/headers/
   render () {
+    return html`
+      ${this.header()}
+
+      <ficus-menu />
+
+      <div id="application">
+        ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+        ${this.marineWeather()}
+      </div>
+    `
+  },
+  header() {
     const weatherProps = JSON.stringify(this.state.weather, null, 2); /* https://github.com/ficusjs/ficusjs/blob/master/src/component.js#L182 */
 
     return html`
@@ -98,14 +57,7 @@ createComponent('ficus-application', {
           <ficus-bin count=${this.state.deletedItems.count} />
         </div>
       </nav>
-
-      <ficus-menu />
-
-      <div id="application">
-        ${render(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
-      </div>
-      ${this.marineWeather()}
-    `
+    `;
   },
   block(host) { 
     console.log(`Blocking host <${host}>`);
@@ -116,27 +68,32 @@ createComponent('ficus-application', {
     return window.application.news.unblock(host);
   },
   marineWeather() {
-    if (false === this.state.uiOptions.showMarineWeather)
-      return null;
-    
-      return [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name =>
-        html`
-          <div class="marine-weather" style="float:left;">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th role="columnheader" scope="col">${name}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><img src=${'/marine-weather/' + name}  alt="Marine weather"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        `
-      );
+    if (this.state.uiOptions.showMarineWeather) {
+      return html`
+        <div id="marine-weather">
+          ${
+            [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name =>
+              html`
+                <div class="marine-weather">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th role="columnheader" scope="col">${name}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><img src=${'/marine-weather/' + name}  alt="Marine weather"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              `
+            )
+          }
+        </div>
+      `;
+    }
   },
   progress() {
     if (this.state.progress.length === 0)
@@ -229,7 +186,6 @@ createComponent('ficus-application', {
       [ "toggle-saved" ], 
       async e => {
         await this.loadToggles();
-        console.log('Reloaded toggles', JSON.stringify(e, null, 2));
         console.log(JSON.stringify(this.state.uiOptions, null, 2));
       }
     );

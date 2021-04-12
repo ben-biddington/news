@@ -7,9 +7,11 @@ li.news:hover { background-color: #f0f0f0; opacity:100% }
 span.hn { color: orange }
 span.lobsters { color: darkred }
 
-#news { margin:10px; border: 1px solid silver; padding:1px }
-div#application { padding: 0px; }
-#marine-weather { margin:2px }
+#news { border: 0px solid silver; padding:1px }
+div#application { padding:50px; }
+#marine-weather { padding:50px; text-align: center; }
+#marine-weather .marine-weather { margin:1px; float: left; }
+
 #menu { 
   text-align: right;
   padding: 5px; 
@@ -25,7 +27,6 @@ div#application { padding: 0px; }
   background: linear-gradient(to bottom, rgba(233, 222, 250, 0.25), rgba(215, 216, 181, 0.25))
 }
 
-#submenu { padding: 5px; }
 #weather { float: right }
 
 .blocked { background-color:silver; opacity: 30% }

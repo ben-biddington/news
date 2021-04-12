@@ -35,9 +35,19 @@ createComponent('ficus-menu', {
     );
   },
   render() {
+    const cssClasses = this.state.showMarineWeather.isOn ? 'btn btn-primary btn-sm active' : 'btn btn-primary btn-sm'; 
+    
     return html`
       <div id="menu">
-        <a href="javascript:void(0)" onclick=${() => this.toggle(this.state.showMarineWeather)}>marine weather<a/>: <span>${this.state.showMarineWeather.isOn ? 'on': 'off'}</span>
+        <button aria-pressed=${this.state.showMarineWeather.isOn} data-toggle="button" class=${cssClasses} onclick=${() => this.toggle(this.state.showMarineWeather)}>marine weather</button>
+        <div class="dropdown" style="display:none">
+          <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Options
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <button class="dropdown-item" type="button">Marine weather</button>
+          </div>
+        </div>
       </div>
       <div style="clear:both"></div>
     `;

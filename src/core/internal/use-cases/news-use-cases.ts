@@ -1,15 +1,18 @@
 import { EventEmitter } from 'events';
 import { BlockedHosts } from '../../blocked-hosts';
 import { State } from '../state';
+import { Ports } from '../../ports';
 import { Toggles } from "../../toggles";
 import { NewsItem } from '../../news-item';
 
 export class NewsUseCases {
+  private ports: Ports;
   private events: EventEmitter;
   private blockedHostList: BlockedHosts;
   private state: State;
 
-  constructor(state: State, blockedHostList: BlockedHosts, events: EventEmitter) {
+  constructor(ports: Ports, state: State, blockedHostList: BlockedHosts, events: EventEmitter) {
+    this.ports            = ports;
     this.state            = state;
     this.events           = events;
     this.blockedHostList  = blockedHostList;
@@ -41,6 +44,29 @@ export class NewsUseCases {
     } else {
       return fullList.filter(it => theIdsToReturn.includes(it.id));
     }
+  }
+
+  async delete(id: string) {
+    await Promise.all([ this.ports.lobsters?.delete(id), this.ports.hackerNews?.delete(id) ]);
+    
+    const allNews = [ 
+      ...this.state.hackerNewsItems.list(), 
+      ...this.state.lobstersNewsItems.list() 
+    ];
+
+    allNews.forEach(it => {
+      if (it.id === id) {
+        it.deleted = true;
+      }
+    });
+
+    this.state.lobstersNewsItems.set(allNews);
+
+    this.events.emit(
+      'news-items-modified', 
+      { 
+        items: this.FilterDeleted(allNews)
+      });
   }
 
   private async update() {

@@ -1,6 +1,7 @@
-const {
+import { NewsItem } from '../../../src/core/news-item';
+import {
   expect, Application, Ports,
-  mockLog: log, MockToggles, MockSeive, MockListener, MockLobsters } = require('../application-unit-test');
+  mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters } from '../application-unit-test';
 
 describe('Viewing lobsters news', async () => {
   it('can list news', async () => {
@@ -16,7 +17,7 @@ describe('Viewing lobsters news', async () => {
 
 describe('Deleting lobsters news items', () => {
   it('performs the delete', () => {
-    const lobsters = new MockLobsters();
+    const lobsters = new MockLobsters(it => it.listReturns([ new NewsItem('a', 'A')]));
 
     const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
 
@@ -26,15 +27,32 @@ describe('Deleting lobsters news items', () => {
   });
 
   it('notifies', async () => {
-    const application = new Application(new Ports(new MockLobsters(), log, new MockSeive()), new MockToggles());
+    const lobsters = new MockLobsters(it => it.listReturns([ new NewsItem('a', 'A'), new NewsItem('b', 'B') ]));
+
+    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
 
     const notifications = new MockListener(application);
 
-    await application.lobsters.delete('item-abc-def');
+    await application.lobsters.list();
+    await application.lobsters.delete('a');
 
     notifications.mustHave({
       type: 'lobsters-item-deleted',
-      id: 'item-abc-def'
+      id: 'a'
+    });
+
+    notifications.mustHave({
+      type: 'news-items-modified',
+      items: [
+        {
+          "id": "b",
+          "title": "B",
+          "deleted": false,
+          "new": true,
+          "hostIsBlocked": false,
+          "label": "lobsters"
+        }
+      ]
     });
   });
 

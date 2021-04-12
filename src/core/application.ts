@@ -41,9 +41,10 @@ export class Application {
 
     this._toggleSource = ports.toggles;
 
-    this._statsTask = setInterval(async () => {
-      this._events.emit('stats', this._stats);
-    }, 5*1000);
+    // [i] https://stackoverflow.com/questions/50372866/mocha-not-exiting-after-test
+    // this._statsTask = setInterval(async () => {
+    //   this._events.emit('stats', this._stats);
+    // }, 5*1000);
   }
 
   pollEvery(milliseconds) {
@@ -61,8 +62,6 @@ export class Application {
   stopPolling() {
     clearInterval(this._pollingTask);
   }
-
-  get news(): NewsUseCases { return new NewsUseCases(this._state, this._ports.blockedHosts, this._events); }
 
   get lobsters() {
     return {
@@ -86,11 +85,7 @@ export class Application {
         return newsItems;
       },
       delete: async id => {
-
-        await this._ports.lobsters.delete(id);
-
-        //@todo: consider removing from state, too? What are the implications for `show-deleted`, though.
-
+        await this.news.delete(id);
         this._events.emit('lobsters-item-deleted', { id });
       },
       snooze: id => {
@@ -99,6 +94,8 @@ export class Application {
       }
     }
   }
+
+  get news(): NewsUseCases { return new NewsUseCases(this._ports, this._state, this._ports.blockedHosts, this._events); }
 
   get hackerNews() {
     return {
@@ -115,13 +112,8 @@ export class Application {
 
         return newsItems;
       },
-
       delete: async id => {
-
-        await this._ports.hackerNews.delete(id);
-
-        //@todo: consider removing from state, too? What are the implications for `show-deleted`, though.
-
+        await this.news.delete(id);
         this._events.emit('hacker-news-item-deleted', { id });
       }
     }

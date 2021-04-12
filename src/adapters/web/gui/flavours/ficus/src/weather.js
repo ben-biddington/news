@@ -18,20 +18,19 @@ createComponent('ficus-weather', {
   },
   render() {
     return html`
-      <div id="weather" style="display: inline-block;">
+      <table id="weather">
+        <tr>
         ${this.props.weather.map(forecast => {
+          const title=`${moment(forecast.date).format('dddd')} -- ${forecast.text} -- ${forecast.temperature.high}C`;
+
           return html`
-            <div style="float:left; display:inline-block; margin:5" title=${moment(forecast.date).format('dddd') + ' -- ' + forecast.text}>
-              <span>${moment(forecast.date).format('ddd')}</span>
-              <div style="width:32; height:40;">
-                ${symbol(forecast.condition)}
-              </div>
-              <span title=${'high:' + forecast.temperature.high + ', low: ' + forecast.temperature.low}>${forecast.temperature.high}</span>
-            </div>
+            <td>
+              <span style="display:inline-block; width:32px">${symbol(forecast.condition)}</span>
+            </td>
           `
         })}
-        <div style="clear: both;"></div>
-      </div>
+        </tr>
+      </table>
       `
   },
   connectedCallback() {},

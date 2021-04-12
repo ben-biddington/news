@@ -40,11 +40,12 @@ const cacheControlHeaders = (maxAge = 60) => ({
 });
 
 app.delete(/news\/items/, async (req, res) => {
-  io.notify({ verb: 'delete', url: req.path });
 
-  return StructuredLog.around(req, res, { prefix: 'bookmarks' }, async log => {
+  return StructuredLog.around(req, res, { prefix: 'items' }, async log => {
 
     const id = req.path.split('/').pop();
+
+    io.notify({ verb: 'delete', url: req.path, id });
 
     await deleted.add(id);
 

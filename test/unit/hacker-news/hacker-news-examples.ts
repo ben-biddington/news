@@ -1,13 +1,11 @@
-const expect = require('chai').expect;
-
-const { log, Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles } = require('../application-unit-test');
+import {expect, Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles } from '../application-unit-test';
 
 describe('Viewing hacker news', async () => {
   it('can list news', async () => {
     const hackerNews = new MockLobsters();
 
     const application = new Application(
-      new Ports(new MockLobsters(), log, new MockSeive(), hackerNews),
+      Ports.blank().withHackerNews(hackerNews),
       new MockToggles());
 
     await application.hackerNews.list();
@@ -20,7 +18,7 @@ describe('Deleting hacker news items', () => {
   const hackerNews = new MockLobsters();
 
   const application = new Application(
-    new Ports(new MockLobsters(), log, new MockSeive(), hackerNews),
+    Ports.blank().withHackerNews(hackerNews),
     new MockToggles());
 
   const notifications = new MockListener(application);

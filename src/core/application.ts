@@ -88,6 +88,9 @@ export class Application {
         await this.news.delete(id);
         this._events.emit('lobsters-item-deleted', { id });
       },
+      remove: async id => {
+        await this.news.remove(id);
+      },
       snooze: id => {
         this._events.emit('lobsters-item-snoozed', { id });
         return Promise.resolve();
@@ -115,6 +118,9 @@ export class Application {
       delete: async id => {
         await this.news.delete(id);
         this._events.emit('hacker-news-item-deleted', { id });
+      },
+      remove: async id => {
+        await this.news.remove(id);
       }
     }
   }

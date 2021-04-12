@@ -47,42 +47,55 @@ export class NewsUseCases {
   }
 
   async delete(id: string) {
-    await Promise.all([ this.ports.lobsters?.delete(id), this.ports.hackerNews?.delete(id) ]);
-    
-    const allNews = [ 
-      ...this.state.hackerNewsItems.list(), 
-      ...this.state.lobstersNewsItems.list() 
-    ];
+    await (this.ports.lobsters || this.ports.hackerNews).delete(id);
 
-    allNews.forEach(it => {
+    await this.remove(id);
+  }
+
+  async remove(id: string) {
+    const hn = this.state.hackerNewsItems.list();
+
+    hn.forEach(it => {
       if (it.id === id) {
         it.deleted = true;
       }
     });
 
-    this.state.lobstersNewsItems.set(allNews);
+    this.state.hackerNewsItems.set(hn);
+
+    const lobsters = this.state.lobstersNewsItems.list();
+
+    lobsters.forEach(it => {
+      if (it.id === id) {
+        it.deleted = true;
+      }
+    });
+
+    this.state.lobstersNewsItems.set(lobsters);
 
     this.events.emit(
       'news-items-modified', 
       { 
-        items: this.FilterDeleted(allNews)
+        items: this.FilterDeleted(this.allNews())
       });
   }
-
+  
   private async update() {
     this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
     this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
 
-    const allNews = [ 
-      ...this.state.hackerNewsItems.list(), 
-      ...this.state.lobstersNewsItems.list() 
-    ]
-
     this.events.emit(
       'news-items-modified', 
       { 
-        items: this.FilterDeleted(allNews)
+        items: this.FilterDeleted(this.allNews())
       });
+  }
+
+  private allNews(): NewsItem[] {
+    return [ 
+      ...this.state.hackerNewsItems.list(), 
+      ...this.state.lobstersNewsItems.list() 
+    ];
   }
 
   private FilterDeleted(items: NewsItem[]) {

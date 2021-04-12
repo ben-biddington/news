@@ -21,13 +21,12 @@ class SocketSync {
       console.log(`[socket] data:${m.data}`);
 
       if (message.verb === 'delete') {
-        //@todo: bit heavy handed? Yes.
-        console.log(`[socket] message is a delete, reloading`);
+        console.log(`[socket] message is a delete, removing item <${message.id}>`);
 
-        await application.lobsters.list();
-        await application.hackerNews.list();
+        // @todo: this causes infinite loop. We just want to remove it from local memory, not delete again.
+        await application.lobsters.remove(message.id);
+        await application.hackerNews.remove(message.id);
       }
-
     });
   }
 }

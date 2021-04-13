@@ -39,7 +39,7 @@ const renderBootstrapList = (news = [], n) => {
           ${news.map(
             (newsItem, i) => html`
             <tr class=${newsItem.hostIsBlocked ? 'blocked': 'xxx'}>
-              <td width="50">${i+1}</td>
+              <td width="25">${i+1}</td>
               <td>
                 <div>
                   <a href="${newsItem.url}">${newsItem.title}</a>

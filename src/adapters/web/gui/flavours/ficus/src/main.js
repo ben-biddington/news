@@ -26,14 +26,23 @@ createComponent('ficus-application', {
   // [i] https://github.com/WebReflection/uhtml
   // [i] https://getbootstrap.com/docs/5.0/examples/headers/
   render () {
+    const leftColumnClass   = this.state.uiOptions.showMarineWeather ? 'col-sm-7' : 'col-12';
+    const rightColumnClass  = this.state.uiOptions.showMarineWeather ? 'col-sm-5' : 'col-0';
+
     return html`
       ${this.header()}
 
       <ficus-menu />
 
       <div id="application">
-        ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
-        ${this.marineWeather()}
+        <div class="row">
+          <div class=${leftColumnClass}>
+            ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+          </div>
+          <div class=${rightColumnClass}>
+            ${this.marineWeather()}
+          </div>
+        </div>
       </div>
     `
   },
@@ -70,24 +79,35 @@ createComponent('ficus-application', {
   marineWeather() {
     if (this.state.uiOptions.showMarineWeather) {
       return html`
-        <div id="marine-weather" class="row mt-2">
-          ${
-            [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name =>
-              html` 
-                <div class="col-sm-6">
+        ${
+          [ 'wellington', 'titahi-bay', 'paekakariki' ].map(name =>
+            html`
+              <div class="row" style="margin-bottom:2px">
+                <div class="col">
                   <div class="card">
-                    <div class="card-header"><strong>${name}</strong></div>
-                    <div class="card-body">
-                      <img src=${'/marine-weather/' + name}  alt="Marine weather">
+                    <div class="card-header"><strong><a target="_blank" href=${'https://www.marineweather.co.nz/forecasts/' + name}>${name}</a></strong></div>
+                    <div class="card-body" style="text-align:center">
+                      <img width="670" src=${'/marine-weather/' + name} alt="Marine weather"/>
                     </div>
                   </div>
                 </div>
-              `
-            )
-          }
-        </div>
+              </div>
+            `
+          )
+        }
       `;
     }
+
+    return html`
+      ${
+        [ 'wellington', 'titahi-bay', 'paekakariki' ].map(name =>
+          html`
+            <div class="row">
+            </div>
+          `
+        )
+      }
+    `;
   },
   progress() {
     if (this.state.progress.length === 0)

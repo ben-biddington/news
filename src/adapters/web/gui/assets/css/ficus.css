@@ -1,7 +1,5 @@
 a.icon { color: black }
 
-li.news { padding: 5px }
-
 li.news:hover { background-color: #f0f0f0; opacity:100% }
 
 span.hn { color: orange }
@@ -9,7 +7,6 @@ span.lobsters { color: darkred }
 
 #news { border: 0px solid silver; padding:1px }
 #news .age { min-width: 75; display:inline-block; text-align: center; }
-div#application { padding:50px; }
 #marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }
 
 #menu { 

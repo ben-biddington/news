@@ -1,15 +1,19 @@
 const { WebInteractor } = require('./web-interactor');
 const path = require('path');
 
-const wellington = async (opts = {}) => {
+const screenshot = async (log, opts = {}) => {
     const options = {
         headless: true,
         ...opts
     };
+
+    const { placeName, day = 1 } = opts;
     
     const interactor      = new WebInteractor({ headless: options.headless });
     const page            = await interactor.page();
-    const url = 'https://www.windfinder.com/forecast/wellington';
+    const url             = `https://www.windfinder.com/forecast/${placeName}`;
+
+    log.info(`[windfinder] Using url <${url}>`);
 
     if (!options.path) {
       throw new Error(`Missing <path> option. You supplied <${options.path}>`);
@@ -21,7 +25,9 @@ const wellington = async (opts = {}) => {
       await page.setViewport({ width: 1366, height: 768});
       await page.goto(url, { waitUntil: 'networkidle2' });
 
-      const selector = 'div .weathertable-container'
+      const selector = `div.fc-day-index-${day}`;
+
+      log.info(`[windfinder] css selector: <${selector}>`);
 
       await page.waitForSelector(selector);
       
@@ -39,4 +45,4 @@ const wellington = async (opts = {}) => {
     return { path: fullPath }
 }
 
-module.exports.wellington = wellington;
+module.exports.screenshot = screenshot;

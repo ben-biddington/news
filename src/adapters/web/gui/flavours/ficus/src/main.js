@@ -40,6 +40,7 @@ createComponent('ficus-application', {
             ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
           </div>
           <div class=${rightColumnClass}>
+            ${this.windfinder()}
             ${this.marineWeather()}
           </div>
         </div>
@@ -47,7 +48,7 @@ createComponent('ficus-application', {
     `
   },
   header() {
-    const weatherProps = JSON.stringify(this.state.weather, null, 2); /* https://github.com/ficusjs/ficusjs/blob/master/src/component.js#L182 */
+    const weatherProps = JSON.stringify(this.state.weather, null, 2); /* Object props must be serialised: https://github.com/ficusjs/ficusjs/blob/master/src/component.js#L182 */
 
     return html`
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -97,7 +98,6 @@ createComponent('ficus-application', {
         }
       `;
     }
-
     return html`
       ${
         [ 'wellington', 'titahi-bay', 'paekakariki' ].map(name =>
@@ -108,6 +108,47 @@ createComponent('ficus-application', {
         )
       }
     `;
+  },
+  windfinder() {
+    if (false === this.state.uiOptions.showMarineWeather)
+      return html`<div class="row"></div>`;
+
+    const sites = [
+      {
+        name: 'wellington',
+      },
+      {
+        name: 'paekakariki_kapiti_coast',
+        title: 'paekākāriki'
+      }
+    ];
+    return html`
+      ${
+        sites.map(site => 
+          {
+            const { name, title = name} = site;
+
+            return html`
+              <div class="row" style="margin-bottom:2px">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header">
+                      <strong><a target="_blank" href=${'https://www.windfinder.com/forecast/' + name}>${title}</a></strong>
+                    </div>
+                    <div class="card-body" style="text-align:center">
+                      ${[1, 2].map(i => {
+                        const url = `/windfinder/${name}?day=${i}`;
+                          
+                        return html`<img src=${url} alt="Windfinder" />`;
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              `
+          }
+      ).flat()}
+    `
   },
   progress() {
     if (this.state.progress.length === 0)

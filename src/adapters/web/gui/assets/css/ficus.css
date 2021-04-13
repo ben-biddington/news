@@ -2,10 +2,13 @@ a.icon { color: black }
 
 li.news:hover { background-color: #f0f0f0; opacity:100% }
 
-span.hn { color: orange }
+span.hn { color: #ff6600 }
 span.lobsters { color: darkred }
-
-#news { border: 0px solid silver; padding:1px }
+/* body table {font-size: 20px !important;} */
+#news { border: 0px solid silver; padding:1px; font-size: 20px; }
+#news .news-title { font-size: 1.5em }
+#news .icon { width:16; height: 16; }
+#news .source { font-size: 1.1em }
 #news .age { min-width: 75; display:inline-block; text-align: center; }
 #marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }
 

@@ -184,6 +184,28 @@ app.get(/marine-weather/, async (req, res) => {
   });
 });
 
+app.get(/windfinder/, async (req, res) => {
+  return StructuredLog.around(req, res, { prefix: 'windfinder' }, async log => {
+    const placeName = req.path.substring(req.path.lastIndexOf('/') + 1);
+    const temp = require('temp');
+    
+    log.info(`${req.path} -> <${placeName}>`);
+
+    const cacheKey = `${req.path}-${req.query["day"]}`;
+
+    const originalFile = await cachedFile(cacheKey , async () => {
+      const { screenshot } = require('../windfinder');
+      const filePath = temp.path({ suffix: '.png' });
+      
+      const result = await screenshot(log, { placeName, path: filePath, day: req.query["day"] });
+
+      return readFile(result.path);
+    });
+
+    returnFile(res, originalFile);
+  });
+});
+
 // [i] https://ahmadawais.com/resize-optimize-images-javascript-node/
 const resize = async (log, opts) => {  
   const { sourceFileBuffer, targetFileName, width } = opts;

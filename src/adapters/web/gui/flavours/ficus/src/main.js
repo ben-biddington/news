@@ -216,7 +216,8 @@ createComponent('ficus-application', {
         ...state, 
         uiOptions: {
           showDeleted       : toggles.showDeleted.isOn,
-          showMarineWeather : toggles.showMarineWeather.isOn
+          showMarineWeather : toggles.showMarineWeather.isOn,
+          showBlocked       : toggles.showBlocked.isOn
         } 
       };
     });

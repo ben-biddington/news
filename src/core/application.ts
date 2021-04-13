@@ -35,6 +35,7 @@ export class Application {
 
     this._toggles = {  
       showDeleted:        { name: 'show-deleted'        , isOn: false },
+      showBlocked:        { name: 'show-blocked'        , isOn: true  },
       showBookmarks:      { name: 'show-bookmarks'      , isOn: false },
       showMarineWeather:  { name: 'show-marine-weather' , isOn: false }
     };

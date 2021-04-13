@@ -13,6 +13,7 @@ class QueryStringToggles extends ToggleSource {
   list() {
     return { 
       showDeleted:        { name: 'show-deleted'        , isOn: this.get('show-deleted') },
+      showBlocked:        { name: 'show-blocked'        , isOn: this.get('show-blocked') },
       showBookmarks:      { name: 'show-bookmarks'      , isOn: this.get('show-bookmarks') },
       showMarineWeather:  { name: 'show-marine-weather' , isOn: this.get('show-marine-weather') }
     }

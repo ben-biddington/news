@@ -72,6 +72,7 @@ describe('Seiving lobsters news', async () => {
 
     const toggles = new MockToggles(it => it.alwaysReturn({
       showBookmarks: { name: 'show-bookmarks', isOn: false },
+      showBlocked: { name: 'show-blocked', isOn: false },
       showDeleted: { name: 'show-deleted', isOn: true },
       showMarineWeather: { name: 'show-weather', isOn: false }
     }));

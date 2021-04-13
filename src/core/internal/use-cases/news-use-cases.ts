@@ -32,7 +32,11 @@ export class NewsUseCases {
   }
 
   async list(list, seive, blockedHosts: BlockedHosts, toggles: Toggles) {
-    const fullList = await this.markBlocked(await list(), blockedHosts);
+    let fullList = await this.markBlocked(await list(), blockedHosts);
+
+    if (false === toggles.showBlocked.isOn) {
+      fullList = fullList.filter(it => false === it.hostIsBlocked);
+    }
 
     const theIdsToReturn = await seive.apply(fullList);
 

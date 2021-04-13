@@ -145,23 +145,58 @@ app.delete(/bookmarks/, async (req, res) => {
   });
 });
 
+const path = require('path');
+
 app.get(/marine-weather/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
     const placeName = req.path.substring(req.path.lastIndexOf('/') + 1);
+    const temp = require('temp');
 
     log.info(`${req.path} -> <${placeName}>`);
 
-    return await cachedFile(req, res, async () => {
-      const { forecast } = require('../marine-weather');
-      const temp = require('temp');
-      const filePath = temp.path({ suffix: '.png' });
+    const cacheKey = req.path;
 
+    const originalFile = await cachedFile(cacheKey , async () => {
+      const { forecast } = require('../marine-weather');
+      const filePath = temp.path({ suffix: '.png' });
       const result = await forecast({ log }, placeName.length > 0 ? placeName : 'wellington', { path: filePath });
 
       return readFile(result.path);
     });
+
+    if (req.query["width"]) {
+      const resizeOptions = { 
+        sourceFileBuffer: originalFile, 
+        targetFileName: path.join(temp.dir, `marine-weather-${placeName}.png`),
+        width: parseInt(req.query["width"])
+      };
+      
+      log.info(`Resizing to <${resizeOptions.targetFileName}> with width <${req.query["width"]}>`);
+
+      await resize(log, resizeOptions);
+
+      log.info(`Returning <${resizeOptions.targetFileName}>`);
+
+      return returnFile(res, await readFile(resizeOptions.targetFileName));
+    }
+
+    returnFile(res, originalFile);
   });
 });
+
+// [i] https://ahmadawais.com/resize-optimize-images-javascript-node/
+const resize = async (log, opts) => {  
+  const { sourceFileBuffer, targetFileName, width } = opts;
+  
+  const Jimp = require('jimp');
+
+  const image = await Jimp.read(sourceFileBuffer);
+  await image.resize(width, Jimp.AUTO);
+  await image.quality(100);
+  await image.writeAsync(targetFileName);
+
+  log.info(`[resize] ${Object.keys(image)}`);
+}
 
 app.get('/wellington-weather/week', async (req, res) => {
   return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, log => {
@@ -174,24 +209,26 @@ app.get('/wellington-weather/week', async (req, res) => {
   });
 });
 
-const cachedFile = async (req, res, fn) => {
-  const key = req.path;
-  let file = await cache.get(key);
-
-  if (!process.env.NO_CACHE && file != null) {
-    res.status(200).write(file, 'binary');
-    res.end();
-    return;
-  }
-
-  file = await fn();
-
-  await cache.add(key, file, Timespan.fromMinutes(120));
-
+const returnFile = (res, file) => {
   setHeaders(res, cacheControlHeaders(600));
   res.status(200).write(file, 'binary');
   res.end();
-  return;
+}
+
+const cachedFile = async (cacheKey, fn) => {
+  if (process.env.NO_CACHE)
+    return await fn();
+
+  let file = await cache.get(cacheKey);
+
+  if (file)
+    return file;
+
+  file = await fn();
+
+  await cache.add(cacheKey, file, Timespan.fromMinutes(120));
+
+  return file;
 }
 
 const cached = async (req, res, log, fn) => {

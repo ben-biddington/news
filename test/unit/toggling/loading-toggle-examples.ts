@@ -10,6 +10,7 @@ describe('Loading toggles', () => {
     
     const expected : Toggles = {  
       showDeleted:        { name: 'show-deleted'        , isOn: true },
+      showBlocked:        { name: 'show-deleted'        , isOn: true },
       showBookmarks:      { name: 'show-bookmarks'      , isOn: true },
       showMarineWeather:  { name: 'show-marine-weather' , isOn: true }
     }

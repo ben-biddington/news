@@ -3,11 +3,11 @@ import { ToggleSource } from '../../src/core/toggle-source';
 import { Toggles } from '../../src/core/toggles';
 
 export class MockToggles extends ToggleSource {
+  private _toggles: Toggles;
+  
   list(): Toggles {
     return this._toggles;
   }
-
-  _toggles: Toggles;
 
   constructor(arg: ((a: MockToggles) => void) | Toggles = () => {}) {
     super();

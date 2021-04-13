@@ -37,7 +37,17 @@ createComponent('ficus-application', {
       <div id="application">
         <div class="row">
           <div class=${leftColumnClass}>
-            ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+            <div class="row">
+              <div class="col-12" style="text-align:right">
+                <ficus-bin count=${this.state.deletedItems.count} />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12" style="text-align:right">
+              ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+              </div>
+            </div>
           </div>
           <div class=${rightColumnClass}>
             ${this.windfinder()}
@@ -64,7 +74,6 @@ createComponent('ficus-application', {
             </li>
           </ul>
           <ficus-weather weather=${weatherProps}/>
-          <ficus-bin count=${this.state.deletedItems.count} />
         </div>
       </nav>
     `;

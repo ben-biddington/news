@@ -10,22 +10,21 @@ span.lobsters { color: darkred }
 #news { border: 0px solid silver; padding:1px }
 #news .age { min-width: 75; display:inline-block; text-align: center; }
 div#application { padding:50px; }
-#marine-weather { padding:50px; text-align: center; }
-#marine-weather .marine-weather { margin:1px; float: left; }
+#marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }
 
 #menu { 
   text-align: right;
   padding: 5px; 
   border-top:1px solid silver;
-  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/*/
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
   /* fallback for old browsers */
-  background: #e9defa;
+  background: #d0d0d0;
 
   /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(to bottom, rgba(233, 222, 250, 0.25), rgba(215, 216, 181, 0.25));
+  background: -webkit-linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to bottom, rgba(233, 222, 250, 0.25), rgba(215, 216, 181, 0.25))
+  background: linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
 }
 
 #weather { float: right }

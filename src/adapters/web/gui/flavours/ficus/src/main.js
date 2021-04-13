@@ -70,23 +70,17 @@ createComponent('ficus-application', {
   marineWeather() {
     if (this.state.uiOptions.showMarineWeather) {
       return html`
-        <div id="marine-weather">
+        <div id="marine-weather" class="row mt-2">
           ${
             [ 'wellington', 'titahi-bay', 'craps', 'riversdale-beach', 'the-cut' ].map(name =>
-              html`
-                <div class="marine-weather">
-                  <table class="table table-hover">
-                    <thead>
-                      <tr>
-                        <th role="columnheader" scope="col">${name}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td><img src=${'/marine-weather/' + name}  alt="Marine weather"></td>
-                      </tr>
-                    </tbody>
-                  </table>
+              html` 
+                <div class="col-sm-6">
+                  <div class="card">
+                    <div class="card-header"><strong>${name}</strong></div>
+                    <div class="card-body">
+                      <img src=${'/marine-weather/' + name}  alt="Marine weather">
+                    </div>
+                  </div>
                 </div>
               `
             )

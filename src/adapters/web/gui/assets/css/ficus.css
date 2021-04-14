@@ -14,6 +14,9 @@ span.lobsters { color: darkred }
 .toolbar ul { float: right }
 .toolbar li { border:0 }
 
+#bookmarks { transition: display 0s linear 0.7s, opacity 0.7s ease-in-out;}
+#bookmarks table { background-color: rgb(218, 224, 229, 0.2);  transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out;}
+
 #menu { 
   text-align: right;
   padding: 5px; 
@@ -29,10 +32,46 @@ span.lobsters { color: darkred }
   background: linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
 }
 
+.recessed {
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
+  /* fallback for old browsers */
+  background: #d0d0d0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
+}
+
+.recessed-reversed {
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
+  /* fallback for old browsers */
+  background: #d0d0d0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to top, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to top, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
+}
+
 #weather { float: right }
 
 .blocked { background-color:silver; opacity: 30% }
 
 .list-group li {
   display: inline-table;
+}
+
+.hidden { display: none; }
+
+.visible {
+  animation: subtleFade 3s;
+  animation-fill-mode: both;
+} 
+
+@keyframes subtleFade {
+  0%   { opacity:0 }
+  100% { opacity:100 }
 }

@@ -31,6 +31,8 @@ createComponent('ficus-application', {
     const leftColumnClass   = this.state.uiOptions.showMarineWeather ? 'col-sm-7' : 'col-12';
     const rightColumnClass  = this.state.uiOptions.showMarineWeather ? 'col-sm-5' : 'col-0';
 
+    console.log('showBookmarks', this.state.uiOptions.showBookmarks);
+
     return html`
       ${this.header()}
 
@@ -47,13 +49,13 @@ createComponent('ficus-application', {
 
             <div class="row">
               <div class="col-12" style="text-align:right">
-              ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+                <ficus-bookmarks visible=${this.state.uiOptions.showBookmarks} bookmarks=${JSON.stringify(this.state.bookmarks)} />
               </div>
             </div>
 
             <div class="row">
               <div class="col-12" style="text-align:right">
-                <ficus-bookmarks bookmarks=${JSON.stringify(this.state.bookmarks)}/>
+              ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
               </div>
             </div>
           </div>
@@ -117,7 +119,7 @@ createComponent('ficus-application', {
     }
     return html`
       ${
-        [ 'wellington', 'titahi-bay', 'paekakariki' ].map(name =>
+        [ 'wellington', 'titahi-bay', 'paekakariki' ].map(_ =>
           html`
             <div class="row">
             </div>
@@ -180,7 +182,9 @@ createComponent('ficus-application', {
 
     return result;
   },
-  connectedCallback() {},
+  mounted() {
+    this.attachCustomEvents();
+  },
   async created () {
     window.application.on([ "stats-xxx" ], e => {
       console.log('stats', JSON.stringify(e, null, 2));
@@ -262,6 +266,14 @@ createComponent('ficus-application', {
       }
     );
 
+    window.application.on([ "bookmark-deleted", "bookmark-added"], _ => {
+      window.application.bookmarks.list().then(result => {
+        this.setState(state => {
+          return {...state, bookmarks: result };
+        });
+      })
+    });
+
     this.props.baseUrl = window.settings.get('baseUrl') || '';
 
     return Promise.all([
@@ -291,16 +303,32 @@ createComponent('ficus-application', {
       })
     ]);
   },
+  attachCustomEvents() {
+    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
+    const bookmarksPanel = document.querySelector('ficus-bookmarks');
+
+    bookmarksPanel.addEventListener('onDelete', e => {
+      return this.deleteBookmark(e.detail.id);
+    });
+
+    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
+    const toolbarPanel = document.querySelector('ficus-toolbar');
+
+    toolbarPanel.addEventListener('toggleBookmarks', e => {
+      return this.toggleBookmarks();
+    });
+  },
   async loadToggles() {
     const toggles = await window.application.toggles.list();
     
-    this.setState(state => {
+    this.setState(async state => {
         return {
         ...state, 
         uiOptions: {
           showDeleted       : toggles.showDeleted.isOn,
           showMarineWeather : toggles.showMarineWeather.isOn,
-          showBlocked       : toggles.showBlocked.isOn
+          showBlocked       : toggles.showBlocked.isOn,
+          showBookmarks     : await window.application.toggles.get('show-bookmarks'),
         } 
       };
     });
@@ -308,13 +336,28 @@ createComponent('ficus-application', {
   pop() {
     this.setState(state => ({...state, clicks: state.clicks + 1 }));
   },
-  delete(id) {
-    console.log(`Deleting <${id}>`);
-    window.application.lobsters.delete(id);
-    window.application.hackerNews.delete(id);
+  async delete(id) {
+    await window.application.lobsters.delete(id);
+    await window.application.hackerNews.delete(id);
   },
   bookmark(id) {
-    console.log(`Bookmarking <${id}>`);
-    window.application.bookmarks.add(id);
+    return window.application.bookmarks.add(id);
+  },
+  deleteBookmark(id) {
+    return window.application.bookmarks.del(id);
+  },
+  toggleBookmarks() {
+    this.setState(state => {
+      console.log(`Toggling to <${false === state.uiOptions.showBookmarks}>`);
+
+      return {
+        ...state, 
+        uiOptions: 
+        {
+          ...state.uiOptions,
+          showBookmarks: false === state.uiOptions.showBookmarks
+        } 
+      };
+    });
   }
 })

@@ -3,6 +3,7 @@ import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from 
 import './weather';
 import './toolbar';
 import './menu';
+import './bookmarks';
 import { render as renderNews } from './news-panel';
 
 createComponent('ficus-application', {
@@ -47,6 +48,12 @@ createComponent('ficus-application', {
             <div class="row">
               <div class="col-12" style="text-align:right">
               ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12" style="text-align:right">
+                <ficus-bookmarks bookmarks=${JSON.stringify(this.state.bookmarks)}/>
               </div>
             </div>
           </div>

@@ -206,6 +206,23 @@ app.get(/windfinder/, async (req, res) => {
   });
 });
 
+app.get(/screenshot/, async (req, res) => {
+  return StructuredLog.around(req, res, { prefix: 'screenshot' }, async log => {
+    const url = req.query["url"];
+    const temp = require('temp');
+    
+    const cacheKey = `screnshot-${url}`;
+
+    const originalFile = await cachedFile(cacheKey , async () => {
+      const { get : screenshot} = require('../screenshot');
+      const result = await screenshot({ log }, url, { path: temp.path({ suffix: '.png' }) });
+      return readFile(result.path);
+    });
+
+    returnFile(res, originalFile);
+  });
+});
+
 // [i] https://ahmadawais.com/resize-optimize-images-javascript-node/
 const resize = async (log, opts) => {  
   const { sourceFileBuffer, targetFileName, width } = opts;

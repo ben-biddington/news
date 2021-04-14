@@ -1,7 +1,7 @@
 import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } from 'ficusjs' 
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
 import './weather';
-import './bin';
+import './toolbar';
 import './menu';
 import { render as renderNews } from './news-panel';
 
@@ -18,6 +18,7 @@ createComponent('ficus-application', {
       deletedItems: {
         count: 0
       },
+      bookmarks: [],
       uiOptions: {},
       stats: {},
       progress: []
@@ -39,7 +40,7 @@ createComponent('ficus-application', {
           <div class=${leftColumnClass}>
             <div class="row">
               <div class="col-12" style="text-align:right">
-                <ficus-bin count=${this.state.deletedItems.count} />
+                <ficus-toolbar deleted-count=${this.state.deletedItems.count} bookmark-count=${this.state.bookmarks.length} />
               </div>
             </div>
 
@@ -258,6 +259,11 @@ createComponent('ficus-application', {
 
     return Promise.all([
       this.loadToggles(),
+      window.application.bookmarks.list().then(result => {
+        this.setState(state => {
+          return {...state, bookmarks: result };
+        });
+      }),
       window.application.weather.sevenDays(),
       window.application.lobsters.list().
         then(result => {

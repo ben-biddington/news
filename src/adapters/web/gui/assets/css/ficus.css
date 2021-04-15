@@ -58,6 +58,8 @@ span.lobsters { color: darkred }
 
 #weather { float: right }
 
+.placeholder { opacity: .10; color: #f0f0f0; }
+
 .blocked { background-color:silver; opacity: 30% }
 
 .list-group li {
@@ -67,7 +69,7 @@ span.lobsters { color: darkred }
 .hidden { display: none; }
 
 .visible {
-  animation: subtleFade 3s;
+  animation: subtleFade 2s;
   animation-fill-mode: both;
 } 
 

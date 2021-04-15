@@ -15,18 +15,17 @@ class SocketSync {
 
   connect(application) {
     this._listener.onMessage(async m => {
-        
       const message = JSON.parse(m.data);
 
       console.log(`[socket] data:${m.data}`);
 
       if (message.verb === 'delete') {
         console.log(`[socket] message is a delete, removing item <${message.id}>`);
-
-        // @todo: this causes infinite loop. We just want to remove it from local memory, not delete again.
         await application.lobsters.remove(message.id);
         await application.hackerNews.remove(message.id);
       }
+
+      //application.dispatch();
     });
   }
 }

@@ -4,6 +4,7 @@ import './weather';
 import './toolbar';
 import './menu';
 import './bookmarks';
+import './image';
 import { render as renderNews } from './news-panel';
 
 createComponent('ficus-application', {
@@ -107,7 +108,7 @@ createComponent('ficus-application', {
                   <div class="card">
                     <div class="card-header"><strong><a target="_blank" href=${'https://www.marineweather.co.nz/forecasts/' + name}>${name}</a></strong></div>
                     <div class="card-body" style="text-align:center">
-                      <img width="670" src=${'/marine-weather/' + name} alt="Marine weather"/>
+                      <ficus-img width="670" height="537" src=${'/marine-weather/' + name} alt="Marine weather" disabled="false" />
                     </div>
                   </div>
                 </div>

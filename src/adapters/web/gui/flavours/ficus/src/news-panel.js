@@ -9,6 +9,17 @@ export const render = (news, notifications) => {
   return renderBootstrapList(news, notifications);
 }
 
+const sourceIcon = item => {
+  // https://fsymbols.com/generators/smallcaps/
+  const labels = {
+    hn:       '🅷',
+    lobsters: '🅻',
+    youtube:  '🅨'
+  }
+
+  return labels[item.label];
+}
+
 // [i] https://getbootstrap.com/docs/5.0/examples/grid/
 const renderBootstrapList = (news = [], n) => {
   const { 
@@ -67,7 +78,7 @@ const renderBootstrapList = (news = [], n) => {
                         </svg>
                       </a>
                       <span class=${'source' + ' ' + newsItem.label} title=${newsItem.label + ' article'}>
-                        ${newsItem.label == 'hn' ? '🅷' : '🅻'} <!-- https://fsymbols.com/generators/smallcaps/ -->
+                        ${sourceIcon(newsItem)}
                       </span>
                       <span class="age">${newsItem.ageSince(window.application.now())}</span>
                       <span class="host">

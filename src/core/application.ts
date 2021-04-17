@@ -126,7 +126,36 @@ export class Application {
     }
   }
 
- get bookmarks() {
+  get youtube() {
+    return {
+      list: async () => {
+        let newsItems = await this.news.list(
+          () => this._ports.youtube.list({ channelId: 'UCJquYOG5EL82sKTfH9aMA9Q' }), 
+          this._ports.seive, 
+          this._ports.blockedHosts, 
+          await this.togglesList());
+
+        newsItems = newsItems.map(it => it.labelled('youtube'));
+
+        this._state.youtubeNewsItems.merge(newsItems);
+
+        this._events.emit('youtube-news-items-loaded', { items: newsItems });
+
+        this._stats.lastUpdateAt = new Date();
+
+        return newsItems;
+      },
+      delete: async id => {
+        await this.news.delete(id);
+        this._events.emit('youtube-news-item-deleted', { id });
+      },
+      remove: async id => {
+        await this.news.remove(id);
+      }
+    }
+  }
+
+  get bookmarks() {
     return {
       add: async bookmarkId => {
         const newsItem = this._state.hackerNewsItems.get(bookmarkId) || this._state.lobstersNewsItems.get(bookmarkId);

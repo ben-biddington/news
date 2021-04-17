@@ -77,6 +77,16 @@ export class NewsUseCases {
 
     this.state.lobstersNewsItems.set(lobsters);
 
+    const youtube = this.state.youtubeNewsItems.list();
+
+    youtube.forEach(it => {
+      if (it.id === id) {
+        it.deleted = true;
+      }
+    });
+
+    this.state.youtubeNewsItems.set(youtube);
+
     this.events.emit(
       'news-items-modified', 
       { 
@@ -87,6 +97,7 @@ export class NewsUseCases {
   private async update() {
     this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
     this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
+    this.state.youtubeNewsItems.set (await this.markBlocked(this.state.youtubeNewsItems.list()  , this.blockedHostList));
 
     this.events.emit(
       'news-items-modified', 
@@ -98,7 +109,8 @@ export class NewsUseCases {
   private allNews(): NewsItem[] {
     return [ 
       ...this.state.hackerNewsItems.list(), 
-      ...this.state.lobstersNewsItems.list() 
+      ...this.state.lobstersNewsItems.list(),
+      ...this.state.youtubeNewsItems.list() 
     ];
   }
 

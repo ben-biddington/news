@@ -104,6 +104,8 @@ app.get(/lobsters/, async (req, res) =>
   forwardGet(req, res, req => req.path.replace('/lobsters', 'https://lobste.rs'), { prefix: 'lobsters' }));
 app.get(/hn/, async (req, res) =>
   forwardGet(req, res, req => req.path.replace('/hn', 'https://hnrss.org'), { prefix: 'hn' }));
+app.get(/youtube/, async (req, res) =>
+  forwardGet(req, res, req => req.url.replace('/youtube', 'https://www.youtube.com'), { prefix: 'youtube' }));
 app.get(/rnz/, async (req, res) =>
   forwardGet(req, res, req => req.path.replace('/rnz', 'https://www.rnz.co.nz'), { prefix: 'rnz' }));
 

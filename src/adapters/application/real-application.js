@@ -9,6 +9,7 @@ const { list: rnzNewsList }             = require('../rnz');
 const { del: deleteNews, deletedCount } = require('../news');
 const { MetserviceWeatherQuery }        = require('../dist/adapters/metservice-weather-query');
 const { LocalStorageBlockedHosts }      = require('../dist/adapters/web/local-storage-blocked-hosts');
+const { YoutubeNewsSource }             = require('../dist/adapters/youtube');
 
 const { add: addBookmark, list: listBookmarks, del: deleteBookmark } = require('../bookmarks');
 
@@ -71,13 +72,14 @@ const application = (toggles, settings) => {
     }).
     withDeletedItems({count: () => deletedCount({ internet }, { baseUrl: baseUrl }),}).
     with(new MetserviceWeatherQuery({ get: internet.get })).
-    withBlockedHosts(new LocalStorageBlockedHosts(window));
+    withBlockedHosts(new LocalStorageBlockedHosts(window)).
+    withYoutube(new YoutubeNewsSource({ get: internet.get }, { url: '/youtube' }));
 
   return new Application(applicationPorts, settings);
 }
 
 const { QueryStringToggles } = require('../web/toggling/query-string-toggles');
-const { QueryStringSettings } = require('../web/query-string-settings');
+const { QueryStringSettings } = require('../dist/adapters/web/query-string-settings');
 const { ConsoleLog } = require('../../core/dist/logging/log');
 const { SocketSync } = require('../web/gui/socket-sync');
 const { UIEvents } = require('../web/gui/ui-events');

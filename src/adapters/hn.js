@@ -1,5 +1,5 @@
-const { feed } = require('./rss/feed');
-const { QueryStringSettings } = require('./web/query-string-settings');
+const { feed } = require('./dist/adapters/rss/feed');
+const { QueryStringSettings } = require('./dist/adapters/web/query-string-settings');
 const { DevNullLog } = require('../core/dist/logging/log');
 
 // [i] https://github.com/lobsters/lobsters/blob/master/config/routes.rb

@@ -1,4 +1,4 @@
-const { feed } = require('./rss/feed');
+const { feed } = require('./dist/adapters/rss/feed');
 const { DevNullLog } = require('../core/dist/logging/log');
 
 // [i] https://www.rnz.co.nz/rss/national.xml

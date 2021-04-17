@@ -16,6 +16,7 @@ createComponent('ficus-application', {
     return { 
       lobstersNews: [],
       hackerNews: [],
+      youtube: [],
       weather: [],
       deletedItems: {
         count: 0
@@ -32,7 +33,9 @@ createComponent('ficus-application', {
     const leftColumnClass   = this.state.uiOptions.showMarineWeather ? 'col-sm-7' : 'col-12';
     const rightColumnClass  = this.state.uiOptions.showMarineWeather ? 'col-sm-5' : 'col-0';
 
-    console.log('showBookmarks', this.state.uiOptions.showBookmarks);
+    const newsItems = this.news();
+
+    document.title = `News (${newsItems.length})`;
 
     return html`
       ${this.header()}
@@ -56,7 +59,7 @@ createComponent('ficus-application', {
 
             <div class="row">
               <div class="col-12" style="text-align:right">
-              ${renderNews(this.news(),{ onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
+              ${renderNews(newsItems, { onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})}
               </div>
             </div>
           </div>
@@ -67,6 +70,15 @@ createComponent('ficus-application', {
         </div>
       </div>
     `
+  },
+  news() {
+    const result = this.state.lobstersNews.
+      concat(this.state.hackerNews).
+      concat(this.state.youtube);
+
+    result.sort((a,b) => new Date(a.date) < new Date(b.date));
+
+    return result;
   },
   header() {
     const weatherProps = JSON.stringify(this.state.weather, null, 2); /* Object props must be serialised: https://github.com/ficusjs/ficusjs/blob/master/src/component.js#L182 */
@@ -136,10 +148,18 @@ createComponent('ficus-application', {
     const sites = [
       {
         name: 'wellington',
+        title: 'Wellington'
       },
       {
         name: 'paekakariki_kapiti_coast',
-        title: 'paekākāriki'
+        title: 'Paekākāriki'
+      },
+      {
+        name: 'Bellambi'
+      },
+      {
+        name:'jan-juc',
+        title: 'Jan Juc'
       }
     ];
     return html`
@@ -176,13 +196,6 @@ createComponent('ficus-application', {
 
     return new Array(this.state.progress.length).join('.');
   },
-  news() {
-    const result = this.state.lobstersNews.concat(this.state.hackerNews);
-
-    result.sort((a,b) => new Date(a.date) < new Date(b.date));
-
-    return result;
-  },
   mounted() {
     this.attachCustomEvents();
   },
@@ -212,7 +225,9 @@ createComponent('ficus-application', {
         return {
           ...state, 
           lobstersNews: e.items.filter(item => item.label === 'lobsters'),
-          hackerNews:   e.items.filter(item => item.label === 'hn'), };
+          hackerNews:   e.items.filter(item => item.label === 'hn'), 
+          youtube:      e.items.filter(item => item.label === 'youtube')
+        };
       });
     });
 
@@ -225,6 +240,12 @@ createComponent('ficus-application', {
     window.application.on([ "hacker-news-items-loaded" ], e => {
       this.setState(state => {
         return {...state, hackerNews: e.items };
+      });
+    });
+
+    window.application.on([ "youtube-news-items-loaded" ], e => {
+      this.setState(state => {
+        return {...state, youtube: e.items };
       });
     });
 
@@ -245,6 +266,13 @@ createComponent('ficus-application', {
     );
 
     window.application.on(
+      [ "youtube-news-item-deleted", "youtube-news-item-snoozed" ], 
+      e => {
+        this.setState(state => ({...state, youtube: state.youtube.filter(it => it.id != e.id) }));
+      }
+    );
+
+    window.application.on(
       [ "weather-loaded" ], 
       e => {
         this.setState(state => ({...state, weather: e.weather }));
@@ -252,7 +280,7 @@ createComponent('ficus-application', {
     );
 
     window.application.on(
-      [ "hacker-news-item-deleted", "lobsters-item-deleted" ], 
+      [ "hacker-news-item-deleted", "lobsters-item-deleted", "youtube-news-item-deleted" ], 
       async _ => {
         const deletedCount = await window.application.deletedItems.count();
         this.setState(state => ({...state, deletedItems: { count: deletedCount } } ));
@@ -290,13 +318,19 @@ createComponent('ficus-application', {
           this.setState(state => {
             return {...state, lobstersNews: result.map(it => it.clone(item => item.label = 'lobsters')) };
           });
-        }),
+      }),
       window.application.hackerNews.list().
         then(result => {
           this.setState(state => {
             return {...state, hackerNews: result.map(it => it.clone(item => item.label = 'hn')) };
           });
-        }),
+      }),
+      window.application.youtube.list().
+        then(result => {
+          this.setState(state => {
+            return {...state, youtube: result.map(it => it.clone(item => item.label = 'youtube')) };
+          });
+      }),
       window.application.deletedItems.count().then(count => {
         this.setState(state => {
           return {...state, deletedItems: { count } };

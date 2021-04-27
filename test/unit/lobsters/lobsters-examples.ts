@@ -26,8 +26,14 @@ describe('Deleting lobsters news items', () => {
     lobsters.mustHaveHadDeleteCalled('item-id');
   });
 
-  it('notifies', async () => {
-    const lobsters = new MockLobsters(it => it.listReturns([ new NewsItem('a', 'A'), new NewsItem('b', 'B') ]));
+  it('notifies, omitting blocked items', async () => {
+    const lobsters = new MockLobsters(
+      it => it.listReturns([ 
+        new NewsItem('a', 'A'), 
+        new NewsItem('b', 'B'),
+        new NewsItem('b', 'C (BLOCKED)').withBlockedHost(true), 
+      ])
+    );
 
     const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
 

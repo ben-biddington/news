@@ -5,6 +5,7 @@ import './toolbar';
 import './menu';
 import './bookmarks';
 import './image';
+
 import { render as renderNews } from './news-panel';
 
 createComponent('ficus-application', {
@@ -35,7 +36,7 @@ createComponent('ficus-application', {
 
     const newsItems = this.news();
 
-    document.title = `News (${newsItems.length})`;
+    document.title = newsItems.length > 0 ? `News (${newsItems.length})`: 'News';
 
     return html`
       ${this.header()}

@@ -75,7 +75,7 @@ const application = (toggles, settings) => {
     withBlockedHosts(new LocalStorageBlockedHosts(window)).
     withYoutube(new YoutubeNewsSource({ get: internet.get }, { url: '/youtube' }));
 
-  return new Application(applicationPorts, settings);
+  return new Application(applicationPorts, settings, { allowStats: true });
 }
 
 const { QueryStringToggles } = require('../web/toggling/query-string-toggles');

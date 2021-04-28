@@ -30,7 +30,7 @@ createComponent('ficus-application', {
         showBlocked       : false,
         showBookmarks     : false
       },
-      stats: {},
+      stats: { lastUpdateAt: new Date() },
       progress: []
     }
   },
@@ -54,7 +54,10 @@ createComponent('ficus-application', {
           <div class=${leftColumnClass}>
             <div class="row">
               <div class="col-12" style="text-align:right">
-                <ficus-toolbar deleted-count=${this.state.deletedItems.count} bookmark-count=${this.state.bookmarks.length} />
+                <ficus-toolbar 
+                  deleted-count=${this.state.deletedItems.count} 
+                  bookmark-count=${this.state.bookmarks.length} 
+                  last-updated=${this.state.stats.lastUpdateAt} />
               </div>
             </div>
 
@@ -207,8 +210,8 @@ createComponent('ficus-application', {
     this.attachCustomEvents();
   },
   async created () {
-    window.application.on([ "stats-xxx" ], e => {
-      console.log('stats', JSON.stringify(e, null, 2));
+    window.application.on([ "stats" ], e => {
+      console.log('[stats]', JSON.stringify(e, null, 2));
       this.setState(state => {
         return {...state, stats: e };
       });

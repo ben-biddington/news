@@ -6,7 +6,7 @@ import {
 
 describe('Saving a toggle value', async () => {
   it("notifies with toggle saved", async () => {
-    const application = new Application(Ports.blank(), {}, null);
+    const application = new Application(Ports.blank());
 
     const notifications = new MockListener(application);
 
@@ -20,7 +20,7 @@ describe('Saving a toggle value', async () => {
   });
 
   it("[special] can update marine weather", async () => {
-    const application = new Application(Ports.blank(), {}, null);
+    const application = new Application(Ports.blank());
 
     await application.toggles.save({ name: 'show-marine-weather', isOn: true });
 

@@ -1,5 +1,6 @@
 import { createComponent /* https://docs.ficusjs.org/docs/installation/ */ } from 'ficusjs' 
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
+import { format, parse } from 'date-fns';
 
 createComponent('ficus-toolbar', {
   renderer,
@@ -15,6 +16,12 @@ createComponent('ficus-toolbar', {
       default: 0,
       required: false,
       observed: true 
+    },
+    lastUpdated: {
+      type: String,
+      default: new Date().toString(),
+      required: false,
+      observed: true 
     }
   },
   render() {
@@ -22,6 +29,11 @@ createComponent('ficus-toolbar', {
       <div class="toolbar row" style="text-align: right">
         <div class="col-12">
           <ul class="list-group list-group-horizontal">
+            <li class="list-group-item">
+              <div style="float:right; display: inline-block;">
+                Last updated at: <span>${format(new Date(this.props.lastUpdated), 'HH:mm')}</span>
+              </div>
+            </li>
             <li class="list-group-item">
               <div style="float:right; display: inline-block;">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

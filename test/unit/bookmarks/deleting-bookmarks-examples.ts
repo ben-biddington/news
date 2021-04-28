@@ -10,7 +10,7 @@ describe('Bookmarking news items', async () => {
 
         const ports = mockPorts().withBookmarks(bookmarks);
 
-        const application = new Application(ports, new MockToggles(), null);
+        const application = new Application(ports);
 
         notifications = new MockListener(application);
 

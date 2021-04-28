@@ -12,6 +12,10 @@ export interface Statistics {
   lastUpdateAt?: Date
 }
 
+export interface Options {
+  allowStats: boolean
+}
+
 export class Application {
   private _ports: Ports;
   private _events: CustomEventEmitter;
@@ -25,7 +29,7 @@ export class Application {
   private _statsTask: NodeJS.Timeout
   private _stats: Statistics;
 
-  constructor(ports: Ports, settings) {
+  constructor(ports: Ports, settings: any = null, opts: Options = { allowStats: false }) {
     this._ports = ports;
     this._events = new CustomEventEmitter(ports.log);
     this._log = ports.log;
@@ -42,10 +46,12 @@ export class Application {
 
     this._toggleSource = ports.toggles;
 
-    // [i] https://stackoverflow.com/questions/50372866/mocha-not-exiting-after-test
-    // this._statsTask = setInterval(async () => {
-    //   this._events.emit('stats', this._stats);
-    // }, 5*1000);
+    if (opts.allowStats === true) {
+      //[i] https://stackoverflow.com/questions/50372866/mocha-not-exiting-after-test
+      this._statsTask = setInterval(async () => {
+        this._events.emit('stats', this._stats);
+      }, 5*1000);
+    }
   }
 
   pollEvery(milliseconds) {

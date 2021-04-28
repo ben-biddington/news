@@ -34,7 +34,7 @@ export class Application {
     this._events = new CustomEventEmitter(ports.log);
     this._log = ports.log;
     this._settings = settings;
-    this._state = new State();
+    this._state = new State(this._events);
     this._stats = {};
 
     this._toggles = {  
@@ -79,17 +79,11 @@ export class Application {
           this._ports.blockedHosts, 
           await this.togglesList());
 
-        newsItems = newsItems.map(it => it.labelled('lobsters'));
-
-        this._state.lobstersNewsItems.missing(newsItems).forEach(item => item.new = true);
-
-        this._state.lobstersNewsItems.set(newsItems);
-
-        this._events.emit('lobsters-items-loaded', { items: newsItems });
+        this._state.lobsters = newsItems;
 
         this._stats.lastUpdateAt = new Date();
 
-        return newsItems;
+        return this._state.lobsters;
       },
       delete: async id => {
         await this.news.delete(id);

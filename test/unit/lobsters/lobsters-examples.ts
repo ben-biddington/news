@@ -2,6 +2,7 @@ import { NewsItem } from '../../../src/core/news-item';
 import {
   expect, Application, Ports,
   mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters } from '../application-unit-test';
+import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
 
 describe('Viewing lobsters news', async () => {
   it('can list news', async () => {
@@ -31,15 +32,17 @@ describe('Deleting lobsters news items', () => {
       it => it.listReturns([ 
         new NewsItem('a', 'A'), 
         new NewsItem('b', 'B'),
-        new NewsItem('b', 'C (BLOCKED)').withBlockedHost(true), 
-      ])
-    );
+        new NewsItem('b', 'C (BLOCKED)', 'http://bbc.co.uk'), 
+      ]));
 
-    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
+    const blockedHosts  = new MockBlockedHosts();
+
+    const application = new Application(new Ports(lobsters, log, new MockSeive()).withBlockedHosts(blockedHosts), new MockToggles());
 
     const notifications = new MockListener(application);
 
     await application.lobsters.list();
+    await application.news.block('bbc.co.uk');
     await application.lobsters.delete('a');
 
     notifications.mustHave({

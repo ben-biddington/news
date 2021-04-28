@@ -11,7 +11,11 @@ describe('Blocking a host', async () => {
     blockedHosts  = new MockBlockedHosts();
     ports   = Ports.blank().
       withBlockedHosts(blockedHosts).
-      withLobsters(new MockLobsters(it => it.listReturns([ new NewsItem('id', 'title', 'https://bbc.co.uk/example')])));
+      withLobsters(new MockLobsters(it => it.listReturns([ 
+        new NewsItem('id'   , 'title'   , 'https://bbc.co.uk/example'),
+        new NewsItem('id-1' , 'title-1' , 'https://rnz.co.nz/news'),
+        new NewsItem('id-2' , 'title-2' , 'https://rnz.co.nz/news').thatIsDeleted()
+      ])));
     application   = new Application(ports, new MockSettings());
     listener      = new MockListener(application);
     
@@ -19,17 +23,26 @@ describe('Blocking a host', async () => {
     await application.news.block('bbc.co.uk');
   });
   
-  it('it notifies with <news-items-modified>', async () => {
+  it('it notifies with <news-items-modified>, filtering out deleted items', async () => {
     listener.mustHave({
       type: "news-items-modified",
       items: [
         {
-          "id":"id",
-          "title":"title",
-          "url":"https://bbc.co.uk/example",
-          "deleted":false,
-          "new":true,
-          "hostIsBlocked":true,
+          "id": "id",
+          "title": "title",
+          "url": "https://bbc.co.uk/example",
+          "deleted": false,
+          "new": true,
+          "hostIsBlocked": true,
+          "label": "lobsters"
+        },
+        {
+          "id": "id-1",
+          "title": "title-1",
+          "url": "https://rnz.co.nz/news",
+          "deleted": false,
+          "new": true,
+          "hostIsBlocked": false,
           "label": "lobsters"
         }
       ]
@@ -38,40 +51,6 @@ describe('Blocking a host', async () => {
 
   it('adds it to the blocked hosts list', () => {
     blockedHosts.mustHave('bbc.co.uk');
-  });
-
-  it('it filters out deleted items from <news-items-modified> notification', async () => {
-    ports = ports.
-      withLobsters(new MockLobsters(it => it.listReturns(
-        [ 
-          new NewsItem('a', 'A', 'https://bbc.co.uk/example'),
-          new NewsItem('b', 'B', 'https://b').thatIsDeleted(),
-        ])));
-    
-    const application = new Application(ports, new MockSettings());
-
-    listener.use(application);
-
-    await application.lobsters.list();
-    
-    listener.clear();
-
-    await application.news.block('bbc.co.uk');
-    
-    listener.mustHave({
-      type: "news-items-modified",
-      items: [
-        {
-          "id": "a",
-          "title": "A",
-          "url": "https://bbc.co.uk/example",
-          "deleted": false,
-          "new": true,
-          "hostIsBlocked": true,
-          "label": "lobsters"
-        }
-      ]  
-    });
   });
 });
 

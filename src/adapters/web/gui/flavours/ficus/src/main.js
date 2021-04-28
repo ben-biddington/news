@@ -26,6 +26,7 @@ createComponent('ficus-application', {
       uiOptions: {
         showDeleted       : false,
         showMarineWeather : false,
+        showWindFinder    : false,
         showBlocked       : false,
         showBookmarks     : false
       },
@@ -148,7 +149,7 @@ createComponent('ficus-application', {
     `;
   },
   windfinder() {
-    if (false === this.state.uiOptions.showMarineWeather)
+    if (false === this.state.uiOptions.showWindFinder)
       return html`<div class="row"></div>`;
 
     const sites = [
@@ -368,6 +369,7 @@ createComponent('ficus-application', {
         uiOptions: {
           showDeleted       : toggles.showDeleted.isOn,
           showMarineWeather : toggles.showMarineWeather.isOn,
+          showWindFinder    : toggles.showwindFinder.isOn,
           showBlocked       : toggles.showBlocked.isOn,
           showBookmarks     : await window.application.toggles.get('show-bookmarks'),
         } 

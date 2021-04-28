@@ -23,12 +23,12 @@ export class NewsUseCases {
     
     this.events.emit('news-host-blocked', { host });
     
-    return this.update();
+    return this.update(this.filterDeleted);
   }
 
   async unblock(host: string): Promise<void> {
     await this.blockedHostList.remove(host);
-    return this.update();
+    return this.update(this.filterDeleted);
   }
 
   async list(list, seive, blockedHosts: BlockedHosts, toggles: Toggles) {
@@ -90,11 +90,11 @@ export class NewsUseCases {
     this.events.emit(
       'news-items-modified', 
       { 
-        items: this.FilterDeleted(this.allNews())
+        items: this.filter(this.allNews(), [ this.filterDeleted, this.filterBlocked ])
       });
   }
   
-  private async update() {
+  private async update(...filters: Array<(input: NewsItem[]) => NewsItem[]>) {
     this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
     this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
     this.state.youtubeNewsItems.set (await this.markBlocked(this.state.youtubeNewsItems.list()  , this.blockedHostList));
@@ -102,7 +102,7 @@ export class NewsUseCases {
     this.events.emit(
       'news-items-modified', 
       { 
-        items: this.FilterDeleted(this.allNews())
+        items: this.filter(this.allNews(), filters) /* this.filterDeleted(this.allNews()) */
       });
   }
 
@@ -114,9 +114,18 @@ export class NewsUseCases {
     ];
   }
 
-  private FilterDeleted(items: NewsItem[]) {
-    return items.filter(it => false === it.deleted);
+  private filter(items: NewsItem[], filters: Array<(input: NewsItem[]) => NewsItem[]>) {
+    let result: NewsItem[] = items;
+
+    for (let i = 0; i < filters.length; i++) {
+      result = filters[i](result);
+    }
+
+    return result;
   }
+
+  private filterDeleted(items: NewsItem[]) { return items.filter(it => false === it.deleted); }
+  private filterBlocked(items: NewsItem[]) { return items.filter(it => false === it.hostIsBlocked); }
 
   private async markBlocked(list: NewsItem[], blockedHosts: BlockedHosts): Promise<NewsItem[]> {
     return Promise.all(list.map(

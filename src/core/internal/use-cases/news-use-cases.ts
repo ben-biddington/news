@@ -87,11 +87,7 @@ export class NewsUseCases {
 
     this.state.youtubeNewsItems.set(youtube);
 
-    this.events.emit(
-      'news-items-modified', 
-      { 
-        items: this.filter(this.allNews(), [ this.filterDeleted, this.filterBlocked ])
-      });
+    this.onModified(this.filter(this.allNews(), [ this.filterDeleted, this.filterBlocked ]));
   }
   
   private async update(...filters: Array<(input: NewsItem[]) => NewsItem[]>) {
@@ -99,10 +95,14 @@ export class NewsUseCases {
     this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
     this.state.youtubeNewsItems.set (await this.markBlocked(this.state.youtubeNewsItems.list()  , this.blockedHostList));
 
+    this.onModified(this.filter(this.allNews(), filters));
+  }
+
+  private onModified(items: NewsItem[]): void {
     this.events.emit(
       'news-items-modified', 
       { 
-        items: this.filter(this.allNews(), filters) /* this.filterDeleted(this.allNews()) */
+        items
       });
   }
 

@@ -83,7 +83,7 @@ export class Application {
 
         this._state.lobstersNewsItems.missing(newsItems).forEach(item => item.new = true);
 
-        this._state.lobstersNewsItems.merge(newsItems);
+        this._state.lobstersNewsItems.set(newsItems);
 
         this._events.emit('lobsters-items-loaded', { items: newsItems });
 
@@ -114,7 +114,7 @@ export class Application {
 
         newsItems = newsItems.map(it => it.labelled('hn'));
 
-        this._state.hackerNewsItems.merge(newsItems);
+        this._state.hackerNewsItems.set(newsItems);
 
         this._events.emit('hacker-news-items-loaded', { items: newsItems });
 
@@ -143,7 +143,7 @@ export class Application {
 
         newsItems = newsItems.map(it => it.labelled('youtube'));
 
-        this._state.youtubeNewsItems.merge(newsItems);
+        this._state.youtubeNewsItems.set(newsItems);
 
         this._events.emit('youtube-news-items-loaded', { items: newsItems });
 

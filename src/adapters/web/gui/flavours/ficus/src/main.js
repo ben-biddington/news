@@ -23,7 +23,12 @@ createComponent('ficus-application', {
         count: 0
       },
       bookmarks: [],
-      uiOptions: {},
+      uiOptions: {
+        showDeleted       : false,
+        showMarineWeather : false,
+        showBlocked       : false,
+        showBookmarks     : false
+      },
       stats: {},
       progress: []
     }

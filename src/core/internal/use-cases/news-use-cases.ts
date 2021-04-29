@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { BlockedHosts } from '../../blocked-hosts';
-import { State } from '../state';
+import { Store } from '../store';
 import { Ports } from '../../ports';
 import { Toggles } from "../../toggles";
 import { NewsItem } from '../../news-item';
@@ -9,11 +9,11 @@ export class NewsUseCases {
   private ports: Ports;
   private events: EventEmitter;
   private blockedHostList: BlockedHosts;
-  private state: State;
+  private store: Store;
 
-  constructor(ports: Ports, state: State, blockedHostList: BlockedHosts, events: EventEmitter) {
+  constructor(ports: Ports, store: Store, blockedHostList: BlockedHosts, events: EventEmitter) {
     this.ports            = ports;
-    this.state            = state;
+    this.store            = store;
     this.events           = events;
     this.blockedHostList  = blockedHostList;
   }
@@ -57,43 +57,15 @@ export class NewsUseCases {
   }
 
   async remove(id: string) {
-    const hn = this.state.hackerNewsItems.list();
-
-    hn.forEach(it => {
-      if (it.id === id) {
-        it.deleted = true;
-      }
-    });
-
-    this.state.hackerNewsItems.set(hn);
-
-    const lobsters = this.state.lobstersNewsItems.list();
-
-    lobsters.forEach(it => {
-      if (it.id === id) {
-        it.deleted = true;
-      }
-    });
-
-    this.state.lobstersNewsItems.set(lobsters);
-
-    const youtube = this.state.youtubeNewsItems.list();
-
-    youtube.forEach(it => {
-      if (it.id === id) {
-        it.deleted = true;
-      }
-    });
-
-    this.state.youtubeNewsItems.set(youtube);
-
+    this.store.remove(id);
     this.onModified(this.filter(this.allNews(), this.filterDeleted, this.filterBlocked));
   }
   
   private async update(...filters: Array<(input: NewsItem[]) => NewsItem[]>) {
-    this.state.lobstersNewsItems.set(await this.markBlocked(this.state.lobstersNewsItems.list(), this.blockedHostList));
-    this.state.hackerNewsItems.set  (await this.markBlocked(this.state.hackerNewsItems.list()  , this.blockedHostList));
-    this.state.youtubeNewsItems.set (await this.markBlocked(this.state.youtubeNewsItems.list()  , this.blockedHostList));
+
+    this.store.hackerNews = await this.markBlocked(this.store.hackerNews, this.blockedHostList);
+    this.store.lobsters   = await this.markBlocked(this.store.lobsters  , this.blockedHostList);
+    this.store.youtube    = await this.markBlocked(this.store.youtube   , this.blockedHostList);
 
     this.onModified(this.filter(this.allNews(), ...filters));
   }
@@ -107,11 +79,7 @@ export class NewsUseCases {
   }
 
   private allNews(): NewsItem[] {
-    return [ 
-      ...this.state.hackerNewsItems.list(), 
-      ...this.state.lobstersNewsItems.list(),
-      ...this.state.youtubeNewsItems.list() 
-    ];
+    return this.store.list();
   }
 
   private filter(items: NewsItem[], ...filters: Array<(input: NewsItem[]) => NewsItem[]>) {

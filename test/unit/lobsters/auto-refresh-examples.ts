@@ -22,14 +22,7 @@ describe('Automatically refreshing lobsters news on a schedule', async () => {
 
     application.stopPolling();
 
-    notifications.mustHaveAtLeast({
-      type: 'lobsters-items-loaded',
-      items: [
-        new NewsItem('id-1', 'Title 1', 'http://xyz').thatIsNew().labelled('lobsters')
-      ]
-    },
-      2
-    );
+    notifications.mustHaveAtLeast({ type: 'lobsters-items-loaded' }, 2);
   });
 
   it('show that it seived the results, too!');

@@ -1,6 +1,6 @@
 import {
   expect, Application, NewsItem, Ports,
-  mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters
+  mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters, MockClock
 } from '../application-unit-test';
 
 import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
@@ -28,6 +28,33 @@ describe('Listing lobsters news', async () => {
       new NewsItem('id-1', 'Title 1', 'http://abc').labelled('lobsters'),
       new NewsItem('id-2', 'Title 2', 'http://abc/def').labelled('lobsters').thatIsNew(),
     ]);
+  });
+
+  it('notifies with <stats>', async () => {
+    const lobsters  = new MockLobsters();
+    const clock     = new MockClock();
+    const ports     = new Ports(lobsters, log, new MockSeive()).withClock(clock);
+
+    lobsters.listReturns([
+      new NewsItem('id-1', 'Title 1', 'http://xyz')
+    ]);
+
+    const now = new Date('01-Apr-2021');
+
+    clock.nowReturns(now);
+
+    const application = new Application(ports, new MockToggles());
+
+    const listener: MockListener = new MockListener(application);
+
+    await application.lobsters.list();
+
+    listener.mustHave(
+      { 
+        type: "stats",
+        lastUpdateAt: "2021-03-31T11:00:00.000Z"
+      }
+    );
   });
 
   it('calling multiple times does not add duplicates', async () => {

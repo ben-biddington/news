@@ -20,6 +20,8 @@ const { MockSettings } = require('../support/mock-settings');
 
 const { MockBookMarks } = require('../support/mock-bookmarks');
 
+const { MockClock } = require('../support/mock-clock');
+
 const { log } = require('../support/mock-log');
 
 const { delay } = require('../integration/support/support');
@@ -36,5 +38,6 @@ module.exports.MockToggles = MockToggles;
 module.exports.MockDeletedItems = MockDeletedItems;
 module.exports.MockSettings = MockSettings;
 module.exports.MockBookMarks = MockBookMarks;
+module.exports.MockClock = MockClock;
 module.exports.mockLog = log;
 module.exports.delay = delay;

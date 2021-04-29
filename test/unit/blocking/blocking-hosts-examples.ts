@@ -32,7 +32,7 @@ describe('Blocking a host', async () => {
           "title": "title",
           "url": "https://bbc.co.uk/example",
           "deleted": false,
-          "new": true,
+          "new": false,
           "hostIsBlocked": true,
           "label": "lobsters"
         },
@@ -41,7 +41,7 @@ describe('Blocking a host', async () => {
           "title": "title-1",
           "url": "https://rnz.co.nz/news",
           "deleted": false,
-          "new": true,
+          "new": false,
           "hostIsBlocked": false,
           "label": "lobsters"
         }
@@ -100,7 +100,7 @@ describe('Unblocking a host', async () => {
           "title": "title",
           "url": "https://bbc.co.uk/example",
           "deleted": false,
-          "new": true,
+          "new": false,
           "hostIsBlocked": false,
           "label": "lobsters"
         }

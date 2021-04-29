@@ -6,6 +6,16 @@ import { DevNullSeive } from './dev-null-seive';
 import { DevNullBlockedHosts } from './dev-null-blocked-hosts';
 import { NewsSource } from './news-source';
 
+export interface Clock {
+  now: () => Date;
+}
+
+export class SystemClock implements Clock {
+  now(): Date {
+    return new Date();
+  }
+}
+
 export class Ports extends Cloneable {
   lobsters: any;
   log: any;
@@ -18,6 +28,7 @@ export class Ports extends Cloneable {
   weather: WeatherQuery;
   blockedHosts: BlockedHosts = new DevNullBlockedHosts();
   youtube: NewsSource
+  clock: Clock = new SystemClock();
 
   constructor(lobsters, log, seive, hackerNews, rnzNews) {
     super();
@@ -43,4 +54,5 @@ export class Ports extends Cloneable {
   withBlockedHosts(blockedHosts: BlockedHosts) { return this.clone(it => it.blockedHosts = blockedHosts); }
   withSeive(seive) { return this.clone(it => it.seive = seive); }
   withYoutube(youtube: NewsSource) { return this.clone(it => it.youtube = youtube); }
+  withClock(clock: Clock) { return this.clone(it => it.clock = clock); }
 }

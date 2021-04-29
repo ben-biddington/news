@@ -1,4 +1,4 @@
-import { State }          from './internal/state';
+import { Store }          from './internal/store';
 import { EventEmitter }   from 'events';
 import { Ports }          from './ports';
 import { Bookmark }       from './bookmark';
@@ -21,7 +21,7 @@ export class Application {
   private _events: CustomEventEmitter;
   private _log: any;
   private _settings: any;
-  private _state: State;
+  private _store: Store;
   private _toggles: Toggles;
   private _togglesLoaded: boolean = false;
   private _toggleSource: ToggleSource;
@@ -34,7 +34,7 @@ export class Application {
     this._events = new CustomEventEmitter(ports.log);
     this._log = ports.log;
     this._settings = settings;
-    this._state = new State(this._events);
+    this._store = new Store(this._events, ports.clock);
     this._stats = {};
 
     this._toggles = {  
@@ -52,6 +52,11 @@ export class Application {
         this._events.emit('stats', this._stats);
       }, 5*1000);
     }
+    
+    this._store.subscribe(state => {
+      this._stats.lastUpdateAt = state.lastUpdatedDate;
+      this._events.emit('stats', this._stats);
+    });
   }
 
   pollEvery(milliseconds) {
@@ -79,11 +84,9 @@ export class Application {
           this._ports.blockedHosts, 
           await this.togglesList());
 
-        this._state.lobsters = newsItems;
+        this._store.lobsters = newsItems;
 
-        this._stats.lastUpdateAt = new Date();
-
-        return this._state.lobsters;
+        return this._store.lobsters;
       },
       delete: async id => {
         await this.news.delete(id);
@@ -99,22 +102,16 @@ export class Application {
     }
   }
 
-  get news(): NewsUseCases { return new NewsUseCases(this._ports, this._state, this._ports.blockedHosts, this._events); }
+  get news(): NewsUseCases { return new NewsUseCases(this._ports, this._store, this._ports.blockedHosts, this._events); }
 
   get hackerNews() {
     return {
       list: async () => {
         let newsItems = await this.news.list(() => this._ports.hackerNews.list(), this._ports.seive, this._ports.blockedHosts, await this.togglesList());
 
-        newsItems = newsItems.map(it => it.labelled('hn'));
+        this._store.hackerNews = newsItems;
 
-        this._state.hackerNewsItems.set(newsItems);
-
-        this._events.emit('hacker-news-items-loaded', { items: newsItems });
-
-        this._stats.lastUpdateAt = new Date();
-
-        return newsItems;
+        return this._store.hackerNews;
       },
       delete: async id => {
         await this.news.delete(id);
@@ -135,15 +132,7 @@ export class Application {
           this._ports.blockedHosts, 
           await this.togglesList());
 
-        newsItems = newsItems.map(it => it.labelled('youtube'));
-
-        this._state.youtubeNewsItems.set(newsItems);
-
-        this._events.emit('youtube-news-items-loaded', { items: newsItems });
-
-        this._stats.lastUpdateAt = new Date();
-
-        return newsItems;
+        this._store.youtube = newsItems;
       },
       delete: async id => {
         await this.news.delete(id);
@@ -158,7 +147,7 @@ export class Application {
   get bookmarks() {
     return {
       add: async bookmarkId => {
-        const newsItem = this._state.hackerNewsItems.get(bookmarkId) || this._state.lobstersNewsItems.get(bookmarkId);
+        const newsItem = this._store.find(bookmarkId);
 
         const bookmark = new Bookmark(newsItem.id, newsItem.title, newsItem.url, '');
 

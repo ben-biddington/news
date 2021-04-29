@@ -57,7 +57,7 @@ describe('Deleting lobsters news items', () => {
           "id": "b",
           "title": "B",
           "deleted": false,
-          "new": true,
+          "new": false,
           "hostIsBlocked": false,
           "label": "lobsters"
         }
@@ -104,3 +104,34 @@ describe('Snoozing lobsters news items', () => {
     });
   });
 })
+
+describe('Removing lobsters news items', () => {
+  it('notifies with change and the item has been omitted', async () => {
+    const lobsters = new MockLobsters(
+      it => it.listReturns([ 
+        new NewsItem('item-a', 'A'), 
+        new NewsItem('item-b', 'B')
+      ]));
+
+    const application = new Application(Ports.blank().withLobsters(lobsters));
+
+    const notifications = new MockListener(application);
+
+    await application.lobsters.list();
+    await application.lobsters.remove('item-a');
+
+    notifications.mustHave({
+      type: "news-items-modified",
+      items: [
+        {
+          "id": "item-b",
+          "title": "B",
+          "deleted": false,
+          "new": true,
+          "hostIsBlocked": false,
+          "label": "lobsters"
+        }
+      ]
+    });
+  });
+});

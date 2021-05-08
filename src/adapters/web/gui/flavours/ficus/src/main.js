@@ -5,8 +5,10 @@ import './toolbar';
 import './menu';
 import './bookmarks';
 import './image';
+import * as Plot from "@observablehq/plot";
 
 import { render as renderNews } from './news-panel';
+import { athletes } from './athletes';
 
 createComponent('ficus-application', {
   renderer,
@@ -80,6 +82,17 @@ createComponent('ficus-application', {
         </div>
       </div>
     `
+  },
+  plot() {
+    // https://github.com/observablehq/plot
+    // https://observablehq.com/@observablehq/plot
+    const svg = Plot.dot(athletes(), { width: 300, height: 300, x: "weight", y: "height", stroke: "sex"}).plot();
+
+    svg.setAttribute('width', 300);
+    svg.setAttribute('height', 300);
+    svg.setAttribute('viewbox', '0 0 300 300');
+    
+    return svg;
   },
   news() {
     const result = this.state.lobstersNews.

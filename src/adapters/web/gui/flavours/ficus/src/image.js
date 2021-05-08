@@ -36,7 +36,7 @@ createComponent('ficus-img', {
       this.setState(state => ({...state, loading: true }));
 
       const img = document.createElement("img");
-      
+
       img.onload = () => {
         this.setState(state => {
           return {...state, loaded: true };

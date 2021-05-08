@@ -10,7 +10,7 @@ class Store {
   private reduxStore: ReduxStore;
 
   constructor() {
-    this.reduxStore = createStore<State, any, any, any>(this.items, { items: [] });
+    this.reduxStore = createStore<State, any, any, any>(this.reducer, { items: [] });
   }
 
   add(item: string) {
@@ -21,7 +21,7 @@ class Store {
     this.reduxStore.subscribe(() => listener(this.reduxStore.getState()))
   }
 
-  private items(state: State, action) {
+  private reducer(state: State, action) {
     switch (action.type) {
       case 'ADD':
         return { items: [ ...state.items, action.text ] }

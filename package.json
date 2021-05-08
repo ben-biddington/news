@@ -54,6 +54,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@observablehq/plot": "^0.1.0",
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.1.0",
     "d3": "^5.16.0",

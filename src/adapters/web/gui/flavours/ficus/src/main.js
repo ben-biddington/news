@@ -336,24 +336,9 @@ createComponent('ficus-application', {
         });
       }),
       window.application.weather.sevenDays(),
-      window.application.lobsters.list().
-        then(result => {
-          this.setState(state => {
-            return {...state, lobstersNews: result.map(it => it.clone(item => item.label = 'lobsters')) };
-          });
-      }),
-      window.application.hackerNews.list().
-        then(result => {
-          this.setState(state => {
-            return {...state, hackerNews: result.map(it => it.clone(item => item.label = 'hn')) };
-          });
-      }),
-      window.application.youtube.list().
-        then(result => {
-          this.setState(state => {
-            return {...state, youtube: result.map(it => it.clone(item => item.label = 'youtube')) };
-          });
-      }),
+      window.application.lobsters.list(),
+      window.application.hackerNews.list(),
+      window.application.youtube.list(),
       window.application.deletedItems.count().then(count => {
         this.setState(state => {
           return {...state, deletedItems: { count } };

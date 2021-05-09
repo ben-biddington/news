@@ -30,7 +30,7 @@ describe('Listing lobsters news', async () => {
     ]);
   });
 
-  it('notifies with <stats>', async () => {
+  it('notifies with <stats> and <lobsters-items-loaded>', async () => {
     const lobsters  = new MockLobsters();
     const clock     = new MockClock();
     const ports     = new Ports(lobsters, log, new MockSeive()).withClock(clock);
@@ -53,6 +53,23 @@ describe('Listing lobsters news', async () => {
       { 
         type: "stats",
         lastUpdateAt: "2021-03-31T11:00:00.000Z"
+      }
+    );
+
+    listener.mustHave(
+      {
+        "type": "lobsters-items-loaded",
+        "items": [
+          {
+            "id": "id-1",
+            "title": "Title 1",
+            "url": "http://xyz",
+            "deleted": false,
+            "new": true,
+            "hostIsBlocked": false,
+            "label": "lobsters"
+          }
+        ]
       }
     );
   });

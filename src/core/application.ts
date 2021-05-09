@@ -126,13 +126,15 @@ export class Application {
   get youtube() {
     return {
       list: async () => {
-        let newsItems = await this.news.list(
+        const newsItems = await this.news.list(
           () => this._ports.youtube.list({ channelId: 'UCJquYOG5EL82sKTfH9aMA9Q' }), 
           this._ports.seive, 
           this._ports.blockedHosts, 
           await this.togglesList());
 
         this._store.youtube = newsItems;
+
+        return newsItems;
       },
       delete: async id => {
         await this.news.delete(id);

@@ -1,4 +1,4 @@
-import {expect, Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles } from '../application-unit-test';
+import { expect, Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles } from '../application-unit-test';
 
 describe('Viewing hacker news', async () => {
   it('can list news', async () => {
@@ -7,10 +7,36 @@ describe('Viewing hacker news', async () => {
     const application = new Application(
       Ports.blank().withHackerNews(hackerNews),
       new MockToggles());
+    
+    const listener: MockListener = new MockListener(application);
 
     await application.hackerNews.list();
 
     hackerNews.mustHaveHadListCalled();
+
+    listener.mustHave(
+      {
+        "type": "hacker-news-items-loaded",
+        "items": [
+          {
+            "id": "",
+            "title": "One",
+            "deleted": false,
+            "new": true,
+            "hostIsBlocked": false,
+            "label": "hn"
+          },
+          {
+            "id": "",
+            "title": "Two",
+            "deleted": false,
+            "new": true,
+            "hostIsBlocked": false,
+            "label": "hn"
+          }
+        ]
+      }
+    );
   });
 });
 

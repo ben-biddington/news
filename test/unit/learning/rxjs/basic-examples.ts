@@ -26,7 +26,7 @@ class Store {
     this.observableItems = new BehaviorSubject<string[]>(this.items);
     this.subject = new BehaviorSubject<State>(this.state);
     this.observable = this.subject.
-      pipe(map((state: State) => { return { items: this.state.items.filter(it => it) } }));
+      pipe(map((state: State) => { return { items: state.items.filter(it => it) } }));
 
     if (throttle) {
       this.observable = this.observable.pipe(throttleTime(100));

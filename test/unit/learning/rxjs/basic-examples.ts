@@ -1,28 +1,15 @@
 import { expect } from '../../application-unit-test';
-
-import { BehaviorSubject, pipe, Observable, from } from 'rxjs';
-import { map, throttleTime } from 'rxjs/operators';
-const delay = ms => new Promise(res => setTimeout(res, ms));
-const until = async (condition: () => boolean) => {
-  while(false == condition()) {
-    await delay(500);
-  }
-};
-
-const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step));
-
-const random = (min, max) => {
-  return Math.floor(
-    Math.random() * (max - min) + min
-  )
-}
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, throttleTime, debounceTime } from 'rxjs/operators';
+import { delay, until, range, random } from '../../../support';
 
 type State = {
   items: string []
 }
 
 type Options = {
-  throttle: boolean
+  throttle?: boolean;
+  debounce?: boolean;
 }
 
 class Store {
@@ -32,8 +19,8 @@ class Store {
   private observable: Observable<State>;
   private observableItems: Observable<string[]>;
 
-  constructor(opts: Options = { throttle: false }) {
-    const { throttle = false } = opts;
+  constructor(opts: Options = { throttle: false, debounce: false }) {
+    const { debounce, throttle } = opts;
 
     this.state = { items: [] };
     this.observableItems = new BehaviorSubject<string[]>(this.items);
@@ -42,7 +29,11 @@ class Store {
       pipe(map((state: State) => { return { items: this.state.items.filter(it => it) } }));
 
     if (throttle) {
-      this.observable = this.observable.pipe(throttleTime(100))
+      this.observable = this.observable.pipe(throttleTime(100));
+    }
+
+    if (debounce) {
+      this.observable = this.observable.pipe(debounceTime(200));
     }
   }
 
@@ -110,18 +101,33 @@ describe('[rxjs] Subscribing to changes', async () => {
 
     store.subscribe(state => items = state.items);
 
-    const x = range(1, count, 1);
+    await Promise.all(range(1, count, 1).map((i) => {
+      return delay(random(50, 200)).then(() => store.add(`item-${i}`));
+    }));
 
-    const promises = x.map((i) => {
-      return delay(random(100, 250)).then(() => {
-        store.add(`item-${i}`);
-      }).catch(e => { throw e; });
-    });
-
-    await Promise.all([promises]);
-
+    // [i] throttle *ignores* some requests
     expect(items.length).to.be.lessThan(count);
   });
 
-  // debounce drops duplicates
+   // "It's like delay, but passes only the most recent notification from each burst of emissions." -- https://rxjs.dev/api/operators/debounceTime
+   it("allows debounce which is more like rate limiting", async () => {
+    const count = 10;
+    
+    const store = new Store({ debounce: true });
+
+    let items = [];
+    let notificationCount = 0;
+    
+    store.subscribe(state => { notificationCount ++; items = state.items; });
+
+    await Promise.all(range(1, count, 1).map((i) => {
+      return delay(random(50, 200)).then(() => store.add(`item-${i}`));
+    }));
+
+    await until(() => items.length == count);
+
+    // [i] debounce does not drop any
+    expect(items.length).to.eql(count);
+    expect(notificationCount).to.be.lessThan(count);
+  });
 });

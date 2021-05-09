@@ -33,7 +33,7 @@ class Store {
 
 describe('[vuex] Subscribing to changes', async () => {
   it('does not work standalone', () => {
-    expect(() => new Store()).to.throw('must call Vue.use(Vuex) before creating a store instance.');
+    expect(() => new Store()).to.throw('vue.reactive is not a function');
   });
 
   it.skip("for example", async () => {

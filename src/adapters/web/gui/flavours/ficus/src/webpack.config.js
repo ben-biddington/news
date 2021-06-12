@@ -1,3 +1,4 @@
+// [13-Jun-2021] Trying esbuild] See ./build.sh
 const { distPath, entryPoint } = require('../../../../../build/webpack.settings');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 

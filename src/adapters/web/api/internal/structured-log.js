@@ -1,9 +1,9 @@
 const { Cloneable } = require("../../../../core/dist/cloneable");
+const { Stopwatch } = require('../../../../core/dist/stopwatch');
 
 class StructuredLog {
   constructor(req, res, opts = { trace: false, prefix: '' }) {
-    this.date = new Date(),
-
+    this.duration = '0';
     this.path = req.path;
     this.verb = req.method;
     this.headers = req.headers;
@@ -17,6 +17,9 @@ class StructuredLog {
 
   static async around(req, res, opts, block) {
     const log = new StructuredLog(req, res, opts);
+    
+    const stopwatch = new Stopwatch();
+    stopwatch.start();
 
     try {
       const result = await block(log);
@@ -27,6 +30,10 @@ class StructuredLog {
       log.error(error);
     }
     finally {
+      stopwatch.stop();
+
+      log.duration = `${stopwatch.elapsed}ms`;
+
       console.log(JSON.stringify(log, null, 2));
     }
   }

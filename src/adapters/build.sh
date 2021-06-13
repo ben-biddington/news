@@ -55,6 +55,31 @@ build 'core'        ./src/adapters/build/webpack.config.js
 build 'mocks'       ./src/adapters/build/webpack.mocks.config.js
 build 'adapters'    ./src/adapters/build/webpack.adapters.config.js
 
+esbuild=./node_modules/.bin/esbuild
+
+#
+# [ESBUILD] The following works but fails in browser with 'Dynamic require of "http" is not supported'
+#
+# Without `--external:http --external:https --external:timers` you get these errors:
+#
+#  > node_modules/rss-parser/lib/parser.js:2:21: error: Could not resolve "http" (use "--platform=node" when building for node)
+#    2 │ const http = require('http');
+#      ╵                      ~~~~~~
+#
+#  > node_modules/rss-parser/lib/parser.js:3:22: error: Could not resolve "https" (use "--platform=node" when building for node)
+#    3 │ const https = require('https');
+#      ╵                       ~~~~~~~
+#
+#  > node_modules/xml2js/lib/parser.js:17:25: error: Could not resolve "timers" (use "--platform=node" when building for node)
+#    17 │   setImmediate = require('timers').setImmediate;
+#       ╵                          ~~~~~~~~
+#
+# ./node_modules/.bin/esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js 
+#
+# $esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js
+
+#$esbuild src/adapters/lobsters.js                     --bundle --outfile=./src/adapters/web/gui/assets/dist/lobsters.bundle.js
+
 build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
 build 'svelte'      ./src/adapters/build/webpack.svelte.config.js
 build 'vue'         ./src/adapters/build/webpack.vue.config.js

@@ -1,4 +1,4 @@
-import { parseStringPromise, Parser } from 'xml2js';
+import { Parser } from 'xml2js';
 import { Log } from '../../core/logging/log';
 
 export interface RssFeedItem {
@@ -17,7 +17,7 @@ export const feed = (ports: any = {}, opts: any = {}): Promise<RssFeedItem[]> =>
   const parser = new Parser({ customFields });
 
   return get(feedUrl, { Accept: "text/xml" }).
-    then(reply => { log.trace(reply.body); parse(log, reply.body); return reply; }).
+    then(reply => { log.trace(reply.body); return reply; }).
     then(reply => {
       if (versionTwo === true)
         return parse(log, reply.body);

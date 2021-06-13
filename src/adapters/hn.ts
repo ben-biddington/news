@@ -15,7 +15,7 @@ export const list = (ports = {}, opts = {}) => {
   return feed(
     { get, log },
     {
-      ...opts,
+      versionTwo: true,
       feedUrl,
       customFields: { item: ['title', 'pubDate', 'guid'] }
     }).

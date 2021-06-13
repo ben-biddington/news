@@ -4,7 +4,7 @@ const { ConcreteNewsApplication }       = require('../../core/dist/app');
 const { NewsItem }                      = require('../../core/dist/news-item');
 
 const { list: lobstersList }            = require('../lobsters');
-const { list: hackerNewsList }          = require('../hn');
+const { list: hackerNewsList }          = require('../dist/adapters/hn');
 const { list: rnzNewsList }             = require('../rnz');
 const { del: deleteNews, deletedCount } = require('../news');
 const { MetserviceWeatherQuery }        = require('../dist/adapters/metservice-weather-query');

@@ -1,15 +1,15 @@
 const { expect } = require('./integration-test');
-const { NewsItem } = require('../../src/core/dist/news-item');
-const { list } = require('../../src/adapters/hn.js');
+import { NewsItem } from '../../src/core/news-item';
+import { list } from '../../src/adapters/hn';
 
 const trace = process.env.TRACE ? console.log : () => { }
 
 const { get, cannedGet } = require('./support/net');
 
 // npm run test.integration -- --grep hack
-describe('Can fetch latest hacker news', async () => {
+describe.only('Can fetch latest hacker news', async () => {
   it('from local server', async () => {
-    const result = await list({ get, trace }, { count: 1, url: 'http://localhost:8080/hn' });
+    const result = await list({ get, trace }, { versionTwo: true, count: 1, url: 'http://localhost:8080/hn' });
 
     expect(result[0]).to.have.keys(NewsItem.keys());
 
@@ -17,7 +17,7 @@ describe('Can fetch latest hacker news', async () => {
   });
 
   it('from remote server', async () => {
-    const result = await list({ get, trace }, { count: 1, url: 'https://hnrss.org' });
+    const result = await list({ get, trace }, { versionTwo: true, count: 1, url: 'https://hnrss.org' });
 
     expect(result[0]).to.have.keys(NewsItem.keys());
 
@@ -54,11 +54,13 @@ describe('Can fetch latest hacker news', async () => {
 
     const get = cannedGet(sampleFeed);
 
-    const result = await list({ get, trace }, { count: 1, url: 'https://hnrss.org' });
+    const result = await list({ get, trace }, { versionTwo: true, count: 1, url: 'https://hnrss.org' });
 
     const item = result[0];
 
     expect(item.id).to.eql('23556841');
+    expect(item.title).to.eql('Covid-19: The T Cell Story');
+    expect(item.date).to.eql('Wed, 17 Jun 2020 21:13:37 +0000');
   });
 
   //TEST: it must return non-null fields

@@ -30,7 +30,7 @@ export class YoutubeNewsSource implements NewsSource {
         customFields: { item: ['title', 'pubDate', 'guid'] }
       }).
       then(items  => items.slice(0, count).
-      map(item    => new NewsItem(item.id, item.title, item.link, item.pubDate)));
+      map(item    => new NewsItem(item.id, item['title'], item.link, item['pubDate'])));
   }
 
   delete(id: string): Promise<void> {

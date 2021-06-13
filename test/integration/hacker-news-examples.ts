@@ -7,7 +7,7 @@ const trace = process.env.TRACE ? console.log : () => { }
 const { get, cannedGet } = require('./support/net');
 
 // npm run test.integration -- --grep hack
-describe.only('Can fetch latest hacker news', async () => {
+describe('Can fetch latest hacker news', async () => {
   it('from local server', async () => {
     const result = await list({ get, trace }, { versionTwo: true, count: 1, url: 'http://localhost:8080/hn' });
 

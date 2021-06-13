@@ -74,10 +74,20 @@ esbuild=./node_modules/.bin/esbuild
 #    17 │   setImmediate = require('timers').setImmediate;
 #       ╵                          ~~~~~~~~
 #
-# ./node_modules/.bin/esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js 
+# ./node_modules/.bin/esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --global-name=real --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js 
 #
-# $esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js
-
+# $esbuild ./src/adapters/application/real-application.js --external:http --external:https --external:timers --bundle --global-name=real --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js
+#
+#
+# `--global-name=real` is the equivalent of webpack 'library' field, see https://esbuild.github.io/api/#global-name
+#
+#
+# I think we have an issue in general with dynamic requires. Browsers do not support them (?) and so this advice does not help:
+# 
+#   https://esbuild.github.io/getting-started/#bundling-for-the-browser
+#
+# It may be easier to find different rss parser.
+#
 #$esbuild src/adapters/lobsters.js                     --bundle --outfile=./src/adapters/web/gui/assets/dist/lobsters.bundle.js
 
 build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js

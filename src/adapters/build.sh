@@ -49,18 +49,11 @@ echo ""
 
 echo -e "Packing\n"
 
-esbuild=./node_modules/.bin/esbuild
-
 #buildMint
 
 build 'core'        ./src/adapters/build/webpack.config.js
 build 'mocks'       ./src/adapters/build/webpack.mocks.config.js
-
 build 'adapters'    ./src/adapters/build/webpack.adapters.config.js
-# [!fails to build] $esbuild src/adapters/application/real-application.js --bundle --outfile=./src/adapters/web/gui/assets/dist/real.bundle.js
-$esbuild src/adapters/lobsters.js                     --bundle --outfile=./src/adapters/web/gui/assets/dist/lobsters.bundle.js
-
-bash ./src/adapters/web/gui/flavours/ficus/src/build.sh
 
 build 'svelte-smui' ./src/adapters/web/gui/flavours/svelte-smui/src/webpack.config.js
 build 'svelte'      ./src/adapters/build/webpack.svelte.config.js

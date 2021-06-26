@@ -1,6 +1,7 @@
 import "@babel/polyfill";
 import React from "react";
 import { Transition, CSSTransition } from 'react-transition-group';
+import { ageSince } from '../../../../../core/dist/news-item';
 
 class NewsPanel extends React.Component {
   constructor(props) {
@@ -55,7 +56,7 @@ class NewsPanel extends React.Component {
                         >
                             <div className="meta">
                             {props.showAge &&
-                                <span className="age">{newsItem.ageSince(props.application.now())}</span>
+                                <span className="age">{ageSince(newsItem, props.application.now())}</span>
                             }
                             {props.showHost &&
                                 <span className="host">{newsItem.host}</span>

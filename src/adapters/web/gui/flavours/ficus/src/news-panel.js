@@ -1,4 +1,5 @@
 import { html /* [i] https://github.com/WebReflection/uhtml */, renderer } from '@ficusjs/renderers'
+import { ageSince } from '../../../../../../core/news-item';
 
 export const render = (news, notifications) => {
   $(function () {
@@ -80,7 +81,7 @@ const renderBootstrapList = (news = [], n) => {
                       <span class=${'source' + ' ' + newsItem.label} title=${newsItem.label + ' article'}>
                         ${sourceIcon(newsItem)}
                       </span>
-                      <span class="age">${newsItem.ageSince(window.application.now())}</span>
+                      <span class="age">${ageSince(newsItem, window.application.now())}</span>
                       <span class="host">
                         <a href="javascript:void(0)" 
                           data-toggle="tooltip" 

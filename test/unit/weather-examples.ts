@@ -1,5 +1,5 @@
 import { WeatherForecast, WeatherQuery } from '../../src/core/weather';
-import { MockListener, Application, Ports, MockSettings, MockToggles } from './application-unit-test';
+import { expect, MockListener, Application, Ports, MockSettings, MockToggles } from './application-unit-test';
 
 class MockWeatherQuery implements WeatherQuery {
   private result: WeatherForecast[] = [];
@@ -54,5 +54,69 @@ describe('Viewing weather', async () => {
         }
       ]
     });
+  });
+});
+
+class Item {
+  id?: string;
+  title?: string;
+  date?: Date;
+}
+
+class ItemBuilder {
+  private readonly item: Item;
+
+  constructor(item?: Item) {
+    this.item = item;
+  }
+
+  static create(): ItemBuilder {
+    return new ItemBuilder();
+  }
+
+  withId<T extends string>(id: string) {
+    return new ItemBuilder({ ...this.item, id });
+  }
+
+  titled<T extends string>(title: string) {
+    return new ItemBuilder({ ...this.item, title });
+  }
+
+  dated<T extends Date>(date: Date | string) {
+    if (date instanceof Date) 
+    {
+      return new ItemBuilder({ ...this.item, date });
+    }
+    
+    return new ItemBuilder({ ...this.item, date: new Date(date) });
+  }
+
+  build(): Item { return this.item; }
+}
+
+const item = () => {
+  let result: Item = { };
+
+  return {
+    withId: (result: Item, id: string) => {
+      return (id: string) => {}
+    },
+    build: () => result,
+  }
+ };
+
+describe('A news item builder', () => {
+  it('returns an item', () => {
+    const value: Item = ItemBuilder.create().
+      withId('abc').
+      titled('An example').
+      dated('19-Nov-1976').
+      build();
+
+    expect(value).to.eql({
+      id: 'abc',
+      title: 'An example',
+      date: new Date('19-Nov-1976')
+    })
   });
 });

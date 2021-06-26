@@ -1,5 +1,13 @@
 import { Cloneable } from './cloneable';
 
+export const ageSince = (item: NewsItem, when: Date) => {
+  const moment = require('moment');
+
+  const difference = moment.duration(moment(when).diff(moment(item.date)));
+
+  return difference.humanize();
+}
+
 export class NewsItem extends Cloneable {
   id: string = '';
   title: string = '';

@@ -46,8 +46,15 @@ const application = (toggles, settings) => {
       delete: id => deleteNews({ internet: internet, trace: log.trace }, { baseUrl, id }),
     },
     console.log,
-    { // seive
+    { 
+      // seive
       apply: newsItems => {
+        return internet.post(
+          `${baseUrl}/lobsters/deleted/sieve`,
+          { 'Content-type': 'application/json', 'Accept': 'application/json' },
+          newsItems.map(it => it.id)).
+          then(reply => JSON.stringify(reply.body));
+
         return fetch(
           `${baseUrl}/lobsters/deleted/sieve`,
           {

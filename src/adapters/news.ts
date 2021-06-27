@@ -1,11 +1,11 @@
-const del = (ports = {}, opts = {}) => {
+export const del = (ports: any = {}, opts: any = {}) => {
     const { internet, trace = _ => {} } = ports;
     const { baseUrl = '', id = 'unknown' } = opts;
   
     return internet.delete(`${baseUrl}/news/items/${id}`).then(reply => { trace(reply); return reply; });
 }
 
-const listDeleted = (ports = {}, opts = {}) => {
+export const listDeleted = (ports: any = {}, opts: any = {}) => {
     const { internet, trace = _ => {} } = ports;
     
     const { baseUrl = '' } = opts;
@@ -15,7 +15,7 @@ const listDeleted = (ports = {}, opts = {}) => {
         then(r => JSON.parse(r.body));
 }
 
-const deletedCount = (ports = {}, opts = {}) => {
+export const deletedCount = (ports: any = {}, opts: any = {}) => {
     const { internet, trace = _ => {} } = ports;
     
     const { baseUrl = '' } = opts;
@@ -24,7 +24,3 @@ const deletedCount = (ports = {}, opts = {}) => {
         then(reply => { trace(reply); return reply; }).
         then(r => JSON.parse(r.body));
 }
-
-module.exports.del = del;
-module.exports.listDeleted = listDeleted;
-module.exports.deletedCount = deletedCount;

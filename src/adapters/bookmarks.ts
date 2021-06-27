@@ -1,4 +1,4 @@
-const add = (ports = {}, opts = {}, bookmark) => {
+export const add = (ports: any = {}, opts: any = {}, bookmark) => {
     const { post, trace = _ => {} } = ports;
     const { url = '' } = opts;
   
@@ -7,7 +7,7 @@ const add = (ports = {}, opts = {}, bookmark) => {
     return post(`${url}/bookmarks`, { 'Content-type': 'application/json' }, bookmark).then(mustBeOkay).then(parse);
 }
 
-const list = (ports = {}, opts = {}, bookmark) => {
+export const list = (ports: any = {}, opts: any = {}, bookmark) => {
     const { get, trace = _ => {} } = ports;
     const { url = '' } = opts;
   
@@ -16,7 +16,7 @@ const list = (ports = {}, opts = {}, bookmark) => {
     return get(`${url}/bookmarks`, { headers: { 'Accept': 'application/json' } }).then(mustBeOkay).then(parse);
 }
 
-const del = (ports = {}, opts = {}, id) => {
+export const del = (ports: any = {}, opts: any = {}, id) => {
     const { del, trace = _ => {} } = ports;
     const { url = '' } = opts;
   
@@ -39,7 +39,3 @@ const parse = reply => {
         throw new Error(`Failed to parse the following as json:\n${reply.body}`);
     }
 }
-
-module.exports.add = add;
-module.exports.list = list;
-module.exports.del = del;

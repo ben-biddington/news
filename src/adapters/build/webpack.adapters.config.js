@@ -6,7 +6,7 @@ module.exports = {
   mode: 'development',
   entry: {
     real:        path.resolve(__dirname, '../application/real-application.js'),
-    lobsters:    path.resolve(__dirname, '../lobsters.js')
+    lobsters:    path.resolve(__dirname, '../dist/adapters/lobsters.js')
   },
   output: {
     path: distPath,

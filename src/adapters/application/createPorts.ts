@@ -1,23 +1,19 @@
-import { Application }                   from '../../core/application';
-import { Ports }                         from '../../core/ports';
-import { ConcreteNewsApplication }       from '../../core/app';
-import { NewsItem }                      from '../../core/news-item';
+import { Ports }                            from '../../core/ports';
 
-const { list: lobstersList }            = require('../lobsters');
-import { list as hackerNewsList }        from '../hn';
-const { list: rnzNewsList }             = require('../rnz');
-const { del: deleteNews, deletedCount } = require('../news');
-import { MetserviceWeatherQuery }         from '../metservice-weather-query';
-import { LocalStorageBlockedHosts }      from '../web/local-storage-blocked-hosts';
-import { YoutubeNewsSource }             from '../youtube';
-import { ConsoleLog }                   from '../../core/logging/log';
+import { list as lobstersList }             from '../lobsters';
+import { list as hackerNewsList }           from '../hn';
+import { del as deleteNews, deletedCount }  from  '../news';
+import { MetserviceWeatherQuery }           from '../metservice-weather-query';
+import { LocalStorageBlockedHosts }         from '../web/local-storage-blocked-hosts';
+import { YoutubeNewsSource }                from '../youtube';
+import { ConsoleLog }                       from '../../core/logging/log';
 
 const { add: addBookmark, list: listBookmarks, del: deleteBookmark } = require('../bookmarks');
 
 export const createPorts = ({ baseUrl, internet, toggles, window }) => {
   const log = new ConsoleLog();
 
-  const applicationPorts = new Ports(
+  return new Ports(
     {
       list: () => lobstersList({ get: internet.get, trace: log.trace }, { url: `${baseUrl}/lobsters/hottest`, count: 20 }),
       delete: id => deleteNews({ internet: internet, trace: log.trace }, { baseUrl, id }),
@@ -38,8 +34,9 @@ export const createPorts = ({ baseUrl, internet, toggles, window }) => {
       delete: id => deleteNews({ internet: internet, trace: log.trace }, { baseUrl, id }),
     },
     {
-      list:   () => rnzNewsList({ get: internet.get, log }, { url: '/rnz', count: 20 }),
-      delete: id => deleteNews({ internet: internet, trace: console.trace }, { baseUrl, id }),
+      // rnz no longer used
+      list:   () => [],
+      delete: id => {},
     }).
     withToggles(toggles).
     withBookmarks({

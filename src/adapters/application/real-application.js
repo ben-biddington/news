@@ -10,27 +10,15 @@ const { del: deleteNews, deletedCount } = require('../news');
 const { MetserviceWeatherQuery }        = require('../dist/adapters/metservice-weather-query');
 const { LocalStorageBlockedHosts }      = require('../dist/adapters/web/local-storage-blocked-hosts');
 const { YoutubeNewsSource }             = require('../dist/adapters/youtube');
+import { FetchBasedInternet }           from '../../adapters/web/fetch-based-internet';
 
 const { add: addBookmark, list: listBookmarks, del: deleteBookmark } = require('../bookmarks');
 
-class FetchBasedInternet {
-  async delete(url, headers) {
-    return fetch(url, { headers, method: 'delete' }).
-      then(async reply => ({ statusCode: reply.status, headers: { empty: 'on purpose' }, body: (await reply.text()) }));;
-  }
-
-  async post(url, headers, body) {
-    return fetch(url, { headers, method: 'post', body: JSON.stringify(body) }).
-      then(async reply => ({ statusCode: reply.status, headers: { empty: 'on purpose' }, body: (await reply.text()) }));
-  }
-
-  async get(url, headers) {
-    return fetch(url, { headers }).
-      then(async reply => ({ statusCode: reply.status, headers: { empty: 'on purpose' }, body: (await reply.text()) }));;
-  }
-}
+const createPorts = require('../dist/adapters/application/createPorts');
 
 const internet = new FetchBasedInternet();
+
+const xxx = createPorts({ toggles, window, internet, baseUrl: settings.get('baseUrl') || '' });
 
 //
 // [i] This is where the real application is bootstrapped from

@@ -1,10 +1,12 @@
-import { Cloneable } from './cloneable';
 import { WeatherQuery } from './weather';
 import { ToggleSource, DevNullToggleSource } from './toggle-source';
 import { BlockedHosts } from './blocked-hosts';
 import { DevNullSeive } from './dev-null-seive';
 import { DevNullBlockedHosts } from './dev-null-blocked-hosts';
 import { NewsSource } from './news-source';
+import { Bookmark } from './bookmark';
+import { NewsItem } from './news-item';
+import { Log } from './logging/log';
 
 export interface Clock {
   now: () => Date;
@@ -16,43 +18,100 @@ export class SystemClock implements Clock {
   }
 }
 
-export class Ports extends Cloneable {
-  lobsters: any;
-  log: any;
-  seive: any;
-  hackerNews: any;
-  rnzNews: any;
-  bookmarks: any;
-  deletedItems: any;
-  toggles: ToggleSource;
-  weather: WeatherQuery;
-  blockedHosts: BlockedHosts = new DevNullBlockedHosts();
-  youtube: NewsSource
-  clock: Clock = new SystemClock();
+type BookmarksPort = { 
+  add: (Bookmark: Bookmark) => void;
+  list: () => Promise<Bookmark[]>;
+  del: (id: string) => Promise<void>;
+}
 
-  constructor(lobsters, log, seive, hackerNews, rnzNews) {
-    super();
+type NewsSourcePort = { 
+  list: () => Promise<NewsItem[]>;
+  delete: (id: string) => Promise<void>;
+}
 
-    this.lobsters = lobsters;
-    this.log = log || console.log;
-    this.seive = seive || new DevNullSeive();
-    this.hackerNews = hackerNews;
-    this.rnzNews = rnzNews;
-    this.bookmarks = null;
-    this.deletedItems = null;
-    this.toggles = new DevNullToggleSource();
+type DeletedItemsQuery = { 
+  count: () => Promise<number>;
+}
+
+type Seive = { 
+  apply: (newsItem) => Promise<NewsItem[]>;
+}
+
+export class PortsBuilder {
+  private ports: Ports;
+
+  constructor(ports: Ports = {}) {
+    this.ports = ports;
   }
 
-  static blank(): Ports { return new Ports(null, null, null, null, null); }
+  static new(): PortsBuilder {
+    return new PortsBuilder().
+      withToggles(new DevNullToggleSource()).
+      withSeive(new DevNullSeive()).
+      withBlockedHosts(new DevNullBlockedHosts()).
+      withClock(new SystemClock());
+  }
 
-  withBookmarks(bookmarks) { return this.clone(it => it.bookmarks = bookmarks); }
-  withHackerNews(hackerNews) { return this.clone(it => it.hackerNews = hackerNews); }
-  withLobsters(lobsters) { return this.clone(it => it.lobsters = lobsters); }
-  withDeletedItems(deletedItems) { return this.clone(it => it.deletedItems = deletedItems); }
-  withToggles(toggles: ToggleSource) { return this.clone(it => it.toggles = toggles); }
-  with(weather: WeatherQuery) { return this.clone(it => it.weather = weather); }
-  withBlockedHosts(blockedHosts: BlockedHosts) { return this.clone(it => it.blockedHosts = blockedHosts); }
-  withSeive(seive) { return this.clone(it => it.seive = seive); }
-  withYoutube(youtube: NewsSource) { return this.clone(it => it.youtube = youtube); }
-  withClock(clock: Clock) { return this.clone(it => it.clock = clock); }
+  withLog(log: Log): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, log });
+  } 
+
+  withToggles(toggles: ToggleSource): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, toggles });
+  }
+
+  withClock(clock: Clock): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, clock });
+  } 
+
+  withBookmarks(bookmarks: BookmarksPort) {
+    return new PortsBuilder({ ...this.ports, bookmarks });
+  }
+
+  withSeive(seive: Seive) {
+    return new PortsBuilder({ ...this.ports, seive });
+  }
+
+  withLobsters(port: NewsSourcePort): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, lobsters: port });
+  }
+
+  withHackerNews(port: NewsSourcePort): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, hackerNews: port });
+  }
+
+  withYoutube(port: NewsSource): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, youtube: port });
+  }
+
+  withBlockedHosts(blockedHosts: BlockedHosts): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, blockedHosts });
+  }
+
+  withDeletedItems(deletedItems: DeletedItemsQuery): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, deletedItems });
+  }
+
+  withWeatherQuery(weather: WeatherQuery): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, weather });
+  }
+
+  build() {
+    return this.ports;
+  }
+}
+
+export type Ports = {
+  readonly lobsters?: NewsSourcePort;
+  readonly log?: Log;
+  readonly seive?: Seive;
+  readonly hackerNews?: NewsSourcePort;
+  readonly rnzNews?: any;
+  readonly bookmarks?: BookmarksPort;
+  readonly deletedItems?: DeletedItemsQuery;
+  readonly toggles?: ToggleSource;
+  readonly weather?: WeatherQuery;
+  readonly blockedHosts?: BlockedHosts;
+  readonly youtube?: NewsSource;
+  readonly clock?: Clock;
 }

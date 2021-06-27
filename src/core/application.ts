@@ -17,22 +17,22 @@ export interface Options {
 }
 
 export class Application {
-  private _ports: Ports;
-  private _events: CustomEventEmitter;
-  private _log: any;
-  private _settings: any;
-  private _store: Store;
+  private readonly _ports: Ports;
+  private readonly _events: CustomEventEmitter;
+  private readonly _log: (m:string) => void;
+  private readonly _settings: any;
+  private readonly _store: Store;
   private _toggles: Toggles;
   private _togglesLoaded: boolean = false;
-  private _toggleSource: ToggleSource;
+  private readonly _toggleSource: ToggleSource;
   private _pollingTask: NodeJS.Timeout;
-  private _statsTask: NodeJS.Timeout
-  private _stats: Statistics;
+  private readonly _statsTask: NodeJS.Timeout
+  private readonly _stats: Statistics;
 
   constructor(ports: Ports, settings: any = null, opts: Options = { allowStats: false }) {
     this._ports = ports;
     this._events = new CustomEventEmitter(ports.log);
-    this._log = ports.log;
+    this._log = ports.log.info;
     this._settings = settings;
     this._store = new Store(this._events, ports.clock);
     this._stats = {};

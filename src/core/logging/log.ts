@@ -1,22 +1,24 @@
-export interface Log {
+export type Log = {
   info: (message) => void;
   trace: (message) => void;
 }
 
 export class ConsoleLog implements Log {
-  _opts: any;
+  private opts: { allowTrace: boolean };
 
   constructor(opts = {}) {
-    this._opts = { allowTrace: false, ...opts };
+    this.opts = { allowTrace: false, ...opts };
   };
 
-  info(message) {
+  info(message: string) {
     console.log(message);
   }
 
-  trace(message) {
-    if (this._opts.allowTrace) {
-      console.log(message);
+  get trace() {
+    return (message) => {
+      if (this.opts.allowTrace) {
+        console.log(message);
+      }
     }
   }
 }

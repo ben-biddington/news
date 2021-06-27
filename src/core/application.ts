@@ -50,7 +50,7 @@ export class Application {
       //[i] https://stackoverflow.com/questions/50372866/mocha-not-exiting-after-test
       this._statsTask = setInterval(async () => {
         this._events.emit('stats', this._stats);
-      }, 5*1000);
+      }, 30*1000);
     }
     
     this._store.subscribe(state => {

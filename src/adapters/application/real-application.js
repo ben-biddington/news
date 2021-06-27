@@ -38,10 +38,12 @@ const internet = new FetchBasedInternet();
 const application = (toggles, settings) => {
   const baseUrl = settings.get('baseUrl') || '';
 
+  const log = new ConsoleLog();
+
   let applicationPorts = new Ports(
     {
-      list: () => lobstersList({ get: internet.get, trace: console.log }, { url: `${baseUrl}/lobsters/hottest`, count: 20 }),
-      delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
+      list: () => lobstersList({ get: internet.get, trace: log.trace }, { url: `${baseUrl}/lobsters/hottest`, count: 20 }),
+      delete: id => deleteNews({ internet: internet, trace: log.trace }, { baseUrl, id }),
     },
     console.log,
     { // seive
@@ -57,18 +59,18 @@ const application = (toggles, settings) => {
       }
     },
     {
-      list:   () => hackerNewsList({ get: internet.get, log: new ConsoleLog() }, { url: `${baseUrl}/hn`, count: 20 }),
-      delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
+      list:   () => hackerNewsList({ get: internet.get, log: log }, { url: `${baseUrl}/hn`, count: 20 }),
+      delete: id => deleteNews({ internet: internet, trace: log.trace }, { baseUrl, id }),
     },
     {
-      list:   () => rnzNewsList({ get: internet.get, log: new ConsoleLog() }, { url: '/rnz', count: 20 }),
-      delete: id => deleteNews({ internet: internet, trace: console.log }, { baseUrl, id }),
+      list:   () => rnzNewsList({ get: internet.get, log }, { url: '/rnz', count: 20 }),
+      delete: id => deleteNews({ internet: internet, trace: console.trace }, { baseUrl, id }),
     }).
     withToggles(toggles).
     withBookmarks({
       add:  bookmark => addBookmark({ post: internet.post }, { url: baseUrl }, bookmark),
-      list: () => listBookmarks({ get: internet.get, trace: console.log }, { url: baseUrl }),
-      del:  id => deleteBookmark({ del: internet.delete, trace: console.log }, { url: baseUrl }, id)
+      list: () => listBookmarks({ get: internet.get, trace: log.trace }, { url: baseUrl }),
+      del:  id => deleteBookmark({ del: internet.delete, trace: log.trace }, { url: baseUrl }, id)
     }).
     withDeletedItems({count: () => deletedCount({ internet }, { baseUrl: baseUrl }),}).
     with(new MetserviceWeatherQuery({ get: internet.get })).

@@ -54,8 +54,6 @@ createComponent('ficus-weather', {
     $(function () {
       const count = $('[data-toggle="popover"]').length 
 
-      console.log(`Enabling popovers on <${count}> elements`);
-
       $('[data-toggle="popover"]').popover();
     });
   },

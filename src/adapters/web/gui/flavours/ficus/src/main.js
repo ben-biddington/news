@@ -65,7 +65,7 @@ createComponent('ficus-application', {
 
             <div class="row">
               <div class="col-12" style="text-align:right">
-                <ficus-bookmarks visible=${this.state.uiOptions.showBookmarks} bookmarks=${JSON.stringify(this.state.bookmarks)} />
+                ${this.renderBookmarks()}
               </div>
             </div>
 
@@ -82,6 +82,11 @@ createComponent('ficus-application', {
         </div>
       </div>
     `
+  },
+  renderBookmarks() {
+    if (this.state.uiOptions.showBookmarks) {
+      return html`<ficus-bookmarks bookmarks=${JSON.stringify(this.state.bookmarks)} />`
+    }
   },
   plot() {
     // https://github.com/observablehq/plot
@@ -125,11 +130,9 @@ createComponent('ficus-application', {
     `;
   },
   block(host) { 
-    console.log(`Blocking host <${host}>`);
     return window.application.news.block(host);
   },
   unblock(host) { 
-    console.log(`Unblocking host <${host}>`);
     return window.application.news.unblock(host);
   },
   marineWeather() {
@@ -220,11 +223,28 @@ createComponent('ficus-application', {
     return new Array(this.state.progress.length).join('.');
   },
   mounted() {
-    this.attachCustomEvents();
+    // [i] Doing this only once because `ficus-toolbar` is always mounted exactly once.
+    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
+    const toolbarPanel = document.querySelector('ficus-toolbar');
+
+    toolbarPanel.addEventListener('toggleBookmarks', e => {
+      return this.toggleBookmarks();
+    });
+  },
+  updated() {
+    // [i] Doing this every time because rather than toggle display in `ficus-bookmarks`, we either add it or not
+    // from `main.js` here. This simplifies `ficus-bookmarks` but means we have to reattach handlers like this.
+    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
+    const bookmarksPanel = document.querySelector('ficus-bookmarks');
+
+    if (bookmarksPanel) {
+      bookmarksPanel.addEventListener('onDelete', e => {
+        return this.deleteBookmark(e.detail.id);
+      });
+    }
   },
   async created () {
     window.application.on([ "stats" ], e => {
-      console.log('[stats]', JSON.stringify(e, null, 2));
       this.setState(state => {
         return {...state, stats: e };
       });
@@ -318,12 +338,16 @@ createComponent('ficus-application', {
       }
     );
 
-    window.application.on([ "bookmark-deleted", "bookmark-added"], _ => {
-      window.application.bookmarks.list().then(result => {
-        this.setState(state => {
-          return {...state, bookmarks: result };
-        });
-      })
+    window.application.on([ "bookmark-deleted" ], deleted => {
+      this.setState(state => {
+        return {...state, bookmarks: [...state.bookmarks.filter(it => it.id !== deleted.id)] };
+      });
+    });
+
+    window.application.on([ "bookmark-added" ], bookmark => {
+      this.setState(state => {
+        return {...state, bookmarks: [...state.bookmarks, bookmark] };
+      });
     });
 
     this.props.baseUrl = window.settings.get('baseUrl') || '';
@@ -346,24 +370,10 @@ createComponent('ficus-application', {
       })
     ]);
   },
-  attachCustomEvents() {
-    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
-    const bookmarksPanel = document.querySelector('ficus-bookmarks');
-
-    bookmarksPanel.addEventListener('onDelete', e => {
-      return this.deleteBookmark(e.detail.id);
-    });
-
-    // This is balls: https://coryrylan.com/blog/using-event-decorators-with-lit-element-and-web-components
-    const toolbarPanel = document.querySelector('ficus-toolbar');
-
-    toolbarPanel.addEventListener('toggleBookmarks', e => {
-      return this.toggleBookmarks();
-    });
-  },
   async loadToggles() {
-    const toggles = await window.application.toggles.list();
-    
+    const toggles       = await window.application.toggles.list();
+    const showBookmarks = await window.application.toggles.get('show-bookmarks');
+
     this.setState(async state => {
         return {
         ...state, 
@@ -372,7 +382,7 @@ createComponent('ficus-application', {
           showMarineWeather : toggles.showMarineWeather.isOn,
           showWindFinder    : toggles.showwindFinder.isOn,
           showBlocked       : toggles.showBlocked.isOn,
-          showBookmarks     : await window.application.toggles.get('show-bookmarks'),
+          showBookmarks     : showBookmarks,
         } 
       };
     });
@@ -392,8 +402,6 @@ createComponent('ficus-application', {
   },
   toggleBookmarks() {
     this.setState(state => {
-      console.log(`Toggling to <${false === state.uiOptions.showBookmarks}>`);
-
       return {
         ...state, 
         uiOptions: 

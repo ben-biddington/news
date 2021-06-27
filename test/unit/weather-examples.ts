@@ -120,3 +120,14 @@ describe('A news item builder', () => {
     })
   });
 });
+
+import { ConsoleLog } from '../../src/core/logging/log';
+
+describe('Console log', () => {
+  it('allows trace', () => {
+    const log = new ConsoleLog();
+
+    expect(typeof log.trace).to.eql('function');
+    expect(typeof log.info).to.eql('function');
+  });
+});

@@ -4,7 +4,7 @@ const {
   describeFeatured, toggles, baseUrl, headless,
   expect, WebInteractor, ConsoleListener } = require('../ui-integration-test');
 
-describeFeatured(toggles, '[UI] Bookmarks', async feature => {
+describeFeatured([...toggles, 'use-ficus'], '[UI] Bookmarks', async feature => {
   let interactor, page, consoleMessages = null;
 
   before(async () => {
@@ -35,6 +35,8 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
 
         await view.waitUntilIdle();
       });
+
+      await consoleMessages.mustHaveNoErrors({ delay: 1000 });
 
       await page.waitForSelector(`${itemsSelector} .item`);
 
@@ -100,9 +102,13 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
 
       await consoleMessages.mustHaveNoErrors({ delay: 1000 });
 
-      await page.$$eval(`${itemsSelector} .item a.del`, items => items.map(it => (it.click())));
+      await page.$$eval(`${itemsSelector} .item .del`, items => {
+        items.map(it => {
+          it.click();
+        });
+      });
 
-      await page.waitForFunction(() => application.bookmarks.hasHadDeleteCalled('id-1'), { timeout: 5000 });
+      await page.waitForFunction(() => application.bookmarks.hasHadDeleteCalled('id-1'), { timeout: 50000 });
 
       await page.evaluate(() => {
         application.bookmarks.mustHaveHadDeleteCalled('id-1');
@@ -145,7 +151,7 @@ describeFeatured(toggles, '[UI] Bookmarks', async feature => {
         () => document.querySelectorAll(`div#bookmarks .items .item`).length == 1,
         { timeout: 1000 });
 
-      const allListItems = await page.$$eval(`div#bookmarks .items .item a.title`, items => items.map(it => (it.innerText)));
+      const allListItems = await page.$$eval(`div#bookmarks .items .item .title`, items => items.map(it => (it.innerText)));
 
       expect(allListItems).to.eql(['Title 1']);
     });

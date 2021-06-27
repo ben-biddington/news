@@ -72,7 +72,7 @@ class MockBookmarkUseCase {
   addHasBeenCalled() { return this._bookmarks.length > 0; }
 
   list() {
-    console.log(`[MockBookmarkUseCase] list called returning <${this._bookmarks}>`);
+    console.log(`[MockBookmarkUseCase] list called returning <${JSON.stringify(this._bookmarks, null, 2)}>`);
     this._listWasCalled = true;
     return Promise.resolve(this._bookmarks);
   }
@@ -148,6 +148,18 @@ class Application {
   pollEvery(milliseconds) { }
 
   stopPolling() { }
+
+  get weather() {
+    return {
+      sevenDays: () => []
+    }
+  }
+
+  get youtube() {
+    return {
+      list: () => []
+    }
+  }
 
   get lobsters() {
     return this._lobstersUseCase;

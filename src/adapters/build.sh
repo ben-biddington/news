@@ -37,6 +37,8 @@ echo -e "Compiling typescript\n"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
 npx tsc -p src/adapters/tsconfig.json --listEmittedFiles
+npx tsc -p test/tsconfig.json --listEmittedFiles
+
 # Can't build rxjs with typescript@3.9.9
 #
 # node_modules/rxjs/dist/types/internal/operators/withLatestFrom.d.ts:3:79 - error TS1256: A rest element must be last in a tuple type.

@@ -1,0 +1,81 @@
+a.icon { color: black }
+
+li.news:hover { background-color: #f0f0f0; opacity:100% }
+
+span.hn { color: #ff6600 }
+span.lobsters { color: darkred }
+span.youtube { color: red }
+
+/* body table {font-size: 20px !important;} */
+#news { border: 0px solid silver; padding:1px; font-size: 20px; }
+#news .news-title { font-size: 1.5em; }
+#news .icon { width:16; height: 16; }
+#news .source { font-size: 1.1em }
+#news .age { min-width: 75; display:inline-block; text-align: center; }
+#marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }
+.toolbar ul { float: right }
+.toolbar li { border:0 }
+
+#bookmarks { transition: display 0s linear 0.7s, opacity 0.7s ease-in-out;}
+#bookmarks table { background-color: rgb(218, 224, 229, 0.2);  transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out;}
+
+#menu { 
+  text-align: right;
+  padding: 5px; 
+  border-top:1px solid silver;
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
+  /* fallback for old browsers */
+  background: #d0d0d0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
+}
+
+.recessed {
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
+  /* fallback for old browsers */
+  background: #d0d0d0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to bottom, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
+}
+
+.recessed-reversed {
+  /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
+  /* fallback for old browsers */
+  background: #d0d0d0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to top, rgb(218, 224, 229, 0.7), rgba(224, 224, 224, 0.0));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to top, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
+}
+
+#weather { float: right }
+
+.placeholder { opacity: .10; color: #f0f0f0; }
+
+.blocked { background-color:silver; opacity: 30% }
+
+.list-group li {
+  display: inline-table;
+}
+
+.hidden { display: none; }
+
+.visible {
+  animation: subtleFade 2s;
+  animation-fill-mode: both;
+} 
+
+@keyframes subtleFade {
+  0%   { opacity:0 }
+  100% { opacity:100 }
+}

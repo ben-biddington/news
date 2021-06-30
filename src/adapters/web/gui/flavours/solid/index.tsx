@@ -1,9 +1,10 @@
-import { createEffect, createMemo, createSignal, onMount } from "solid-js";
+import { createEffect,  createMemo, createSignal, onMount } from "solid-js";
 import { render } from "solid-js/web";
 import { Bookmark } from "../../../../../core/bookmark";
 import { NewsItem, ageSince } from "../../../../../core/news-item";
 import { format } from 'date-fns';
 import { Statistics, Application as Core } from '../../../../../core/application';
+import { NewsPanel } from './components/NewsPanel';
 export type Props = { 
 
 }
@@ -81,16 +82,13 @@ const Application = (props: Props) => {
               <p>There are {newsItems().length} news items</p>
               <p>Last updated: {format(stats().lastUpdateAt, 'HH:mm')}</p>
 
-              <ol>
-              {
-                newsItems().map(item => (
-                  <>
-                    <li><button onClick={() => application.hackerNews.delete(item.id)}>del</button> {item.title} ({ageSince(item, now())})</li>
-                  </>
-                ))
-              }
-              </ol>
-            {/* ${renderNews(newsItems, { onDelete: this.delete, onBookmark: this.bookmark, onBlock: this.block, onUnblock: this.unblock})} */}
+              <NewsPanel 
+                news={newsItems()} 
+                now={now()} 
+                onDelete={application.hackerNews.delete} 
+                onBlock={application.news.block}
+                onUnblock={application.news.unblock}
+                onBookmark={application.bookmarks.add} /> 
             </div>
           </div>
         </div>

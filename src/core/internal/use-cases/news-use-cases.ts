@@ -18,7 +18,7 @@ export class NewsUseCases {
     this.blockedHostList  = blockedHostList;
   }
 
-  async block(host: string): Promise<void> {
+  public block = async (host: string): Promise<void> =>  {
     await this.blockedHostList.add(host);
     
     this.events.emit('news-host-blocked', { host });
@@ -26,12 +26,12 @@ export class NewsUseCases {
     return this.update(this.filterDeleted);
   }
 
-  async unblock(host: string): Promise<void> {
+  public unblock = async (host: string): Promise<void> => {
     await this.blockedHostList.remove(host);
     return this.update(this.filterDeleted);
   }
 
-  async list(list, seive, blockedHosts: BlockedHosts, toggles: Toggles) {
+  public list = async (list, seive, blockedHosts: BlockedHosts, toggles: Toggles) => {
     let fullList = await this.markBlocked(await list(), blockedHosts);
 
     if (false === toggles.showBlocked.isOn) {

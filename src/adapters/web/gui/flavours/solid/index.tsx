@@ -1,29 +1,30 @@
-import { createEffect,  createMemo, createSignal, onMount } from "solid-js";
+import { createEffect,  createMemo, createSignal, onMount, Show } from "solid-js";
 import { render } from "solid-js/web";
 import { Bookmark } from "../../../../../core/bookmark";
 import { NewsItem, ageSince } from "../../../../../core/news-item";
 import { format } from 'date-fns';
 import { Statistics, Application as Core } from '../../../../../core/application';
 import { NewsPanel } from './components/NewsPanel';
-export type Props = { 
+import { MarineWeatherPanel } from './components/MarineWeatherPanel';
 
+type UIOptions = { 
+  showMarineWeather: boolean,
+  showBookmarks: boolean 
 }
 
-type UIOptions = { showMarineWeather: boolean }
-
-const Application = (props: Props) => {
+const Application = () => {
   //@ts-ignore
   const application: Core = window.application;
 
-  const [uiOptions, setUiOptions]               = createSignal<UIOptions>({ showMarineWeather: false });
+  const [uiOptions, setUiOptions]               = createSignal<UIOptions>({ showMarineWeather: false, showBookmarks: false });
   const [bookmarks, setBookmarks]               = createSignal<Bookmark[]>([]);
   const [lobstersNews, setLobstersNews]         = createSignal<NewsItem[]>([]);
   const [hackerNews, setHackerNews]             = createSignal<NewsItem[]>([]);
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
 
-  const leftColumnClass   = uiOptions().showMarineWeather ? 'col-sm-7' : 'col-12';
-  const rightColumnClass  = uiOptions().showMarineWeather ? 'col-sm-5' : 'col-0';
+  const leftColumnClass   = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-7' : 'col-12');
+  const rightColumnClass  = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-5' : 'col-0');
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -43,7 +44,17 @@ const Application = (props: Props) => {
     application.on([ "hacker-news-item-deleted" ] , e => setHackerNews(hackerNews().filter(it => it.id != e.id)));
     application.on([ "stats" ]                    , setStats);
 
+    const loadToggles = async (): Promise<void> => {
+      const toggles       = await application.toggles.list();
+  
+      setUiOptions({
+        showMarineWeather:  toggles.showMarineWeather.isOn,
+        showBookmarks:      toggles.showBookmarks.isOn,
+      })
+    }
+
     return Promise.all([
+      loadToggles(),
       application.bookmarks.list().then(setBookmarks),
       application.weather.sevenDays(),
       application.lobsters.list(),
@@ -60,12 +71,14 @@ const Application = (props: Props) => {
   createEffect(() => {
     //@ts-ignore
     document.title = newsItems().length > 0 ? `News (${newsItems().length})`: 'News'
+
+    console.log('[showMarineWeather]', uiOptions().showMarineWeather);
   });
 
   return <>
     <div>
       <div class="row">
-        <div className={leftColumnClass}>
+        <div className={leftColumnClass()}>
           <div class="row">
             <div class="col-12" style="text-align:right">
             </div>
@@ -92,9 +105,8 @@ const Application = (props: Props) => {
             </div>
           </div>
         </div>
-        <div class={rightColumnClass}>
-          {/* ${this.windfinder()} */}
-          {/* ${this.marineWeather()} */}
+        <div class={rightColumnClass()}>
+          <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
         </div>
       </div>
     </div>

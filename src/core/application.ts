@@ -1,6 +1,6 @@
 import { Store }          from './internal/store';
 import { EventEmitter }   from 'events';
-import { Ports }          from './ports';
+import { Ports, PortsBuilder }          from './ports';
 import { Bookmark }       from './bookmark';
 import { Toggle }         from './toggle';
 import { Toggles }        from './toggles';
@@ -8,8 +8,14 @@ import { ToggleSource }   from './toggle-source';
 import { WeatherUseCases} from './internal/use-cases/weather-use-cases';
 import { NewsUseCases }   from './internal/use-cases/news-use-cases';
 
+export type Intervals = {
+  statisticsEmitInSeconds: number;
+  updateIntervalInSeconds?: number | undefined; 
+}
+
 export interface Statistics {
   lastUpdateAt?: Date
+  intervals?: Intervals;
 }
 
 export interface Options {
@@ -19,23 +25,37 @@ export interface Options {
 export class Application {
   private readonly _ports: Ports;
   private readonly _events: CustomEventEmitter;
-  private readonly _log: (m:string) => void;
+  private readonly _log: (m: string) => void;
   private readonly _settings: any;
   private readonly _store: Store;
   private _toggles: Toggles;
   private _togglesLoaded: boolean = false;
   private readonly _toggleSource: ToggleSource;
   private _pollingTask: NodeJS.Timeout;
-  private readonly _statsTask: NodeJS.Timeout
+  private readonly _statsTask: NodeJS.Timeout;
   private readonly _stats: Statistics;
 
-  constructor(ports: Ports, settings: any = null, opts: Options = { allowStats: false }) {
-    this._ports = ports;
-    this._events = new CustomEventEmitter(ports.log);
-    this._log = ports.log.info;
+  constructor(portsOrBuilder: Ports | PortsBuilder, settings: any = null, opts: Options = { allowStats: false }) {
+    let ports: Ports;
+    
+    if ((portsOrBuilder as PortsBuilder).build) {
+      ports = (portsOrBuilder as PortsBuilder).build();;
+    } else {
+      ports = portsOrBuilder as Ports;
+    }
+
+    this._ports = { ...PortsBuilder.new().build(), ...ports };
+    
+    this._events = new CustomEventEmitter();
+    this._log = this._ports.log?.info;
     this._settings = settings;
-    this._store = new Store(this._events, ports.clock);
-    this._stats = {};
+    this._store = new Store(this._events, this._ports.clock);
+    this._stats = {
+      intervals: {
+        statisticsEmitInSeconds: 30,
+        updateIntervalInSeconds: null  
+      } 
+    };
 
     this._toggles = {  
       showDeleted:        { name: 'show-deleted'        , isOn: false },
@@ -44,13 +64,13 @@ export class Application {
       showMarineWeather:  { name: 'show-marine-weather' , isOn: false }
     };
 
-    this._toggleSource = ports.toggles;
+    this._toggleSource = this._ports.toggles;
 
     if (opts.allowStats === true) {
       //[i] https://stackoverflow.com/questions/50372866/mocha-not-exiting-after-test
       this._statsTask = setInterval(async () => {
         this._events.emit('stats', this._stats);
-      }, 30*1000);
+      }, this._stats.intervals.statisticsEmitInSeconds * 1000);
     }
     
     this._store.subscribe(state => {
@@ -62,13 +82,15 @@ export class Application {
   pollEvery(milliseconds) {
     this._log(`[application] polling frequency set to <${milliseconds}ms>`);
 
+    this._stats.intervals.updateIntervalInSeconds = milliseconds/1000;
+
     this._pollingTask = setInterval(async () => {
       await Promise.all([
         this.lobsters.list(),
         this.hackerNews.list()
       ]);
       
-    }, milliseconds);
+    }, this._stats.intervals.updateIntervalInSeconds * 1000);
   }
 
   stopPolling() {
@@ -229,10 +251,12 @@ export class Application {
 
   private async ensureTogglesLoaded() {
     if (!this._togglesLoaded) {
-      const list = await this._toggleSource.list();
-      
-      if (list) {
-        this._toggles = list;
+      if (this._toggleSource) {
+        const list = await this._toggleSource.list();
+        
+        if (list) {
+          this._toggles = list;
+        }
       }
 
       this._togglesLoaded = true;
@@ -257,23 +281,13 @@ export class Application {
 
 // https://stackoverflow.com/questions/5178869/listen-to-all-emitted-events-in-node-js
 class CustomEventEmitter extends EventEmitter {
-  private _log: any;
-
-  constructor(log) {
-    super();
-
-    this._log = log;
-  }
-
-  emit(type, ...args) {
+  public emit = (type, ...args) => {
     const n = { type: type, ...args[0] };
 
-    try {
-      super.emit('*', n);
+    super.emit('*', n);
 
+    try {
       return super.emit(type, ...args) || super.emit('', ...args);
-    } catch (error) {
-      this._log(error);
-    }
+    } catch {}
   }
 }

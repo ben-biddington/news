@@ -1,6 +1,6 @@
+import { Application } from '../../../src/core/application';
 import {
-  delay, Application, Ports, NewsItem,
-  mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters } from '../application-unit-test';
+  delay, PortsBuilder, NewsItem, MockListener, MockLobsters } from '../application-unit-test';
 
 describe('Automatically refreshing lobsters news on a schedule', async () => {
   it("notifies with 'lobsters-items-loaded'", async () => {
@@ -10,9 +10,10 @@ describe('Automatically refreshing lobsters news on a schedule', async () => {
       new NewsItem('id-1', 'Title 1', 'http://xyz').thatIsNew()
     ]);
 
-    const toggles = new MockToggles();
-
-    const application = new Application(new Ports(lobsters, log, new MockSeive(), new MockLobsters()), toggles);
+    const application = new Application(
+      PortsBuilder.new().
+        withLobsters(lobsters).
+        withHackerNews(new MockLobsters()));
 
     const notifications = new MockListener(application);
 

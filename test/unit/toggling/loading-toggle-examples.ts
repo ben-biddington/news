@@ -1,6 +1,6 @@
 import { MockToggles } from '../../support/mock-toggles';
 import {
-  Application, Ports, expect
+  Application, PortsBuilder, expect
 } from '../application-unit-test';
 
 import { Toggles } from '../../../src/core/toggles';
@@ -17,7 +17,7 @@ describe('Loading toggles', () => {
 
     const toggleSource = new MockToggles(expected);
 
-    const application = new Application(Ports.blank().withToggles(toggleSource), null);
+    const application = new Application(PortsBuilder.new().withToggles(toggleSource), null);
 
     const actualToggles = await application.toggles.list();
 

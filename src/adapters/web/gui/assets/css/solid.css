@@ -79,3 +79,7 @@ span.youtube { color: red }
   0%   { opacity:0 }
   100% { opacity:100 }
 }
+
+.host .host-name { border-top-right-radius: 0; border-bottom-right-radius: 0}
+.host .host-block { border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: darkred; }
+.host .host-block :hover { background-color: red; }

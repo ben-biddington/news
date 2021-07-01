@@ -1,5 +1,5 @@
 import { WeatherForecast, WeatherQuery } from '../../src/core/weather';
-import { expect, MockListener, Application, Ports, MockSettings, MockToggles } from './application-unit-test';
+import { expect, MockListener, Application, PortsBuilder, MockSettings, MockToggles } from './application-unit-test';
 
 class MockWeatherQuery implements WeatherQuery {
   private result: WeatherForecast[] = [];
@@ -28,7 +28,7 @@ describe('Viewing weather', async () => {
     const weatherQuery = new MockWeatherQuery(expectedWeather);
 
     const application = new Application(
-      Ports.blank().with(weatherQuery),
+      PortsBuilder.new().withWeatherQuery(weatherQuery),
       new MockToggles(), 
       new MockSettings());
     

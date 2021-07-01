@@ -1,5 +1,5 @@
 import {
-  expect, Application, NewsItem, Ports,
+  expect, Application, NewsItem, PortsBuilder,
   mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters, MockClock
 } from '../application-unit-test';
 
@@ -9,7 +9,7 @@ describe('Listing lobsters news', async () => {
   it('marks items as new', async () => {
     const lobsters = new MockLobsters();
 
-    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters));
 
     lobsters.listReturns([
       new NewsItem('id-1', 'Title 1', 'http://xyz')
@@ -33,7 +33,7 @@ describe('Listing lobsters news', async () => {
   it('notifies with <stats> and <lobsters-items-loaded>', async () => {
     const lobsters  = new MockLobsters();
     const clock     = new MockClock();
-    const ports     = new Ports(lobsters, log, new MockSeive()).withClock(clock);
+    const ports     = PortsBuilder.new().withLobsters(lobsters).withLog(log).withClock(clock).build();
 
     lobsters.listReturns([
       new NewsItem('id-1', 'Title 1', 'http://xyz')
@@ -52,6 +52,10 @@ describe('Listing lobsters news', async () => {
     listener.mustHave(
       { 
         type: "stats",
+        "intervals": {
+          "statisticsEmitInSeconds": 30,
+          "updateIntervalInSeconds": null
+        },
         lastUpdateAt: "2021-03-31T11:00:00.000Z"
       }
     );
@@ -76,7 +80,7 @@ describe('Listing lobsters news', async () => {
 
   it('calling multiple times does not add duplicates', async () => {
     const lobsters = new MockLobsters();
-    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters));
     
     const listener = new MockListener(application);
 
@@ -102,7 +106,7 @@ describe('Listing and blocked hosts', () => {
     blockedHosts.add('www.bbc.co.uk');
 
     application = new Application(
-      Ports.blank().
+      PortsBuilder.new().
         withBlockedHosts(blockedHosts).
         withLobsters(lobsters).
         withToggles(toggles));

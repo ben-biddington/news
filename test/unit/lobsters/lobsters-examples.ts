@@ -1,6 +1,6 @@
 import { NewsItem } from '../../../src/core/news-item';
 import {
-  expect, Application, Ports,
+  expect, Application, PortsBuilder,
   mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters } from '../application-unit-test';
 import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
 
@@ -8,7 +8,7 @@ describe('Viewing lobsters news', async () => {
   it('can list news', async () => {
     const lobsters = new MockLobsters();
 
-    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters), new MockToggles());
 
     await application.lobsters.list();
 
@@ -20,7 +20,7 @@ describe('Deleting lobsters news items', () => {
   it('performs the delete', () => {
     const lobsters = new MockLobsters(it => it.listReturns([ new NewsItem('a', 'A')]));
 
-    const application = new Application(new Ports(lobsters, log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters), new MockToggles());
 
     application.lobsters.delete('item-id');
 
@@ -37,7 +37,7 @@ describe('Deleting lobsters news items', () => {
 
     const blockedHosts  = new MockBlockedHosts();
 
-    const application = new Application(new Ports(lobsters, log, new MockSeive()).withBlockedHosts(blockedHosts), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters).withBlockedHosts(blockedHosts), new MockToggles());
 
     const notifications = new MockListener(application);
 
@@ -66,7 +66,7 @@ describe('Deleting lobsters news items', () => {
   });
 
   it('allows registering for the event', async () => {
-    const application = new Application(new Ports(new MockLobsters(), log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(new MockLobsters()), new MockToggles());
 
     let theIdDeleted = null;
 
@@ -80,7 +80,7 @@ describe('Deleting lobsters news items', () => {
   });
 
   it('allows event handlers to fail', async () => {
-    const application = new Application(new Ports(new MockLobsters(), log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(new MockLobsters()), new MockToggles());
 
     application.on('lobsters-item-deleted', _ => {
       throw new Error('Failed on purpose');
@@ -92,7 +92,7 @@ describe('Deleting lobsters news items', () => {
 
 describe('Snoozing lobsters news items', () => {
   it('notifies', async () => {
-    const application = new Application(new Ports(new MockLobsters(), log, new MockSeive()), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(new MockLobsters()), new MockToggles());
 
     const notifications = new MockListener(application);
 
@@ -113,7 +113,7 @@ describe('Removing lobsters news items', () => {
         new NewsItem('item-b', 'B')
       ]));
 
-    const application = new Application(Ports.blank().withLobsters(lobsters));
+    const application = new Application(PortsBuilder.blank().withLobsters(lobsters));
 
     const notifications = new MockListener(application);
 

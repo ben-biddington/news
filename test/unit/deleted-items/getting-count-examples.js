@@ -1,10 +1,11 @@
+const { PortsBuilder } = require('../../../src/core/ports');
 const {
     expect, 
-    Application, Ports, 
+    Application, 
     log, 
-    MockLobsters, MockSeive, MockToggles, MockListener, MockDeletedItems } = require('../application-unit-test');
+    MockToggles, MockListener, MockDeletedItems } = require('../application-unit-test');
 
-const mockPorts = () => new Ports(new MockLobsters(), log, new MockSeive(), new MockLobsters());
+const mockPorts = () => PortsBuilder.new();
 
 describe('Getting deleted item count', async () => {
     let deletedItems, notifications = null;

@@ -1,5 +1,5 @@
 import {
-  delay, Application, Ports,
+  delay, Application, PortsBuilder,
   mockLog as log, MockToggles, MockSeive, MockListener, MockLobsters, NewsItem } from '../application-unit-test';
 
 describe('Automatically refreshing hacker news on a schedule', async () => {
@@ -13,7 +13,9 @@ describe('Automatically refreshing hacker news on a schedule', async () => {
     const toggles = new MockToggles();
 
     const application = new Application(
-      new Ports(new MockLobsters(), log, new MockSeive()).withHackerNews(hackerNews), toggles);
+      PortsBuilder.new().
+        withHackerNews(hackerNews).
+        withLobsters(new MockLobsters()), toggles);
 
     const notifications = new MockListener(application);
 

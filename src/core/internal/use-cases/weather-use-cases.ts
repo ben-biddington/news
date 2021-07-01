@@ -11,7 +11,7 @@ export class WeatherUseCases {
     this.events = events;
   }
 
-  async sevenDays(): Promise<Array<WeatherForecast>> {
+  public sevenDays = async (): Promise<Array<WeatherForecast>> => {
     const weather = await this.weatherQuery.sevenDays();
 
     this.events.emit('weather-loaded', { weather });

@@ -54,23 +54,29 @@ export const NewsPanel = (props: Props) => {
           </span>
           <span class="age">{ageSince(newsItem, props.now)}</span>
           <span class="host">
+            <span class="host-name badge badge-dark">
+              {newsItem.host}
+            </span>
             <a href="javascript:void(0)" 
-              data-toggle="tooltip" 
-              data-placement="top" 
-              title={(newsItem.hostIsBlocked ? 'unblock': 'block') + ' ' + newsItem.host} 
-              class="badge badge-danger" 
-              onclick={newsItem.hostIsBlocked ? () => props.onUnblock(newsItem.host): () => props.onBlock(newsItem.host)}>{newsItem.hostIsBlocked ? 'unblock': 'block'} {newsItem.host}</a>
+              class="host-block badge badge-danger" 
+              onclick={newsItem.hostIsBlocked ? () => props.onUnblock(newsItem.host): () => props.onBlock(newsItem.host)}>{newsItem.hostIsBlocked ? 'unblock': 'block'}</a>
           </span>
         </div>
       </td>
     </tr>
   );
 
+  const loading = <>
+    <tr>
+      <td>...</td>
+    </tr>
+  </>;
+
   return(
     <div id="news">
       <table class="table table-hover">
         <tbody>
-          <For each={props.news} fallback={<div>Loading...</div>} children={f} />
+          <For each={props.news} fallback={loading} children={f} />
         </tbody>
       </table>
     </div>

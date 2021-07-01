@@ -1,4 +1,4 @@
-import { MockListener, Application, Ports, NewsItem, MockSettings, MockLobsters } from '../application-unit-test';
+import { MockListener, Application, PortsBuilder, NewsItem, MockSettings, MockLobsters } from '../application-unit-test';
 import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
 
 describe('Blocking a host', async () => {
@@ -9,7 +9,7 @@ describe('Blocking a host', async () => {
 
   beforeEach(async () => {
     blockedHosts  = new MockBlockedHosts();
-    ports   = Ports.blank().
+    ports   = PortsBuilder.blank().
       withBlockedHosts(blockedHosts).
       withLobsters(new MockLobsters(it => it.listReturns([ 
         new NewsItem('id'   , 'title'   , 'https://bbc.co.uk/example'),
@@ -62,7 +62,7 @@ describe('Unblocking a host', async () => {
 
   beforeEach(async () => {
     blockedHosts  = new MockBlockedHosts();
-    ports   = Ports.blank().
+    ports   = PortsBuilder.blank().
       withBlockedHosts(blockedHosts).
       withLobsters(new MockLobsters(it => it.listReturns([ new NewsItem('id', 'title', 'https://bbc.co.uk/example')])));
     application   = new Application(ports, new MockSettings());

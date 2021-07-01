@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 const { Application } = require('../../src/core/application');
 
-const { Ports } = require('../../src/core/ports');
+const { Ports, PortsBuilder } = require('../../src/core/ports');
 
 const { NewsItem } = require('../../src/core/news-item');
 
@@ -31,6 +31,7 @@ module.exports.expect = expect;
 module.exports.Application = Application;
 module.exports.NewsItem = NewsItem;
 module.exports.Ports = Ports;
+module.exports.PortsBuilder = PortsBuilder;
 module.exports.MockLobsters = MockLobsters;
 module.exports.MockListener = MockListener;
 module.exports.MockSeive = MockSeive;

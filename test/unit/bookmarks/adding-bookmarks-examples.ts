@@ -1,8 +1,8 @@
-import { MockBookMarks, MockSeive, MockLobsters, MockListener, Application, Ports, MockSettings, MockToggles } from '../application-unit-test';
+import { MockBookMarks, MockSeive, MockLobsters, MockListener, Application, PortsBuilder, MockToggles } from '../application-unit-test';
 const { NewsItem } = require('../../../src/core/dist/news-item')
 const { log } = require('../../support/mock-log');
 const { Bookmark } = require('../../../src/core/dist/bookmark');
-const mockPorts = () => new Ports(new MockLobsters(), log, new MockSeive(), new MockLobsters(), null);
+const mockPorts: PortsBuilder = () => PortsBuilder.blank().withLobsters(new MockLobsters()).withLog(log).withSeive(new MockSeive()).withLobsters(new MockLobsters());
 
 describe('Bookmarking news items', async () => {
   let bookmarks, notifications, application = null;
@@ -16,7 +16,7 @@ describe('Bookmarking news items', async () => {
     const ports = mockPorts().
       withHackerNews(new MockLobsters(it => it.listReturns(Promise.resolve([hackerNewsItemToBookmark])))).
       withLobsters(new MockLobsters(it => it.listReturns(Promise.resolve([lobstersNewsItemToBookmark])))).
-      withBookmarks(bookmarks);
+      withBookmarks(bookmarks).build();
 
     application = new Application(ports, new MockToggles());
 

@@ -1,11 +1,14 @@
-import { createEffect,  createMemo, createSignal, onMount, Show } from "solid-js";
+import { createEffect,  createMemo, createSignal, JSXElement, onMount, Show } from "solid-js";
 import { render } from "solid-js/web";
 import { Bookmark } from "../../../../../core/bookmark";
-import { NewsItem, ageSince } from "../../../../../core/news-item";
+import { NewsItem } from "../../../../../core/news-item";
+import { WeatherForecast } from "../../../../../core/weather";
 import { format } from 'date-fns';
 import { Statistics, Application as Core } from '../../../../../core/application';
 import { NewsPanel } from './components/NewsPanel';
 import { MarineWeatherPanel } from './components/MarineWeatherPanel';
+import { Weather } from './components/Weather';
+import { formatDifference, formatDuration } from '../../../../../core/date';
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -22,6 +25,7 @@ const Application = () => {
   const [hackerNews, setHackerNews]             = createSignal<NewsItem[]>([]);
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
+  const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
 
   const leftColumnClass   = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-7' : 'col-12');
   const rightColumnClass  = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-5' : 'col-0');
@@ -42,7 +46,7 @@ const Application = () => {
     application.on([ "hacker-news-items-loaded" ] , e => setHackerNews(e.items));
     application.on([ "lobsters-item-deleted" ]    , e => setLobstersNews(lobstersNews().filter(it => it.id != e.id)));
     application.on([ "hacker-news-item-deleted" ] , e => setHackerNews(hackerNews().filter(it => it.id != e.id)));
-    application.on([ "stats" ]                    , setStats);
+    application.on([ "stats" ]                    , e => setStats(old => ( {...old, lastUpdateAt: new Date(e.lastUpdateAt), intervals: e.intervals} ) ));
 
     const loadToggles = async (): Promise<void> => {
       const toggles       = await application.toggles.list();
@@ -56,23 +60,39 @@ const Application = () => {
     return Promise.all([
       loadToggles(),
       application.bookmarks.list().then(setBookmarks),
-      application.weather.sevenDays(),
+      application.weather.sevenDays().then(setWeather),
       application.lobsters.list(),
       application.hackerNews.list(),
-      application.youtube.list(),
       application.deletedItems.count().then(setDeletedItemCount)
     ])
   });
 
   const newsItems = createMemo<NewsItem[]>(news);
+  
+  const lastUpdatedLabel = createMemo<JSXElement>(() => {
+    const statistics: Statistics = stats();
+    
+    console.log(JSON.stringify(statistics, null, 2));
+
+    const title = `Updating news every <${statistics.intervals?.updateIntervalInSeconds}s>. ` + 
+                  `Stats emitted every <${statistics.intervals?.statisticsEmitInSeconds}s>`;
+    
+    return <>
+        <span title={title}>
+          {format(statistics.lastUpdateAt, 'HH:mm')} ({formatDifference(statistics.lastUpdateAt, application.now())})
+        </span>
+        </>;
+  });
 
   const now = createMemo(() => application.now()); 
 
   createEffect(() => {
-    //@ts-ignore
-    document.title = newsItems().length > 0 ? `News (${newsItems().length})`: 'News'
+    const lastUpdated = stats().lastUpdateAt;
 
-    console.log('[showMarineWeather]', uiOptions().showMarineWeather);
+    //@ts-ignore
+    document.title = newsItems().length > 0 ? `News (${newsItems().length})`: 'News';
+    
+    console.log(`Last updated <${format(lastUpdated, 'HH:mm')}>`);
   });
 
   return <>
@@ -92,16 +112,41 @@ const Application = () => {
 
           <div class="row">
             <div class="col-12">
-              <p>There are {newsItems().length} news items</p>
-              <p>Last updated: {format(stats().lastUpdateAt, 'HH:mm')}</p>
+              <div class="row">
+                <div class="col-6">
+                  <div class="row">
+                    <div class="col-12">
+                    <a href="javascript:void(0)" 
+                      class={uiOptions().showMarineWeather ? 'badge badge-success' : 'badge badge-primary'} 
+                      onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>marine weather</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <Weather forecasts={weather()}/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-12">
+                      <p>Last updated: {lastUpdatedLabel()}</p>
+                    </div>
+                  </div>
 
-              <NewsPanel 
-                news={newsItems()} 
-                now={now()} 
-                onDelete={application.hackerNews.delete} 
-                onBlock={application.news.block}
-                onUnblock={application.news.unblock}
-                onBookmark={application.bookmarks.add} /> 
+                  <div class="row">
+                    <div class="col-12">
+                      <NewsPanel 
+                        news={newsItems()} 
+                        now={now()} 
+                        onDelete={application.hackerNews.delete} 
+                        onBlock={application.news.block}
+                        onUnblock={application.news.unblock}
+                        onBookmark={application.bookmarks.add} /> 
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

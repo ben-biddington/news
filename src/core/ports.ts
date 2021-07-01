@@ -6,7 +6,7 @@ import { DevNullBlockedHosts } from './dev-null-blocked-hosts';
 import { NewsSource } from './news-source';
 import { Bookmark } from './bookmark';
 import { NewsItem } from './news-item';
-import { Log } from './logging/log';
+import { DevNullLog, Log } from './logging/log';
 
 export interface Clock {
   now: () => Date;
@@ -44,8 +44,13 @@ export class PortsBuilder {
     this.ports = ports;
   }
 
+  static blank() {
+    return new PortsBuilder();
+  }
+
   static new(): PortsBuilder {
     return new PortsBuilder().
+      withLog(new DevNullLog()).
       withToggles(new DevNullToggleSource()).
       withSeive(new DevNullSeive()).
       withBlockedHosts(new DevNullBlockedHosts()).

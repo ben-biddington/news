@@ -2,7 +2,7 @@ import { MockBlockedHosts } from "../../support/mock-blocked-hosts";
 
 const {
   expect,
-  Application, Ports, NewsItem,
+  Application, PortsBuilder, NewsItem,
   MockToggles, MockSeive, MockLobsters } = require('../application-unit-test');
 
 describe('Seiving lobsters news', async () => {
@@ -20,7 +20,7 @@ describe('Seiving lobsters news', async () => {
     const seive = new MockSeive();
     seive.alwaysReturn(['B']);
 
-    const application = new Application(new Ports(lobsters, console.log, seive), new MockToggles());
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters).withSeive(seive), new MockToggles());
 
     const seivedResult = await application.lobsters.list();
 
@@ -49,7 +49,7 @@ describe('Seiving lobsters news', async () => {
       new NewsItem('C', '', 'https://c')
     ]);
 
-    const application = new Application(Ports.blank().withLobsters(lobsters).withBlockedHosts(blockedHosts), null);
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters).withBlockedHosts(blockedHosts), null);
 
     const result = await application.lobsters.list();
     
@@ -77,7 +77,7 @@ describe('Seiving lobsters news', async () => {
       showMarineWeather: { name: 'show-weather', isOn: false }
     }));
 
-    const application = new Application(new Ports(lobsters, console.log, seive).withToggles(toggles), null);
+    const application = new Application(PortsBuilder.new().withLobsters(lobsters).withSeive(seive).withToggles(toggles), null);
 
     const seivedResult = await application.lobsters.list();
 

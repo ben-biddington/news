@@ -1,11 +1,11 @@
-import { expect, Application, Ports, MockLobsters, MockListener, MockSeive, MockToggles } from '../application-unit-test';
+import { expect, Application, PortsBuilder, MockLobsters, MockListener, MockSeive, MockToggles } from '../application-unit-test';
 
 describe('Viewing hacker news', async () => {
   it('can list news', async () => {
     const hackerNews = new MockLobsters();
 
     const application = new Application(
-      Ports.blank().withHackerNews(hackerNews),
+      PortsBuilder.blank().withHackerNews(hackerNews),
       new MockToggles());
     
     const listener: MockListener = new MockListener(application);
@@ -44,7 +44,7 @@ describe('Deleting hacker news items', () => {
   const hackerNews = new MockLobsters();
 
   const application = new Application(
-    Ports.blank().withHackerNews(hackerNews),
+    PortsBuilder.blank().withHackerNews(hackerNews),
     new MockToggles());
 
   const notifications = new MockListener(application);

@@ -1,12 +1,11 @@
-import { MockToggles } from '../../support/mock-toggles';
 import {
-  Application, Ports,
+  Application, PortsBuilder,
   MockListener, expect
 } from '../application-unit-test';
 
 describe('Saving a toggle value', async () => {
   it("notifies with toggle saved", async () => {
-    const application = new Application(Ports.blank());
+    const application = new Application(PortsBuilder.blank());
 
     const notifications = new MockListener(application);
 
@@ -20,7 +19,7 @@ describe('Saving a toggle value', async () => {
   });
 
   it("[special] can update marine weather", async () => {
-    const application = new Application(Ports.blank());
+    const application = new Application(PortsBuilder.blank());
 
     await application.toggles.save({ name: 'show-marine-weather', isOn: true });
 

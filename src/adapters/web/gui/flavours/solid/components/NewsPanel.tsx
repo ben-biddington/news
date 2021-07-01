@@ -1,8 +1,8 @@
-import { createEffect, For } from "solid-js";
+import { createSignal, For, mergeProps } from "solid-js";
 
 import { ageSince, NewsItem } from '../../../../../../core/news-item';
 
-export type Props = {
+type Props = {
   news: NewsItem[];
   onDelete?: (id: string) => void;
   onBookmark?: (id: string) => void;
@@ -23,13 +23,46 @@ const sourceIcon = item => {
 }
 
 export const NewsPanel = (props: Props) => {
-  
-  createEffect(() => {
-    console.log(props.news.length);
-  });
+  const [isLoaded, setLoaded] = createSignal<boolean>(false);
+
+  props = mergeProps({ news: []}, props);
+
+  const controls = (newsItem: NewsItem) => {
+    return <>
+      <ul class="news-controls list-group list-group-horizontal rounded-0">
+        <li class="list-group-item">
+          <span class={`source ${newsItem.label}`}>
+            {sourceIcon(newsItem)}
+          </span>
+        </li>
+        <li class="list-group-item">
+          <span class="age">{ageSince(newsItem, props.now)}</span>
+        </li>
+        <li class="list-group-item icon">
+          <a href="javascript:void(0)" onclick={() => props.onBookmark(newsItem.id)} title={`bookmark ${newsItem.title}`} class="icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon bi bi-bookmark-heart-fill" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M4 0a2 2 0 0 0-2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4zm4 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"></path>
+            </svg>
+          </a>
+        </li>
+        <li class="list-group-item">
+          <span class="host">
+            <span class="host-name badge badge-secondary">
+              {newsItem.host}
+            </span>
+            <a href="javascript:void(0)" 
+              class="host-block badge badge-danger" 
+              onclick={newsItem.hostIsBlocked ? () => props.onUnblock(newsItem.host): () => props.onBlock(newsItem.host)}>{newsItem.hostIsBlocked ? 'unblock': 'block'}</a>
+          </span>
+        </li>
+      </ul>
+    </>
+  }
+
+  const cssClass = (newsItem: NewsItem) => `news-item-row ${newsItem.hostIsBlocked ? 'blocked': null}`;
 
   const f = (newsItem: NewsItem, i) => (
-    <tr class={newsItem.hostIsBlocked ? 'blocked': 'xxx'}>
+    <tr class={cssClass(newsItem)}>
       <td width="20" style="vertical-align: middle;text-align: center;">{i()+1}</td>
       <td width="20" style="vertical-align: middle;text-align: center;">
         <a href="javascript:void(0)" onclick={() => props.onDelete(newsItem.id)} title={`delete ${newsItem.title} (${newsItem.id})`} class="icon">
@@ -40,28 +73,10 @@ export const NewsPanel = (props: Props) => {
         </a>
       </td>
       <td>
-        <div>
+        <div style="margin-bottom:10px">
           <a href={newsItem.url}><span class="news-title">{newsItem.title}</span></a>
         </div>
-        <div>
-          <a href="javascript:void(0)" onclick={() => props.onBookmark(newsItem.id)} title={`bookmark ${newsItem.title}`} class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon bi bi-bookmark-heart-fill" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M4 0a2 2 0 0 0-2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4zm4 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"></path>
-            </svg>
-          </a>
-          <span class={'source' + ' ' + newsItem.label} title={newsItem.label + ' article'}>
-            {sourceIcon(newsItem)}
-          </span>
-          <span class="age">{ageSince(newsItem, props.now)}</span>
-          <span class="host">
-            <span class="host-name badge badge-dark">
-              {newsItem.host}
-            </span>
-            <a href="javascript:void(0)" 
-              class="host-block badge badge-danger" 
-              onclick={newsItem.hostIsBlocked ? () => props.onUnblock(newsItem.host): () => props.onBlock(newsItem.host)}>{newsItem.hostIsBlocked ? 'unblock': 'block'}</a>
-          </span>
-        </div>
+          {controls(newsItem)}
       </td>
     </tr>
   );
@@ -72,15 +87,23 @@ export const NewsPanel = (props: Props) => {
     </tr>
   </>;
 
-  return(
+  return <>
     <div id="news">
       <table class="table table-hover">
+        <thead>
+          <tr>
+            <td colspan="3"><strong>News</strong> ({props.news.length})</td>
+          </tr>
+        </thead>
         <tbody>
           <For each={props.news} fallback={loading} children={f} />
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">&nbsp;</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
-  )
+  </>
 }
-
-module.exports.NewsPanel = NewsPanel;

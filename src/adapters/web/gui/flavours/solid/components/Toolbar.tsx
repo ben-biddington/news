@@ -5,7 +5,7 @@ type Props = {
   deletedCount?: number;
   bookmarkCount?: number;
   lastUpdated?: Date | null;
-  onTogglebokmarks?: () => void;
+  onTogglebookmarks?: () => void;
 }
 
 export const Toolbar = (props: Props) => {
@@ -34,7 +34,7 @@ export const Toolbar = (props: Props) => {
             </li>
             <li class="list-group-item">
               <div style="float:right; display: inline-block;">
-                <a href="javascript:void(0)" onclick={props.onTogglebokmarks}>
+                <a href="javascript:void(0)" onclick={props.onTogglebookmarks}>
                 <svg width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="icon bi bi-bookmark-heart-fill" viewBox="0 0 16 16">
                   <path fill-rule="evenodd" d="M4 0a2 2 0 0 0-2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4zm4 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"></path>
                 </svg></a><span>{props.bookmarkCount}</span>

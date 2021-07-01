@@ -8,6 +8,7 @@ import { Statistics, Application as Core } from '../../../../../core/application
 import { NewsPanel } from './components/NewsPanel';
 import { MarineWeatherPanel } from './components/MarineWeatherPanel';
 import { Weather } from './components/Weather';
+import { Toolbar } from './components/Toolbar';
 import { formatDifference, formatDuration } from '../../../../../core/date';
 
 type UIOptions = { 
@@ -123,14 +124,18 @@ const Application = () => {
                   </div>
                 </div>
                 <div class="col-6">
-                  <Weather forecasts={weather()}/>
+                  <Weather forecasts={weather()} link="https://www.metservice.com/towns-cities/locations/wellington/7-days" />
                 </div>
               </div>
               <div class="row">
                 <div class="col-12">
                   <div class="row">
                     <div class="col-12">
-                      <p>Last updated: {lastUpdatedLabel()}</p>
+                      {/* <p>Last updated: {lastUpdatedLabel()}</p> */}
+                      <Toolbar 
+                        lastUpdated={stats().lastUpdateAt} 
+                        bookmarkCount={bookmarks().length} 
+                        deletedCount={deletedItemCount()} />
                     </div>
                   </div>
 

@@ -1,13 +1,16 @@
-import { For, createEffect } from "solid-js";
+import { For, createEffect, mergeProps } from "solid-js";
 import { WeatherForecast } from "../../../../../../core/weather";
 import { icon } from './icons';
 import { format } from 'date-fns';
 
 export type Props = {
   forecasts: WeatherForecast[];
- }
+  link?: string;
+}
 
 export const Weather = (props: Props) => {
+  props = mergeProps({ link: 'javascript:void(0)'}, props);
+
   createEffect(() => {
     console.log('Enabling popovers for <', props.forecasts.length, '> forecasts');
     try {
@@ -37,7 +40,7 @@ export const Weather = (props: Props) => {
     return <>
       <td>
         <a
-          href="javascript:void(0)"
+          href={props.link}
           role="button" 
           data-toggle="popover"
           data-html="true"  

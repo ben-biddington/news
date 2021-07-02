@@ -59,7 +59,7 @@ export const NewsPanel = (props: Props) => {
     </>
   }
 
-  const cssClass = (newsItem: NewsItem) => `news-item-row ${newsItem.hostIsBlocked ? 'blocked': null}`;
+  const cssClass = (newsItem: NewsItem) => `news-item-row ${newsItem.hostIsBlocked ? 'blocked': ''}`;
 
   const f = (newsItem: NewsItem, i) => (
     <tr class={cssClass(newsItem)}>
@@ -89,7 +89,7 @@ export const NewsPanel = (props: Props) => {
 
   return <>
     <div id="news">
-      <table class="table table-hover">
+      <table class="table">
         <thead>
           <tr>
             <td colspan="3"><strong>News</strong> ({props.news.length})</td>

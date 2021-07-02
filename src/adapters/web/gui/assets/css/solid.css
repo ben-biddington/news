@@ -9,7 +9,11 @@ span.youtube { color: red }
 /* body table {font-size: 20px !important;} */
 #news { border: 0px solid silver; padding:1px; font-size: 20px; }
 #news tr.news-item-row { 
-  background-color: rgb(218, 224, 229, 0.2);  transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out;
+  transition: all 1s;
+
+  background-color: rgb(218, 224, 229, 0.2); 
+  
+  /* transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out; */
 
    /* https://mdbootstrap.com/docs/standard/tools/design/gradients/ */
   /* fallback for old browsers */
@@ -22,10 +26,17 @@ span.youtube { color: red }
   background: linear-gradient(to bottom, rgb(218, 224, 229, 0.2), rgba(117, 67, 67, 0.0));
 }
 
-#news tr.news-item-row td { border-top: 1px soild red; }
+#news tr.news-item-row:hover { 
+  /* background-color: rgb(218, 224, 229, 0.2); transition: visibility 2s linear 0.7s, opacity 0.7s ease-in-out; */
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to bottom, rgb(218, 224, 229, 0.6), rgba(117, 67, 67, 0.0));
+}
+
+#news tr.news-item-row td { border-top: 1px solid #f0f0f0; }
 
 #news .news-title { font-size: 1.5em; }
-#news .news-controls { background-color: inherit; border: 0; border-bottom-color: #f0f0f0;  border-bottom-width: 1; border-style: solid; }
+#news .news-controls { background-color: inherit; border: 0; border-bottom-color: #f0f0f0; border-bottom-width: 1; border-style: solid; }
 #news .news-controls li { border: 0; background-color: inherit; }
 #news .news-controls li.icon { min-width: 50; }
 #news .icon { width:16; height: 16; }
@@ -34,9 +45,9 @@ span.youtube { color: red }
 #marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }
 .toolbar ul { float: right }
 .toolbar li { border:0 }
-
+.toolbar .list-group-item .label { margin-left: 5px;  }
 #bookmarks { transition: display 0s linear 0.7s, opacity 0.7s ease-in-out;}
-#bookmarks table { background-color: rgb(218, 224, 229, 0.2);  transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out;}
+#bookmarks table { background-color: rgb(218, 224, 229, 0.2); transition: visibility 0s linear 0.7s, opacity 0.7s ease-in-out;}
 
 #menu { 
   text-align: right;

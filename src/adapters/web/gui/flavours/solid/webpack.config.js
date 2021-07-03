@@ -1,5 +1,4 @@
-const { distPath, entryPoint } = require('../../../../build/webpack.settings');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { distPath } = require('../../../../build/webpack.settings');
 
 module.exports = {
   mode: 'development',
@@ -13,12 +12,7 @@ module.exports = {
     globalObject: 'this',
     library: '[name]',
   },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'adapters.web.[name].css',
-      chunkFilename: '[name].[id].css'
-    })
-  ],
+  plugins: [],
   module: {
     rules: [
       {
@@ -36,6 +30,8 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    alias: {
+    }
   },
   stats: 'errors-only'
 };

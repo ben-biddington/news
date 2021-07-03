@@ -21,6 +21,7 @@
 </head>
 
 <body></body>
+
 <script>
   var toggles = new real.QueryStringToggles(document.location.search);
   var settings = new real.QueryStringSettings(document.location.search);
@@ -136,7 +137,8 @@
         crossorigin: "anonymous"
       });
 
-      addCss({ href: '/assets/css/solid.css' });
+      addCss(   { href: '/assets/css/solid.css' });
+      addScript({ src: 'https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@latest/dist/hlsjs-playback.min.js' });
       addScript({ src: '/assets/dist/adapters.web.solid.bundle.js' });
     }
     else {

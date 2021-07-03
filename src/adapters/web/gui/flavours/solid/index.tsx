@@ -9,6 +9,7 @@ import { MarineWeatherPanel } from './components/MarineWeatherPanel';
 import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
+import { Radio } from './components/Radio';
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -103,9 +104,13 @@ const Application = () => {
                 <div class="col-6">
                   <div class="row">
                     <div class="col-12">
-                    <a href="javascript:void(0)" 
-                      class={uiOptions().showMarineWeather ? 'badge badge-success' : 'badge badge-primary'} 
-                      onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>marine weather</a>
+                      <button 
+                        type="button" 
+                        class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
+                        onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
+                        marine weather
+                      </button>
+                      <Radio />
                     </div>
                   </div>
                 </div>

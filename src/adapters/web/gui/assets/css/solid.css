@@ -1,3 +1,7 @@
+body {
+  overflow-y: scroll; /* Show vertical scrollbar */
+}
+
 a.icon { color: black }
 
 li.news:hover { background-color: #f0f0f0; opacity:100% }
@@ -116,3 +120,23 @@ span.youtube { color: red }
 .host .host-name { border-top-right-radius: 0; border-bottom-right-radius: 0}
 .host .host-block { border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: darkred; }
 .host .host-block :hover { background-color: red; }
+
+.deleted-message-x { 
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;}
+
+ @-webkit-keyframes fadeOut {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+ }
+
+ @keyframes fadeOut {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+ }
+
+ .fadeOut {
+    -webkit-animation-name: fadeOut;
+    animation-name: fadeOut;
+ }

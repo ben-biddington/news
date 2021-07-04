@@ -9,7 +9,7 @@ import { MarineWeatherPanel } from './components/MarineWeatherPanel';
 import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
-import { Radio } from './components/Radio';
+import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -19,7 +19,7 @@ type UIOptions = {
 const Application = () => {
   //@ts-ignore
   const application: Core = window.application;
-
+  const [itemDeleted, setItemDeleted]           = createSignal<boolean>();
   const [uiOptions, setUiOptions]               = createSignal<UIOptions>({ showMarineWeather: false, showBookmarks: false });
   const [bookmarks, setBookmarks]               = createSignal<Bookmark[]>([]);
   const [lobstersNews, setLobstersNews]         = createSignal<NewsItem[]>([]);
@@ -27,8 +27,8 @@ const Application = () => {
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
-  const leftColumnClass   = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-7' : 'col-12');
-  const rightColumnClass  = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-5' : 'col-0');
+  const leftColumnClass   = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-8' : 'col-sm-8');
+  const rightColumnClass  = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-4' : 'col-sm-4');
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -49,7 +49,10 @@ const Application = () => {
     application.on([ "stats" ]                    , e => setStats(old => ( {...old, lastUpdateAt: new Date(e.lastUpdateAt), intervals: e.intervals} ) ));
     application.on(
       [ "hacker-news-item-deleted", "lobsters-item-deleted", "youtube-news-item-deleted" ], 
-      () => application.deletedItems.count().then(setDeletedItemCount)
+      () => {
+        setItemDeleted(true);
+        application.deletedItems.count().then(setDeletedItemCount);
+      }
     );
     application.on([ "bookmark-deleted" ]         , deleted   => setBookmarks(old => old.filter(it => it.id !== deleted.id)));
     application.on([ "bookmark-added" ]           , bookmark  => setBookmarks(old => [...old, bookmark]));
@@ -101,21 +104,18 @@ const Application = () => {
           <div class="row">
             <div class="col-12">
               <div class="row">
-                <div class="col-6">
+                <div class="col-4">
                   <div class="row">
                     <div class="col-12">
-                      <button 
-                        type="button" 
-                        class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
-                        onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
-                        marine weather
-                      </button>
-                      <Radio />
+                      &nbsp;
                     </div>
                   </div>
                 </div>
-                <div class="col-6">
-                  <Weather forecasts={weather()} />
+                <div class="col-4">
+                  {/* <Show when={itemDeleted()} children={<span class="fadeOut badge badge-pill badge-primary">Primary</span>} /> */}
+                </div>
+                <div class="col-4">
+                  &nbsp;
                 </div>
               </div>
               <div class="row">
@@ -151,6 +151,18 @@ const Application = () => {
           </div>
         </div>
         <div class={rightColumnClass()}>
+          <button 
+            type="button" 
+            class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
+            onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
+            marine weather
+          </button>
+          <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
+          <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
+          <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
+          <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
+          {/* <Radio title="Active" sources={['https://radio123-gecko.radioca.st/radioactivefm', 'https://ssl.geckohost.nz/proxy/radioac2?mp=/stream">']}/> */}
+          <Weather forecasts={weather()} />
           <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
         </div>
       </div>

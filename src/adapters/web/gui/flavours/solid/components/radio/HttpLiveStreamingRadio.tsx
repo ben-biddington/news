@@ -14,16 +14,20 @@ This works:
 
 */
 
+type Props = {
+  playlistUrl: string;
+  title: string;
+}
+
 // [i] https://github.com/clappr/hlsjs-playback
-export const Radio = () => {
+// [i] https://www.dacast.com/blog/http-live-streaming/
+export const HttpLiveStreamingRadio = (props: Props) => {
   const [playing    , setPlaying]     = createSignal<boolean>(false);
   const [player     , setPlayer]      = createSignal<Player>();
   const [initialised, setInitialised] = createSignal<boolean>(false);
   const [status, setStatus]           = createSignal<string>();
 
   const playerId = 'player';
-
-  const url = 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8'; //'https://radionz.streamguys1.com/national/national/playlist.m3u8';
 
   const onClick = () => {
     if (!initialised()) {
@@ -44,11 +48,12 @@ export const Radio = () => {
       };
 
       const opts = {
-        source: "https://radionz.streamguys1.com/national/national/playlist.m3u8", 
+        //source: props.playlistUrl,
+        source: { source: props.playlistUrl, mimeType: 'audio/mp3' }, 
         parentId: `#${playerId}`, 
         ...displayOptions,
         ...eventHandlers,
-        // [!] The constant `HlsjsPlayback` resolves to undefined when trying to use `@clappr/hlsjs-playback`
+        // [!] The constant `HlsjsPlayback` resolves to undefined when trying to import it from `@clappr/hlsjs-playback`:
         //  
         //      import { HlsjsPlayback } from '@clappr/hlsjs-playback/dist/'
         //
@@ -91,7 +96,7 @@ export const Radio = () => {
     <div id={playerId} style="display:none"></div>
 
     <button type="button" onclick={onClick} class={cssClasses()}>
-      radio new zealand <span class={badgeClasses}>{icon()}</span>
+      {props.title} <span class={badgeClasses}>{icon()}</span>
     </button>
 
     <span>{status()}</span>

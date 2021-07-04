@@ -72,7 +72,7 @@ export const HttpLiveStreamingRadio = (props: Props) => {
     }
   };
 
-  const cssClasses = createMemo(() => playing() ? 'btn btn-primary active' : 'btn btn-primary');
+  const cssClasses = createMemo(() => playing() ? 'btn btn-primary active shadow-sm' : 'btn btn-primary shadow-sm');
   const badgeClasses = createMemo(() => playing() ? 'badge badge-light' : 'badge badge-success');
 
   const icon = createMemo(() => playing() 

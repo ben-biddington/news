@@ -27,8 +27,8 @@ const Application = () => {
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
-  const leftColumnClass   = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-8' : 'col-sm-8');
-  const rightColumnClass  = createMemo(() => uiOptions().showMarineWeather ? 'col-sm-4' : 'col-sm-4');
+  const leftColumnClass   = 'col-sm-7';
+  const rightColumnClass  = 'col-sm-5';
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -89,7 +89,7 @@ const Application = () => {
   return <>
     <div>
       <div class="row">
-        <div className={leftColumnClass()}>
+        <div className={leftColumnClass}>
           <div class="row">
             <div class="col-12" style="text-align:right">
             </div>
@@ -150,20 +150,27 @@ const Application = () => {
             </div>
           </div>
         </div>
-        <div class={rightColumnClass()}>
-          <button 
-            type="button" 
-            class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
-            onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
-            marine weather
-          </button>
-          <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
-          <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
-          <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
-          <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
-          {/* <Radio title="Active" sources={['https://radio123-gecko.radioca.st/radioactivefm', 'https://ssl.geckohost.nz/proxy/radioac2?mp=/stream">']}/> */}
-          <Weather forecasts={weather()} />
-          <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
+        <div class={rightColumnClass}>
+          <div class="p-1 mb-1 shadow">
+              {/* <button 
+                type="button" 
+                class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
+                onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
+                marine weather
+              </button> */}
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
+                <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
+                <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
+                <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
+              </div>
+            {/* <div class="col-4">
+              <Weather forecasts={weather()} />
+            </div> */}
+          </div>
+          <div class="shadow">
+            <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
+          </div>
         </div>
       </div>
     </div>

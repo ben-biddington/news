@@ -88,7 +88,7 @@ export const NewsPanel = (props: Props) => {
   </>;
 
   return <>
-    <div id="news">
+    <div id="news" class="shadow">
       <table class="table">
         <thead>
           <tr>

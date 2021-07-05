@@ -1,5 +1,5 @@
 #!/bin/bash 
-set -e 
+set -e
 
 function build {
   only=$ONLY
@@ -37,7 +37,10 @@ echo -e "Compiling typescript\n"
 
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
 npx tsc -p src/adapters/tsconfig.json --listEmittedFiles
+npx tsc -p src/adapters/web-worker/tsconfig.json --listEmittedFiles
 npx tsc -p test/tsconfig.json --listEmittedFiles
+
+cp ./src/adapters/web-worker/dist/network-probe.js ./src/adapters/web/gui/
 
 # Can't build rxjs with typescript@3.9.9
 #

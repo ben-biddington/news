@@ -24,7 +24,9 @@ export const Weather = (props: Props) => {
     // 
     //  DataCloneError: The object could not be cloned.
     //
-    // The issue is that `data-content` needs to be a string, where we were sending actual nodes:
+    // The issue is that `data-content` needs to be a string. 
+    //
+    // We were sending actual nodes:
     //
     //   data-content="[object HTMLParagraphElement],[object HTMLParagraphElement]"
     //
@@ -38,7 +40,7 @@ export const Weather = (props: Props) => {
     `;
 
     return <>
-      <td>
+      <div class="weather-icon p-3 border rounded float-right shadow-sm">
         <a
           href={props.link}
           role="button" 
@@ -46,18 +48,12 @@ export const Weather = (props: Props) => {
           data-html="true"  
           data-content={tooltip}
           data-trigger="focus" 
-          data-placement="bottom">
-          <span style="display:inline-block; width:32px">{icon(forecast.condition)}</span>
-        </a>
-      </td>
+          data-placement="bottom"><span style="display:inline-block; width:32px">{icon(forecast.condition)}</span></a>
+      </div>
     </>
   }
 
   return <>
-    <table id="weather">
-      <tr>
-        <For each={props.forecasts || []} children={f} />
-      </tr>
-    </table>
+    <For each={props.forecasts || []} children={f} />
   </>
 }

@@ -98,7 +98,5 @@ export const HttpLiveStreamingRadio = (props: Props) => {
     <button type="button" onclick={onClick} class={cssClasses()}>
       {props.title} <span class={badgeClasses}>{icon()}</span>
     </button>
-
-    <span>{status()}</span>
   </>
 }

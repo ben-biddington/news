@@ -156,6 +156,17 @@
   if (!toggles.get('disallow-autostart')) {
     start();
   }
+
+  if ('serviceWorker' in navigator && toggles.get('allow-sw')) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/network-probe.js').then(function(registration) {
+        console.log('Service worker registered with scope: ', JSON.stringify(registration));
+        console.log('Service worker registered with scope: ', registration.scope);
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
 </script>
 
 </html>

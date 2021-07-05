@@ -95,8 +95,6 @@ span.youtube { color: red }
   background: linear-gradient(to top, rgb(218, 224, 229, 0.7), rgba(117, 67, 67, 0.0))
 }
 
-#weather { float: right }
-
 .placeholder { opacity: .10; color: #f0f0f0; }
 
 .blocked { background-color:silver; opacity: 30% }
@@ -140,3 +138,6 @@ span.youtube { color: red }
     -webkit-animation-name: fadeOut;
     animation-name: fadeOut;
  }
+
+ .weather-icon { filter: saturate(25%); }
+ .weather-icon:hover { filter: saturate(100%) }

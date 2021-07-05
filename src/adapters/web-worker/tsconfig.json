@@ -10,10 +10,10 @@
     "target": "es2015",
     "jsx": "preserve",
     "lib": [
-      "es2018",
-      "DOM",
+      "es2020",
+      "WebWorker"
     ]
   },
   "include": [ "." ],
-  "exclude": [ "./web-worker" ]
+  "exclude": [ ]
 }

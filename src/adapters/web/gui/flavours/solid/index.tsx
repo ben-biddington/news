@@ -10,6 +10,8 @@ import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
 import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
+import { Options } from './components/Options';
+import { relativeTimeRounding } from "moment";
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -27,8 +29,8 @@ const Application = () => {
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
-  const leftColumnClass   = 'col-sm-7';
-  const rightColumnClass  = 'col-sm-5';
+  const leftColumnClass   = 'col-sm-8';
+  const rightColumnClass  = 'col-sm-4';
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -60,6 +62,8 @@ const Application = () => {
     const loadToggles = async (): Promise<void> => {
       const toggles       = await application.toggles.list();
   
+      console.log('Setting UI options');
+
       setUiOptions({
         showMarineWeather:  toggles.showMarineWeather.isOn,
         showBookmarks:      toggles.showBookmarks.isOn,
@@ -76,6 +80,13 @@ const Application = () => {
     ]))
   });
 
+  const reload = () => {
+    return batch(() => Promise.all([
+      application.lobsters.list(),
+      application.hackerNews.list(),
+    ]))
+  }
+
   const newsItems = createMemo<NewsItem[]>(news);
   const now = createMemo(() => application.now()); 
 
@@ -84,23 +95,26 @@ const Application = () => {
     document.title = newsItems().length > 0 ? `News (${newsItems().length})`: 'News';
   });
 
+  createEffect(() => {
+    console.log(JSON.stringify(uiOptions(), null, 2));
+  });
+
   const toggleBookmarks = () => setUiOptions(opts => ({ ...opts, showBookmarks: !opts.showBookmarks }));
 
   return <>
-    <div>
+    <div class="container-fluid">
       <div class="row">
+        <div class="col-12">
+          <div class="btn-group pr-2" role="group">
+            <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
+            <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
+            <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
+            <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
+          </div>
+        </div>
+      </div>
+      <div class="row no-gutters">
         <div className={leftColumnClass}>
-          <div class="row">
-            <div class="col-12" style="text-align:right">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-12" style="text-align:right">
-              {/* ${this.renderBookmarks()} */}
-            </div>
-          </div>
-
           <div class="row">
             <div class="col-12">
               <div class="row">
@@ -122,6 +136,7 @@ const Application = () => {
                 <div class="col-12">
                   <div class="row">
                     <div class="col-12">
+                      <a href="javascript:void(0)" onClick={reload}>refresh</a>
                       <Toolbar 
                         lastUpdated={stats().lastUpdateAt} 
                         bookmarkCount={bookmarks().length} 
@@ -151,25 +166,16 @@ const Application = () => {
           </div>
         </div>
         <div class={rightColumnClass}>
-          <div class="p-1 mb-1 shadow">
-              {/* <button 
-                type="button" 
-                class={uiOptions().showMarineWeather ? 'btn btn-primary active' : 'btn btn-primary'}
-                onclick={() => setUiOptions(opts => ({ ...opts, showMarineWeather: !opts.showMarineWeather }))}>
-                marine weather
-              </button> */}
-              <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
-                <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
-                <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
-                <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
-              </div>
-            {/* <div class="col-4">
+          {/* https://getbootstrap.com/docs/4.1/layout/grid/#horizontal-alignment */}
+          <div class="row justify-content-end">
+            <div class="shadow-sm mb-1">
               <Weather forecasts={weather()} />
-            </div> */}
+            </div>
           </div>
-          <div class="shadow">
-            <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
+          <div class="row justify-content-end">
+            <div class="shadow">
+              <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
+            </div>
           </div>
         </div>
       </div>

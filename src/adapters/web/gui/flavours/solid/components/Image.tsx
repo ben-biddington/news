@@ -22,5 +22,5 @@ export const Image = (props: Props) => {
   return <Show 
     when={loaded()}
     fallback={placeholder} 
-    children={<img src={props.src} width={props.width} height={props.height} alt={props.alt} class="visible" />} />
+    children={<img src={props.src} width={props.width} height={props.height} alt={props.alt} class="visible shadow-sm" />} />
 }

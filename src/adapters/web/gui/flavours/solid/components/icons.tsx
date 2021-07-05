@@ -1,12 +1,12 @@
 // https://www.metservice.com/towns-cities/locations/wellington/7-days
-export const icon = name => {
+export const icon = (name, size = 32) => {
   console.log(`Finding icon for ${JSON.stringify(name, null, 2)}`);
 
   if (!icons[name]) {
     console.log(`Unable to find symbol for name <${name}>`);
   }
 
-  return <>{(icons[name] || icons['missing'])()}</>;
+  return <>{(icons[name] || icons['missing'])(size)}</>;
 }
 
 const icons = {};
@@ -16,10 +16,10 @@ const icons = {};
 //     otherwise for some reason only the first time you request an icon by name return gets a value.
 //     Subsequent requests for the same name return empty. Why?
 //
-icons['partly-cloudy'] = () => <>
-  <svg xmlns="http://www.w3.o()rg/2000/svg" viewBox="0 0 32 32">
+icons['partly-cloudy'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.o()rg/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-partly-cloudy">
-      <symbol id="condition-partly-cloudy" viewBox="0 0 32 32">
+      <symbol id="condition-partly-cloudy" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g transform="translate(12 4)">
             <path d="m3 3h13v13h-13z" fill="#eea80e"></path>
@@ -38,10 +38,10 @@ icons['partly-cloudy'] = () => <>
   </>
 ;
 
-icons['few-showers'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['few-showers'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-few-showers">
-      <symbol id="condition-few-showers" viewBox="0 0 32 32">
+      <symbol id="condition-few-showers" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g fill="#6eb6ff" transform="translate(4 19)">
             <rect height="6" rx="1" transform="matrix(.8660254 .5 -.5 .8660254 3.607654 -7.267947)" width="2" x="14.366" y=".098"></rect>
@@ -66,10 +66,10 @@ icons['few-showers'] = () => <>
 </>
 ;
 
-icons['showers'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['showers'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-showers">
-      <symbol id="condition-showers" viewBox="0 0 32 32">
+      <symbol id="condition-showers" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g fill="#6EB6FF" transform="translate(6 18)">
             <rect width="2" height="4" x="11.866" y="8.232" rx="1" transform="rotate(30 12.866 10.232)"></rect>
@@ -88,10 +88,10 @@ icons['showers'] = () => <>
   </svg>
 </>;
 
-icons['fine'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['fine'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-fine">
-      <symbol id="condition-fine" viewBox="0 0 32 32">
+      <symbol id="condition-fine" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <path d="m12.142 6 4-4 4 4h5.858v5.858l4.284 4.284-4.284 4.284v5.574h-5.574l-4.284 4.284-4.284-4.284h-5.858v-5.858l-4-4 4-4v-6.142z" fill="#eea80e"></path>
           <circle cx="16" cy="16" fill="#fec157" r="10"></circle>
@@ -101,10 +101,10 @@ icons['fine'] = () => <>
   </svg>
 </>;
 
-icons['cloudy'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['cloudy'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-cloudy">
-      <symbol id="condition-cloudy" viewBox="0 0 32 32">
+      <symbol id="condition-cloudy" viewBox={`0 0 ${size} ${size}`}>
       <g fill="none" fill-rule="evenodd">
         <path d="m20.542 13h3.958a6.5 6.5 0 1 1 0 13h-13c-.075 0-.15-.001-.223-.004-.092.004-.184.004-.277.004-5.523 0-10-4.477-10-10s4.477-10 10-10c4.478 0 8.268 2.943 9.542 7z" fill="#f2f4f4"></path>
         <g fill="#aaa" fill-rule="nonzero">
@@ -117,10 +117,10 @@ icons['cloudy'] = () => <>
   </svg>
 </>
 
-icons['rain'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['rain'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-rain">
-      <symbol id="condition-rain" viewBox="0 0 32 32">
+      <symbol id="condition-rain" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g fill="#6EB6FF" transform="translate(5 18)">
             <rect width="2" height="3" x="9.616" y="9.299" rx="1" transform="rotate(30 10.616 10.799)"></rect>
@@ -141,10 +141,10 @@ icons['rain'] = () => <>
   </svg>
 </>
 
-icons['windy'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['windy'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-windy">
-      <symbol id="condition-windy" viewBox="0 0 32 32">
+      <symbol id="condition-windy" viewBox={`0 0 ${size} ${size}`}>
         <g fill="#909AB5" fill-rule="nonzero">
           <path d="M13.497 9.166c1.162 0 2.347-.02 3.497-.172 1.244-.164 2.669-.408 3.832-1.237 1.305-.93 2.043-2.629 1.795-4.13-.34-2.058-1.998-3.61-3.859-3.61a3.64 3.64 0 00-2.798 1.277c-.704.818-1.035 1.906-.884 2.913a.99.99 0 101.96-.292c-.066-.438.097-.947.425-1.327.232-.27.645-.59 1.297-.59.99 0 1.746.991 1.904 1.95.128.773-.289 1.696-.99 2.196-.792.565-1.933.754-2.94.887-1.234.162-2.58.157-3.882.153l-.63-.001H2.209a.99.99 0 000 1.98l10.64.002.649.001z"></path>
           <path d="M24.773 12.555c.528 0 1.05 0 1.557-.002 2.49-.005 3.19-.528 4.212-1.453 1.157-1.046 1.725-2.612 1.481-4.084-.339-2.058-1.998-3.61-3.858-3.61a3.64 3.64 0 00-2.798 1.278c-.704.817-1.035 1.906-.885 2.913a.99.99 0 101.96-.293c-.066-.438.097-.946.425-1.326.232-.27.646-.59 1.298-.59.99 0 1.746.991 1.904 1.95.135.815-.194 1.694-.856 2.294-.775.7-1.036.937-2.887.94-1.015.003-2.095.002-3.156.001H1.026a.99.99 0 000 1.98l22.143.001h1.604zm-11.178 9.43c.648 0 1.284-.184 1.777-.483.97-.587 1.568-1.61 1.641-2.81.084-1.369-.504-2.722-1.535-3.533-1.19-.935-2.545-1.066-3.832-1.068a1269.13 1269.13 0 00-3.16 0H3.398a.99.99 0 000 1.98h8.243c1.078.002 1.934.113 2.612.645.51.402.825 1.148.782 1.856-.024.387-.162.916-.69 1.235-.423.257-1.032.268-1.33.026-.37-.302-.377-.87-.28-1.018a.99.99 0 00-1.656-1.085c-.714 1.089-.4 2.756.687 3.64.533.433 1.186.615 1.828.615z"></path>
@@ -154,10 +154,10 @@ icons['windy'] = () => <>
   </svg>
 </>;
 
-icons['drizzle'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['drizzle'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-drizzle">
-      <symbol id="condition-drizzle" viewBox="0 0 32 32">
+      <symbol id="condition-drizzle" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g fill="#6eb6ff">
             <rect height="5" rx="1" width="2" x="21" y="19"></rect>
@@ -178,10 +178,10 @@ icons['drizzle'] = () => <>
   </svg>
 </>;
 
-icons['wind-rain'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['wind-rain'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <use xlink:href="#condition-wind-rain">
-        <symbol id="condition-wind-rain" viewBox="0 0 32 32">
+        <symbol id="condition-wind-rain" viewBox={`0 0 ${size} ${size}`}>
         <g fill="none" fill-rule="evenodd">
           <g fill="#6EB6FF" transform="translate(5 18)">
             <rect width="2" height="3" x="9.616" y="9.299" rx="1" transform="rotate(30 10.616 10.799)"></rect>
@@ -203,8 +203,8 @@ icons['wind-rain'] = () => <>
   </svg>
 </>;
 
-icons['missing'] = () => <>
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+icons['missing'] = (size: number = 32) => <>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
     <circle r="50"/>
   </svg>
 </>;

@@ -10,8 +10,6 @@ import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
 import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
-import { Options } from './components/Options';
-import { relativeTimeRounding } from "moment";
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -29,6 +27,7 @@ const Application = () => {
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
+  const [loading, setLoading]                   = createSignal(false);
   const leftColumnClass   = 'col-sm-8';
   const rightColumnClass  = 'col-sm-4';
 
@@ -74,17 +73,20 @@ const Application = () => {
       loadToggles(),
       application.bookmarks.list().then(setBookmarks),
       application.weather.sevenDays().then(setWeather),
-      application.lobsters.list(),
-      application.hackerNews.list(),
+      loadNews(),
       application.deletedItems.count().then(setDeletedItemCount)
     ]))
   });
 
-  const reload = () => {
-    return batch(() => Promise.all([
+  const loadNews = async (): Promise<any> => {
+    setLoading(true);
+
+    await Promise.all([
       application.lobsters.list(),
-      application.hackerNews.list(),
-    ]))
+      application.hackerNews.list()
+    ]);
+
+    setLoading(false);
   }
 
   const newsItems = createMemo<NewsItem[]>(news);
@@ -103,14 +105,29 @@ const Application = () => {
 
   return <>
     <div class="container-fluid">
-      <div class="row">
+      <div class="row justify-content-end">
         <div class="col-12">
-          <div class="btn-group pr-2" role="group">
+          <div class="btn-group pr-2 float-right" role="group">
             <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
             <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
             <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
             <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
           </div>
+          <div class="justify-content-end">
+            <Show when={loading()} 
+              fallback={
+                <>
+                <div class="alert w-25">
+                  &nbsp;
+                </div>
+                </>
+              } 
+              children={<>
+                <div class="alert w-25 alert-primary" role="alert">
+                  loading
+                </div>
+              </>} />
+            </div>
         </div>
       </div>
       <div class="row no-gutters">
@@ -136,12 +153,12 @@ const Application = () => {
                 <div class="col-12">
                   <div class="row">
                     <div class="col-12">
-                      <a href="javascript:void(0)" onClick={reload}>refresh</a>
                       <Toolbar 
                         lastUpdated={stats().lastUpdateAt} 
                         bookmarkCount={bookmarks().length} 
                         deletedCount={deletedItemCount()} 
-                        onTogglebookmarks={toggleBookmarks} />
+                        onTogglebookmarks={toggleBookmarks} 
+                      />
                     </div>
                   </div>
 
@@ -157,7 +174,8 @@ const Application = () => {
                         onDelete={application.hackerNews.delete} 
                         onBlock={application.news.block}
                         onUnblock={application.news.unblock}
-                        onBookmark={application.bookmarks.add} /> 
+                        onBookmark={application.bookmarks.add}
+                        onReload={loadNews} /> 
                     </div>
                   </div>
                 </div>

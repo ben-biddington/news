@@ -3,6 +3,7 @@ body {
 }
 
 a.icon { color: black }
+a.icon:hover { color: red }
 
 li.news:hover { background-color: #f0f0f0; opacity:100% }
 
@@ -139,5 +140,6 @@ span.youtube { color: red }
     animation-name: fadeOut;
  }
 
- .weather-icon { filter: saturate(25%); }
+ .weather-icon { filter: saturate(0%); }
+ .weather-icon span { width: 16px }
  .weather-icon:hover { filter: saturate(100%) }

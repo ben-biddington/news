@@ -105,9 +105,10 @@ const Application = () => {
 
   return <>
     <div class="container-fluid">
-      <div class="row justify-content-end">
-        <div class="col-12">
-          <div class="justify-content-end">
+      <div class="row">
+        <div className={leftColumnClass}>
+          
+          <div class="row justify-content-center">
             <Show when={loading()} 
               fallback={
                 <>
@@ -117,15 +118,12 @@ const Application = () => {
                 </>
               } 
               children={<>
-                <div class="alert w-25 alert-primary" role="alert">
+                <div class="alert w-25 alert-primary justify-content-center" role="alert">
                   loading
                 </div>
               </>} />
-            </div>
-        </div>
-      </div>
-      <div class="row">
-        <div className={leftColumnClass}>
+          </div>
+          
           <div class="row">
             <div class="col-12">
               <div class="row">

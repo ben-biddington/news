@@ -107,12 +107,6 @@ const Application = () => {
     <div class="container-fluid">
       <div class="row justify-content-end">
         <div class="col-12">
-          <div class="btn-group pr-2 float-right" role="group">
-            <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
-            <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
-            <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
-            <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
-          </div>
           <div class="justify-content-end">
             <Show when={loading()} 
               fallback={
@@ -130,7 +124,7 @@ const Application = () => {
             </div>
         </div>
       </div>
-      <div class="row no-gutters">
+      <div class="row">
         <div className={leftColumnClass}>
           <div class="row">
             <div class="col-12">
@@ -183,17 +177,20 @@ const Application = () => {
             </div>
           </div>
         </div>
-        <div class={rightColumnClass}>
-          {/* https://getbootstrap.com/docs/4.1/layout/grid/#horizontal-alignment */}
-          <div class="row justify-content-end">
-            <div class="shadow-sm mb-1">
-              <Weather forecasts={weather()} />
+        <div class="col-sm-4 border-left">
+          <div class="row p-2">
+            <div class="btn-group shadow-sm flex-fill" role="group">
+              <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
+              <HttpLiveStreamingRadio title="George FM" playlistUrl="https://livestream.mediaworks.nz/radio_origin/george_128kbps/playlist.m3u8" />
+              <HttpLiveStreamingRadio title="Hauraki" playlistUrl="https://ais-nzme.streamguys1.com/nz_009/playlist.m3u8" />
+              <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
             </div>
           </div>
-          <div class="row justify-content-end">
-            <div class="shadow">
-              <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
-            </div>
+          <div class="row justify-content-center p-2">
+            <Weather forecasts={weather()} />
+          </div>
+          <div class="row p-2 justify-content-center">
+            <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
           </div>
         </div>
       </div>

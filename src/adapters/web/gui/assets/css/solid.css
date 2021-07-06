@@ -140,6 +140,6 @@ span.youtube { color: red }
     animation-name: fadeOut;
  }
 
- .weather-icon { filter: saturate(0%); }
- .weather-icon span { width: 16px }
+ .weather-icon { filter: saturate(0%); display: inline-block; }
+ .weather-icon span { width: 32px }
  .weather-icon:hover { filter: saturate(100%) }

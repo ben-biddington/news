@@ -1,5 +1,5 @@
 import { createMemo, createSignal } from 'solid-js';
-import { Player, ContainerFactory } from '@clappr/core';
+import { Player } from '@clappr/core';
 
 /*
 
@@ -72,7 +72,7 @@ export const HttpLiveStreamingRadio = (props: Props) => {
     }
   };
 
-  const cssClasses = createMemo(() => playing() ? 'btn btn-primary active shadow-sm' : 'btn btn-primary shadow-sm');
+  const cssClasses = createMemo(() => playing() ? 'flex-fill btn btn-primary active shadow-sm' : 'flex-fill btn btn-primary shadow-sm');
   const badgeClasses = createMemo(() => playing() ? 'badge badge-light' : 'badge badge-success');
 
   const icon = createMemo(() => playing() 

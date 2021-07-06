@@ -40,7 +40,7 @@ export const Weather = (props: Props) => {
     `;
 
     return <>
-      <div class="weather-icon p-1 border rounded float-right shadow-sm">
+      <span class="weather-icon p-1 border rounded shadow-sm">
         <a
           href={props.link}
           role="button" 
@@ -49,7 +49,7 @@ export const Weather = (props: Props) => {
           data-content={tooltip}
           data-trigger="focus" 
           data-placement="bottom"><span style="display:inline-block">{icon(forecast.condition, 32)}</span></a>
-      </div>
+      </span>
     </>
   }
 

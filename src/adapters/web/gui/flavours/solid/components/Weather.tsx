@@ -1,4 +1,5 @@
 import { For, createEffect, mergeProps } from "solid-js";
+import { isSameDay } from 'date-fns';
 import { WeatherForecast } from "../../../../../../core/weather";
 import { icon } from './icons';
 import { format } from 'date-fns';
@@ -6,6 +7,7 @@ import { format } from 'date-fns';
 export type Props = {
   forecasts: WeatherForecast[];
   link?: string;
+  today: Date;
 }
 
 export const Weather = (props: Props) => {
@@ -39,8 +41,14 @@ export const Weather = (props: Props) => {
       <p><strong>${format(new Date(forecast.date), 'EEEE')}</strong> ${forecast.temperature.high}°C</p><p>${forecast.text}</p>
     `;
 
+    const forecastDate = new Date(forecast.date);
+
+    const isToday = isSameDay(forecastDate, props.today);
+
+    console.log('forecast.date == props.today', 'forecast date', forecastDate, 'today', props.today);
+
     return <>
-      <span class="weather-icon p-1 border rounded shadow-sm">
+      <span class={`weather-icon ${isToday ? 'today' : undefined} p-1 border rounded shadow-sm`}>
         <a
           href={props.link}
           role="button" 

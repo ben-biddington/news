@@ -185,7 +185,7 @@ const Application = () => {
             </div>
           </div>
           <div class="row justify-content-center p-2">
-            <Weather forecasts={weather()} />
+            <Weather forecasts={weather()} today={new Date()} />
           </div>
           <div class="row p-2 justify-content-center">
             <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />

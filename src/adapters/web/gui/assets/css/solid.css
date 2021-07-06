@@ -140,6 +140,7 @@ span.youtube { color: red }
     animation-name: fadeOut;
  }
 
+ .weather-today {  }
  .weather-icon { filter: saturate(0%); display: inline-block; }
  .today { filter: saturate(100%); }
  .weather-icon span { width: 32px }

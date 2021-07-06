@@ -175,7 +175,7 @@ const Application = () => {
             </div>
           </div>
         </div>
-        <div class="col-sm-4 border-left">
+        <div class="col-sm-4 border-left border-right">
           <div class="row p-2">
             <div class="btn-group shadow-sm flex-fill" role="group">
               <HttpLiveStreamingRadio title="RNZ" playlistUrl="https://radionz.streamguys1.com/national/national/playlist.m3u8" />
@@ -184,8 +184,8 @@ const Application = () => {
               <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
             </div>
           </div>
-          <div class="row justify-content-center p-2">
-            <Weather forecasts={weather()} today={new Date()} />
+          <div class="p-2">
+            <Weather forecasts={weather()} today={new Date()} link="https://www.metservice.com/towns-cities/locations/wellington/7-days" />
           </div>
           <div class="row p-2 justify-content-center">
             <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />

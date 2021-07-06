@@ -1,4 +1,4 @@
-import { For, createEffect, mergeProps, createMemo } from "solid-js";
+import { For, createEffect, mergeProps, createMemo, createSignal } from "solid-js";
 import { isSameDay } from 'date-fns';
 import { WeatherForecast } from "../../../../../../core/weather";
 import { icon } from './icons';
@@ -13,16 +13,18 @@ export type Props = {
 export const Weather = (props: Props) => {
   props = mergeProps({ link: 'javascript:void(0)'}, props);
 
-  createEffect(() => {
-    console.log('Enabling popovers for <', props.forecasts.length, '> forecasts');
-    try {
-      //@ts-ignore
-      $('[data-toggle="popover"]').popover();
-    } catch { }
-  });
+  const [date, setDate] = createSignal<Date>(props.today);
+
+  // createEffect(() => {
+  //   console.log('Enabling popovers for <', props.forecasts.length, '> forecasts');
+  //   try {
+  //     //@ts-ignore
+  //     $('[data-toggle="popover"]').popover();
+  //   } catch { }
+  // });
 
   const todaysForecast = createMemo<WeatherForecast>(() => {
-    return props.forecasts.find(it => isSameDay(new Date(it.date), props.today));
+    return props.forecasts.find(it => isSameDay(new Date(it.date), date()));
   });
 
   const f = (forecast: WeatherForecast) => {
@@ -45,18 +47,14 @@ export const Weather = (props: Props) => {
       <p><strong>${format(new Date(forecast.date), 'EEEE')}</strong> ${forecast.temperature.high}°C</p><p>${forecast.text}</p>
     `;
 
-    const isToday = isSameDay(new Date(forecast.date), props.today);
+    const isToday = isSameDay(new Date(forecast.date), date());
 
     return <>
       <li class={`weather-icon ${isToday ? 'today' : undefined} p-1 border rounded shadow-sm list-group-item`}>
         <a
           href="javascript:void(0)"
-          role="button" 
-          data-toggle="popover"
-          data-html="true"  
-          data-content={tooltip}
-          data-trigger="focus" 
-          data-placement="bottom"><span style="display:inline-block">{icon(forecast.condition, 32)}</span>
+          onClick={() => setDate(new Date(forecast.date))}
+          role="button"><span style="display:inline-block">{icon(forecast.condition, 32)}</span>
         </a>
       </li>
     </>

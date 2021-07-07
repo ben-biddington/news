@@ -1,4 +1,4 @@
-import { WeatherForecast, WeatherQuery } from '../../src/core/weather';
+import { WaterTemperature, WeatherForecast, WeatherQuery } from '../../src/core/weather';
 import { expect, MockListener, Application, PortsBuilder, MockSettings, MockToggles } from './application-unit-test';
 
 class MockWeatherQuery implements WeatherQuery {
@@ -7,6 +7,8 @@ class MockWeatherQuery implements WeatherQuery {
   constructor(result: WeatherForecast[]) {
     this.result = result;
   }
+
+  seaTemperature: () => Promise<WaterTemperature[]>;
 
   sevenDays(): Promise<WeatherForecast[]> {
     return Promise.resolve(this.result);

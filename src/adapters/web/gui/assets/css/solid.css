@@ -153,3 +153,10 @@ span.youtube { color: red }
  .today { filter: saturate(100%); }
  .weather-icon span { width: 32px }
  .weather-icon:hover { filter: saturate(100%) }
+ 
+ .water-temp {
+  }
+
+  .water-temp li {
+    background: linear-gradient(to top, #f0f0f0, white) 
+  }

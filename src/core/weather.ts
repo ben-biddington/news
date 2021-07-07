@@ -1,5 +1,11 @@
 export interface WeatherQuery {
   sevenDays: () => Promise<Array<WeatherForecast>>;
+  seaTemperature: () => Promise<WaterTemperature[]>;
+}
+
+export type WaterTemperature = {
+  name: string;
+  temperature: number;
 }
 
 export interface WeatherForecast {

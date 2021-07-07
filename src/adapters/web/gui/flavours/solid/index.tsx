@@ -1,7 +1,8 @@
-import { batch, createEffect,  createMemo, createSignal, onMount, Show } from "solid-js";
+import { batch, createEffect, createMemo, createSignal, onMount, For, Show } from "solid-js";
 import { render } from "solid-js/web";
 import { Bookmark } from "../../../../../core/bookmark";
 import { NewsItem } from "../../../../../core/news-item";
+import { WaterTemperature } from "../../../../../core/weather";
 import { WeatherForecast } from "../../../../../core/weather";
 import { Statistics, Application as Core } from '../../../../../core/application';
 import { NewsPanel } from './components/NewsPanel';
@@ -27,7 +28,8 @@ const Application = () => {
   const [deletedItemCount, setDeletedItemCount] = createSignal(0);
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
-  const [loading, setLoading]                   = createSignal(false);
+  const [seaTemp, setSeaTemp]                   = createSignal<WaterTemperature[]>([]);
+  const [loading, setLoading]                   = createSignal();
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -71,6 +73,7 @@ const Application = () => {
       loadToggles(),
       application.bookmarks.list().then(setBookmarks),
       application.weather.sevenDays().then(setWeather),
+      application.weather.seaTemperature().then(setSeaTemp),
       loadNews(),
       application.deletedItems.count().then(setDeletedItemCount)
     ]))
@@ -176,6 +179,25 @@ const Application = () => {
             <Weather forecasts={weather()} today={new Date()} link="https://www.metservice.com/towns-cities/locations/wellington/7-days" />
           </div>
           <div class="row p-2 justify-content-center">
+            <div class="m-2 water-temp">
+              <ul class="list-group list-group-horizontal">
+                <For each={seaTemp()} children={
+                  (temp: WaterTemperature): Element => {
+                    return <>
+                      <li class="list-group-item">
+                        <span style="width: 16px">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+                            <path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+                            <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+                          </svg>
+                          {temp.name} {temp.temperature}°C
+                        </span>
+                      </li>
+                    </>
+                  }
+                } />
+              </ul>
+            </div>
             <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
           </div>
         </div>

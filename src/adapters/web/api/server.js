@@ -250,12 +250,14 @@ app.get('/wellington-weather/week', async (req, res) => {
   });
 });
 
-app.get('/sea-temp/wellington', async (req, res) => {
+app.get(/sea-temp/, async (req, res) => {
   return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'sea-temp' }, log => {
-    return cached(req, res, log, async () => {
-      const { wellington } = require('../../dist/adapters/web/sea-temp');
+    const id = req.path.substring(req.path.lastIndexOf('/') + 1);
 
-      return await wellington();
+    return cached(req, res, log, async () => {
+      const { get } = require('../../dist/adapters/web/sea-temp');
+
+      return await get(id);
     });
   });
 });

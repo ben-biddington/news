@@ -1,6 +1,6 @@
 
 import { EventEmitter } from 'events';
-import { WeatherQuery, WeatherForecast } from '../../weather';
+import { WeatherQuery, WeatherForecast, WaterTemperature } from '../../weather';
 
 export class WeatherUseCases {
   private weatherQuery: WeatherQuery;
@@ -17,5 +17,13 @@ export class WeatherUseCases {
     this.events.emit('weather-loaded', { weather });
 
     return weather;
+  }
+
+  public seaTemperature = async (): Promise<WaterTemperature[]> => {
+    const temp = await this.weatherQuery.seaTemperature();
+
+    this.events.emit('sea-temp-loaded', temp);
+
+    return temp;
   }
 }

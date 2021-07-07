@@ -8,6 +8,8 @@ export class MetserviceWeatherQuery implements WeatherQuery {
   }
 
   sevenDays(): Promise<WeatherForecast[]> {
-    return this.get('/wellington-weather/week').then(reply => JSON.parse(reply.body));
+    return this.get('/wellington-weather/week').
+      then(reply => JSON.parse(reply.body)).
+      then(forecasts => forecasts.map(forecast => ({ ...forecast, date: new Date(forecast.date) })));
   }
 }

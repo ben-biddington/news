@@ -28,8 +28,6 @@ const Application = () => {
   const [stats, setStats]                       = createSignal<Statistics>({ lastUpdateAt: new Date() });
   const [weather, setWeather]                   = createSignal<WeatherForecast[]>([]);
   const [loading, setLoading]                   = createSignal(false);
-  const leftColumnClass   = 'col-sm-8';
-  const rightColumnClass  = 'col-sm-4';
 
   const news = () => {
     const result: NewsItem[] = lobstersNews().concat(hackerNews());
@@ -106,22 +104,12 @@ const Application = () => {
   return <>
     <div class="container-fluid">
       <div class="row">
-        <div className={leftColumnClass}>
+        <div className="col-sm-8">
           
           <div class="row justify-content-center">
-            <Show when={loading()} 
-              fallback={
-                <>
-                <div class="alert w-25">
-                  &nbsp;
-                </div>
-                </>
-              } 
-              children={<>
-                <div class="alert w-25 alert-primary justify-content-center" role="alert">
-                  loading
-                </div>
-              </>} />
+            <div id="info" class={`${!loading() ? 'loaded': ''} alert w-25 alert-primary justify-content-center`} role="alert">
+              loading
+            </div>
           </div>
           
           <div class="row">
@@ -184,7 +172,7 @@ const Application = () => {
               <HttpLiveStreamingRadio title="Active" playlistUrl="https://radio123-gecko.radioca.st/radioactivefm" />
             </div>
           </div>
-          <div class="p-2">
+          <div class="p-2" style="min-height:700px">
             <Weather forecasts={weather()} today={new Date()} link="https://www.metservice.com/towns-cities/locations/wellington/7-days" />
           </div>
           <div class="row p-2 justify-content-center">

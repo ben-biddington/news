@@ -11,6 +11,14 @@ span.hn { color: #ff6600 }
 span.lobsters { color: darkred }
 span.youtube { color: red }
 
+#info { }
+
+.loaded {  
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+
 /* body table {font-size: 20px !important;} */
 #news { border: 0px solid silver; padding:1px; font-size: 20px; }
 #news tr.news-item-row { 

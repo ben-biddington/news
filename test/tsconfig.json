@@ -11,7 +11,11 @@
     "lib": [
       "es2018",
       "DOM"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@test/*": [ "./*" ]
+    }
   },
   "include": [ "." ],
   "exclude": [ ]

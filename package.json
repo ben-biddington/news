@@ -6,7 +6,7 @@
   "scripts": {
     "build": "bash ./src/adapters/build.sh $@",
     "test.unit": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/unit/**/*-examples.{j,t}s\" --timeout  5000",
-    "test.integration": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/integration/**/*examples.{j,t}s\" \"test/integration/**/can-*.{j,t}s\" --timeout 10000",
+    "test.integration": "env TS_NODE_PROJECT=./test/tsconfig.json env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r node_modules/ts-node/register -r tsconfig-paths/register  \"test/integration/**/*examples.{j,t}s\" \"test/integration/**/can-*.{j,t}s\" --timeout 10000",
     "test.system": "mocha \"test/system/**/*examples.js\"      --timeout 10000",
     "server-simple": "http-server ./src/adapters/web/vanilla",
     "server": "node src/adapters/web/api/server.js"
@@ -46,6 +46,7 @@
     "temp": "^0.9.4",
     "ts-loader": "^9.2.3",
     "ts-node": "^9.1.1",
+    "tsconfig-paths": "^3.10.1",
     "tslib": "^2.1.0",
     "typescript": "^4.3.4",
     "vue": "^2.6.12",

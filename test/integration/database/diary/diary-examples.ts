@@ -2,9 +2,9 @@ const expect = require('chai').expect;
 const temp = require('temp');
 temp.track();
 
-import { DiaryEntry } from '../../../src/core/diary/diary-entry';
-import { Diary } from '../../../src/adapters/database/diary';
-import { ConsoleLog } from '../../../src/core/logging/log';
+import { DiaryEntry } from '../../../../src/core/diary/diary-entry';
+import { Diary } from '../../../../src/adapters/database/diary';
+import { ConsoleLog } from '../../../../src/core/logging/log';
 
 describe('[diary] Can store diary entries', () => {
   let diary = null;

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "bash ./src/adapters/build.sh $@",
-    "test.unit": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/unit/**/*-examples.{j,t}s\" --timeout  5000",
+    "test.unit": "env TS_NODE_PROJECT=./test/tsconfig.json TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha --require node_modules/ts-node/register \"test/unit/**/*-examples.{j,t}s\" --timeout  5000",
     "test.integration": "env TS_NODE_PROJECT=./test/tsconfig.json env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r node_modules/ts-node/register -r tsconfig-paths/register  \"test/integration/**/*examples.{j,t}s\" \"test/integration/**/can-*.{j,t}s\" --timeout 10000",
     "test.system": "mocha \"test/system/**/*examples.js\"      --timeout 10000",
     "server-simple": "http-server ./src/adapters/web/vanilla",
@@ -65,6 +65,7 @@
     "@clappr/hlsjs-playback": "^0.6.0",
     "@observablehq/plot": "^0.1.0",
     "@types/hls.js": "^1.0.0",
+    "@types/sqlite3": "^3.1.7",
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.1.0",
     "d3": "^5.16.0",

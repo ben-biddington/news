@@ -1,4 +1,4 @@
-const { Database } = require('./internal/database');
+const { Database } = require('../../adapters/dist/adapters/database/internal/database');
 const { DevNullLog } = require('../../core/dist/logging/log');
 
 class Cache {

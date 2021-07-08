@@ -1,14 +1,14 @@
 import { Database } from './internal/database';
 import { DiaryEntry } from '../../../src/core/diary/diary-entry';
-import { Database as SqliteDatabase, OPEN_CREATE, OPEN_READWRITE } from 'sqlite3';
-
+import { parseISO, parse, toDate } from 'date-fns';
+import { DevNullLog, Log } from '../../core/logging/log';
 
 export class Diary {
   private database: Database;
-  private filename: string;
+  private log: Log;
 
-  constructor(filename: string) {
-    this.filename = filename;
+  constructor(filename: string, log: Log = new DevNullLog()) {
+    this.log = log;
     this.database = new Database(filename);
   }
 
@@ -37,11 +37,25 @@ export class Diary {
     return this.get(id);
   }
 
+  async update(entry: DiaryEntry) {
+    this.log.trace(`Updating entry with id <${entry.id}>`);
+
+    await this.database.ex(
+      'run',
+      `UPDATE [diary] SET body=@body WHERE ROWID=@id`, 
+      {
+          '@id':    entry.id,
+          '@body':  entry.body,
+      });
+    
+    return this.get(entry.id);
+  }
+
   async get(id: string): Promise<DiaryEntry> {
     const result = await this.database.ex('get', `SELECT ROWID as id, body, timestamp FROM [diary] WHERE rowid=?`, id);
 
     if (result)
-      return { id: result.id, timestamp: result.timestamp, body: result.body};
+      return { id: result.id, timestamp: parseISO(new Date(result.timestamp).toISOString()), body: result.body};
     
     return null;
   }

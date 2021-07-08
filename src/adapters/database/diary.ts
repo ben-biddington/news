@@ -38,15 +38,16 @@ export class Diary {
       'run',
       `
       INSERT INTO [diary] 
-        (body, timestamp, location, start, end, board) 
+        (body, timestamp, location, start, end, board, tide) 
       VALUES 
-        (@body, DATETIME('now'), @location, @start, @end, @board)`, 
+        (@body, DATETIME('now'), @location, @start, @end, @board, @tide)`, 
       {
           '@body': entry.body,
           '@location': entry.location,
           '@start': entry.session?.start,
           '@end': entry.session?.start,
           '@board': entry.board,
+          '@tide': entry.tide,
       });
     
     // [i] last_insert_rowid() only works on the same connection 
@@ -107,13 +108,14 @@ export class Diary {
         location: result.location,
         session: { start: new Date(result.start), end: new Date(result.end) },
         board: result.board,
+        tide: result.tide
       };
     
     return null;
   }
 
   private allColumns() {
-    return 'ROWID as id, body, timestamp, location, start, end, board';
+    return 'ROWID as id, body, timestamp, location, start, end, board, tide';
   }
 }
 
@@ -132,4 +134,5 @@ const migrate = async (database: Database) => {
   await addColumn(database, 'start'   , 'date');
   await addColumn(database, 'end'     , 'date');
   await addColumn(database, 'board'   , 'text');
+  await addColumn(database, 'tide'   , 'text');
 }

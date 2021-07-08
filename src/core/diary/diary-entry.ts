@@ -5,6 +5,7 @@ export type DiaryEntry = {
   body: string;
   session?: Session;
   board?: string;
+  tide?: string;
 }
 
 export type Session = {

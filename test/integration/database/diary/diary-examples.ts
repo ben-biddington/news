@@ -100,3 +100,21 @@ describe('[diary] Can add board', () => {
     expect(newEntry.board).to.eql('Long');
   });
 });
+
+describe('[diary] Can add tide', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('for example', async () => {
+    const newEntry: DiaryEntry = await diary.enter({ body: 'ABC', tide: 'High at 11' });
+
+    expect(newEntry.tide).to.eql('High at 11');
+  });
+});

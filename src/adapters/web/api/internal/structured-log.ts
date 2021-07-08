@@ -1,9 +1,19 @@
-const { Cloneable } = require("../../../../core/dist/cloneable");
-const { Stopwatch } = require('../../../../core/dist/stopwatch');
+import { Cloneable } from '../../../../core/cloneable';
+import { Stopwatch } from '../../../../core/stopwatch';
 
-class StructuredLog {
+export class StructuredLog {
+  duration: string = '0ms';
+  private path: string;
+  private verb: string;
+  private headers: object;
+  private logs = [];
+  private errors = [];
+  private statusCode: number;
+  private responseHeaders: object[]
+  private _trace: boolean;
+  private _prefix: string;
+
   constructor(req, res, opts = { trace: false, prefix: '' }) {
-    this.duration = '0';
     this.path = req.path;
     this.verb = req.method;
     this.headers = req.headers;
@@ -15,7 +25,7 @@ class StructuredLog {
     this._prefix = opts.prefix ? `${opts.prefix}` : '';
   }
 
-  static async around(req, res, opts, block) {
+  static async around(req, res, opts, block: (log: StructuredLog) => void) {
     const log = new StructuredLog(req, res, opts);
     
     const stopwatch = new Stopwatch();
@@ -43,7 +53,7 @@ class StructuredLog {
       logEntry = new LogEntry(logEntry);
     }
 
-    this.logs.push(logEntry.prefixedWith(this._prefix));
+    this.logs.push(this.prefixedWith(logEntry));
   }
 
   error(e) {
@@ -59,24 +69,23 @@ class StructuredLog {
       if (typeof (logEntry) == 'string') {
         logEntry = new LogEntry(logEntry);
       }
-      this.logs.push(logEntry.prefixedWith(this._prefix));
+      this.logs.push(this.prefixedWith(logEntry));
     }
   }
+
+  private prefixedWith(entry) {
+    if (this._prefix && this._prefix != '') {
+      return {...entry, text: `[${this._prefix}] ${entry.text}`}
+    }
+  };
 }
 
-class LogEntry extends Cloneable {
+export class LogEntry {
+  timestamp: string;
+  text: string;
+
   constructor(text) {
-    super();
     this.timestamp = new Date().toUTCString();
     this.text = text;
   }
-
-  prefixedWith(value) {
-    if (value && value != '')
-      return this.clone(it => it.text = `[${value}] ${this.text}`)
-
-    return this.clone();
-  }
 }
-
-module.exports = { LogEntry, StructuredLog }

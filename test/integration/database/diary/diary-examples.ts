@@ -80,6 +80,16 @@ describe('[diary] Can add start and end time', () => {
     });
 
     expect(format(toNewZealandTime(newEntry.session.start), 'pppp')).to.eql('9:00:00 AM GMT+12:00');
+    expect(format(toNewZealandTime(newEntry.session.end)  , 'pppp')).to.eql('11:00:00 AM GMT+12:00');
+  });
+
+  it('dates default to null', async () => {
+    const newEntry: DiaryEntry = await diary.enter({ 
+      body: 'ABC', 
+    });
+
+    expect(newEntry.session.start).to.be.null;
+    expect(newEntry.session.end).to.be.null;
   });
 });
 

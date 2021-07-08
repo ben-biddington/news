@@ -1,6 +1,6 @@
 const port = 8080;
 
-const { StructuredLog, LogEntry } = require('./internal/structured-log');
+const { StructuredLog, LogEntry } = require('../../dist/adapters/web/api/internal/structured-log');
 const { SocketNotifier } = require('./internal/sockets');
 const { QueryStringToggles } = require('../toggling/query-string-toggles');
 const express = require('express')
@@ -261,6 +261,11 @@ app.get(/sea-temp/, async (req, res) => {
     });
   });
 });
+
+const { init: initialiseDiary, apply } = require('../../dist/adapters/web/api/internal/diary-resources');
+
+initialiseDiary();
+apply(app);
 
 const returnFile = (res, file) => {
   setHeaders(res, cacheControlHeaders(600));

@@ -1,7 +1,6 @@
 import { Database } from './internal/database';
 import { DiaryEntry } from '../../../src/core/diary/diary-entry';
 import { Attachment } from '../../../src/core/diary/attachment';
-import { parseISO, parse, toDate } from 'date-fns';
 import { DevNullLog, Log } from '../../core/logging/log';
 
 export class Diary {
@@ -45,7 +44,7 @@ export class Diary {
           '@body': entry.body,
           '@location': entry.location,
           '@start': entry.session?.start,
-          '@end': entry.session?.start,
+          '@end': entry.session?.end,
           '@board': entry.board,
           '@tide': entry.tide,
       });
@@ -106,7 +105,10 @@ export class Diary {
         timestamp: new Date(result.timestamp), 
         body: result.body,
         location: result.location,
-        session: { start: new Date(result.start), end: new Date(result.end) },
+        session: { 
+          start:  result.start ? new Date(result.start): null, 
+          end:    result.end   ? new Date(result.end): null 
+        },
         board: result.board,
         tide: result.tide
       };

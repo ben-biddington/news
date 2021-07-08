@@ -148,15 +148,12 @@ span.youtube { color: red }
     animation-name: fadeOut;
  }
 
- .weather-today {  }
+ .weather-today .forecast-text { }
  .weather-icon { filter: saturate(0%); display: inline-block; }
  .today { filter: saturate(100%); }
  .weather-icon span { width: 32px }
  .weather-icon:hover { filter: saturate(100%) }
  
- .water-temp {
-  }
-
-  .water-temp li {
-    background: linear-gradient(to top, #f0f0f0, white) 
-  }
+.water-temp li {
+  background: linear-gradient(to top, #f0f0f0, white) 
+}

@@ -1,5 +1,6 @@
 import { Database } from './internal/database';
 import { DiaryEntry } from '../../../src/core/diary/diary-entry';
+import { Attachment } from '../../../src/core/diary/attachment';
 import { parseISO, parse, toDate } from 'date-fns';
 import { DevNullLog, Log } from '../../core/logging/log';
 
@@ -20,6 +21,14 @@ export class Diary {
         body      text, 
         timestamp date
       )`);
+    
+    await this.database.ex(
+        'run',
+        `CREATE TABLE IF NOT EXISTS [attachment] (
+          diaryEntryId int, 
+          file blob,
+          FOREIGN KEY(diaryEntryId) REFERENCES diary(ROWID)
+        )`);
   }
 
   async enter(entry: DiaryEntry) {
@@ -49,6 +58,32 @@ export class Diary {
       });
     
     return this.get(entry.id);
+  }
+
+  async attach(diaryEntryId: number, attachment: Attachment) : Promise<void> {
+    return this.database.ex(
+      'run',
+      `INSERT INTO [attachment] (diaryEntryId, file) VALUES (@diaryEntryId, @file)`, 
+      {
+          '@diaryEntryId': diaryEntryId,
+          '@file':  attachment.file,
+      });
+  }
+
+  async attachments(diaryEntryId: number, attachment: Attachment) : Promise<Attachment[]> {
+    return this.database.ex(
+      'all',
+      `SELECT * from [attachment] WHERE diaryEntryId=@diaryEntryId`, 
+      {
+          '@diaryEntryId': diaryEntryId,
+      }).then(rows => {
+        return rows.map(row => {
+          return {
+            diaryEntryId: diaryEntryId, 
+            file: row.file 
+          }
+        })
+      });
   }
 
   async get(id: string): Promise<DiaryEntry> {

@@ -4,6 +4,7 @@ export type DiaryEntry = {
   location?: string;
   body: string;
   session?: Session;
+  board?: string;
 }
 
 export type Session = {

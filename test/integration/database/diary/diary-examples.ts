@@ -82,3 +82,21 @@ describe('[diary] Can add start and end time', () => {
     expect(format(toNewZealandTime(newEntry.session.start), 'pppp')).to.eql('9:00:00 AM GMT+12:00');
   });
 });
+
+describe('[diary] Can add board', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('for example', async () => {
+    const newEntry: DiaryEntry = await diary.enter({ body: 'ABC', board: 'Long' });
+
+    expect(newEntry.board).to.eql('Long');
+  });
+});

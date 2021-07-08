@@ -96,6 +96,24 @@ export class Diary {
       });
   }
 
+  async list(): Promise<DiaryEntry[]> {
+    const results = await this.database.ex(
+      'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY timestamp DESC LIMIT 50`);
+
+    return results.map((result) => ({
+      id: result.id, 
+      timestamp: new Date(result.timestamp), 
+      body: result.body,
+      location: result.location,
+      session: { 
+        start:  result.start ? new Date(result.start): null, 
+        end:    result.end   ? new Date(result.end): null 
+      },
+      board: result.board,
+      tide: result.tide
+    }));
+  }
+
   async get(id: string): Promise<DiaryEntry> {
     const result = await this.database.ex('get', `SELECT ${this.allColumns()} FROM [diary] WHERE rowid=?`, id);
 

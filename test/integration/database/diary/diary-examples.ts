@@ -128,3 +128,31 @@ describe('[diary] Can add tide', () => {
     expect(newEntry.tide).to.eql('High at 11');
   });
 });
+
+describe('[diary] Can list all', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('default to empty', async () => {
+    expect((await diary.list()).length).to.eql(0);
+  });
+
+  it('for example', async () => {
+    await Promise.all([
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+    ]);
+
+    expect((await diary.list()).length).to.eql(5);
+  });
+});

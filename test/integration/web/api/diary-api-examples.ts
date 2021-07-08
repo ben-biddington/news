@@ -1,4 +1,3 @@
-
 const expect = require('chai').expect;
 const { add, list, del } = require('../../../../src/adapters/bookmarks');
 const trace = process.env.TRACE ? console.log : () => { }
@@ -31,5 +30,19 @@ describe('Can post diary entries', async () => {
         end:    '2021-07-08T23:00:00.000Z'
       } 
     });
+  });
+});
+
+describe('Can list diary entries', async () => {
+  it('for example', async () => {
+    const result = await get(
+      'http://localhost:8080/diary', 
+      { 'Accept': 'application/json' });
+      
+    const body = JSON.parse(result.body);
+
+    expect(result.statusCode).to.eql(200);
+    
+    expect(body.length).to.not.be.undefined;
   });
 });

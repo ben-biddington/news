@@ -2,6 +2,7 @@ import express = require('express');
 import { StructuredLog } from './structured-log';
 import { Diary } from '../../../database/diary';
 import { ConsoleLog } from '../../../../core/logging/log';
+import { DiaryEntry } from '../../../../core/diary/diary-entry';
 
 export const init = () => diary().init();
 
@@ -10,14 +11,24 @@ export const apply = (app: express.Application) => {
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
       
       log.info(`Adding diary entry`);
-      
+
       log.info(JSON.stringify(req.body, null, 2));
 
       const result = await diary().enter(req.body);
       
       res.status(200).json(result);
     });
-  }); 
+  });
+
+  app.get(/diary/, async (req, res) => {
+    return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
+      const list: DiaryEntry[] = await diary().list();
+
+      log.info(`Returning <${list.length}> diary entries`);
+
+      res.status(200).json(list);
+    });
+  });
 }
 
 const diary = () => {

@@ -30,29 +30,22 @@ export class Diary {
           FOREIGN KEY(diaryEntryId) REFERENCES diary(ROWID)
         )`);
 
-    await this.addLocationColumn();
-  }
-
-  private async addLocationColumn() {
-    const count = await 
-      this.database.ex('get', "SELECT COUNT(*) AS count FROM pragma_table_info('diary') WHERE name='location'").
-        then(row => parseInt(row.count));
-    
-    if (count === 0) {
-      await this.database.ex('run', "ALTER TABLE [diary] ADD location text").then(console.log);
-    }
-
-    // await this.database.ex('all', "SELECT * FROM pragma_table_info('diary')").
-    //   then(console.log);
+    await migrate(this.database);
   }
 
   async enter(entry: DiaryEntry) {
     await this.database.ex(
       'run',
-      `INSERT INTO [diary] (body, timestamp, location) VALUES (@body, DATETIME('now'), @location)`, 
+      `
+      INSERT INTO [diary] 
+        (body, timestamp, location, start, end) 
+      VALUES 
+        (@body, DATETIME('now'), @location, @start, @end)`, 
       {
           '@body': entry.body,
-          '@location': entry.location
+          '@location': entry.location,
+          '@start': entry.session?.start,
+          '@end': entry.session?.start,
       });
     
     // [i] last_insert_rowid() only works on the same connection 
@@ -108,15 +101,32 @@ export class Diary {
     if (result)
       return { 
         id: result.id, 
-        timestamp: parseISO(new Date(result.timestamp).toISOString()), 
+        timestamp: new Date(result.timestamp), 
         body: result.body,
-        location: result.location 
+        location: result.location,
+        session: { start: new Date(result.start), end: new Date(result.end) } 
       };
     
     return null;
   }
 
   private allColumns() {
-    return 'ROWID as id, body, timestamp, location';
+    return 'ROWID as id, body, timestamp, location, start, end';
   }
+}
+
+const migrate = async (database: Database) => {
+  const addColumn = async (database: Database, name: string, type: string) => {
+    const count = await 
+      database.ex('get', `SELECT COUNT(*) AS count FROM pragma_table_info('diary') WHERE name='${name}'`).
+        then(row => parseInt(row.count));
+    
+    if (count === 0) {
+      await database.ex('run', `ALTER TABLE [diary] ADD ${name} ${type}`)
+    }
+  }
+
+  await addColumn(database, 'location', 'text');
+  await addColumn(database, 'start'   , 'date');
+  await addColumn(database, 'end'     , 'date');
 }

@@ -2,9 +2,11 @@ const expect = require('chai').expect;
 const temp = require('temp');
 temp.track();
 
-import { DiaryEntry } from '../../../../src/core/diary/diary-entry';
+import { DiaryEntry, Session } from '../../../../src/core/diary/diary-entry';
 import { Diary } from '../../../../src/adapters/database/diary';
 import { ConsoleLog } from '../../../../src/core/logging/log';
+import { toNewZealandTime } from '../../../../src/core/date';
+import { format } from 'date-fns';
 
 describe('[diary] Can store diary entries', () => {
   let diary = null;
@@ -48,9 +50,35 @@ describe('[diary] Can add location', () => {
     await diary.init();
   });
 
-  it('can add entries and it sets id', async () => {
+  it('for example', async () => {
     const newEntry: DiaryEntry = await diary.enter({ body: 'ABC', location: 'Lyall' });
 
     expect(newEntry.location).to.eql('Lyall');
+  });
+});
+
+describe('[diary] Can add start and end time', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('for example', async () => {
+    const session = {
+      start: new Date('2021-07-08T21:00:00.000Z'),
+      end: new Date('2021-07-08T23:00:00.000Z'),
+    };
+
+    const newEntry: DiaryEntry = await diary.enter({ 
+      body: 'ABC', 
+      session
+    });
+
+    expect(format(toNewZealandTime(newEntry.session.start), 'pppp')).to.eql('9:00:00 AM GMT+12:00');
   });
 });

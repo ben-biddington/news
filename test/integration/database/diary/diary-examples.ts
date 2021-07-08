@@ -36,3 +36,21 @@ describe('[diary] Can store diary entries', () => {
     expect(updated.body).to.eql     ('DEF');
   });
 });
+
+describe('[diary] Can add location', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('can add entries and it sets id', async () => {
+    const newEntry: DiaryEntry = await diary.enter({ body: 'ABC', location: 'Lyall' });
+
+    expect(newEntry.location).to.eql('Lyall');
+  });
+});

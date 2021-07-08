@@ -29,14 +29,30 @@ export class Diary {
           file blob,
           FOREIGN KEY(diaryEntryId) REFERENCES diary(ROWID)
         )`);
+
+    await this.addLocationColumn();
+  }
+
+  private async addLocationColumn() {
+    const count = await 
+      this.database.ex('get', "SELECT COUNT(*) AS count FROM pragma_table_info('diary') WHERE name='location'").
+        then(row => parseInt(row.count));
+    
+    if (count === 0) {
+      await this.database.ex('run', "ALTER TABLE [diary] ADD location text").then(console.log);
+    }
+
+    // await this.database.ex('all', "SELECT * FROM pragma_table_info('diary')").
+    //   then(console.log);
   }
 
   async enter(entry: DiaryEntry) {
     await this.database.ex(
       'run',
-      `INSERT INTO [diary] (body, timestamp) VALUES (@body, DATETIME('now'))`, 
+      `INSERT INTO [diary] (body, timestamp, location) VALUES (@body, DATETIME('now'), @location)`, 
       {
           '@body': entry.body,
+          '@location': entry.location
       });
     
     // [i] last_insert_rowid() only works on the same connection 
@@ -87,11 +103,20 @@ export class Diary {
   }
 
   async get(id: string): Promise<DiaryEntry> {
-    const result = await this.database.ex('get', `SELECT ROWID as id, body, timestamp FROM [diary] WHERE rowid=?`, id);
+    const result = await this.database.ex('get', `SELECT ${this.allColumns()} FROM [diary] WHERE rowid=?`, id);
 
     if (result)
-      return { id: result.id, timestamp: parseISO(new Date(result.timestamp).toISOString()), body: result.body};
+      return { 
+        id: result.id, 
+        timestamp: parseISO(new Date(result.timestamp).toISOString()), 
+        body: result.body,
+        location: result.location 
+      };
     
     return null;
+  }
+
+  private allColumns() {
+    return 'ROWID as id, body, timestamp, location';
   }
 }

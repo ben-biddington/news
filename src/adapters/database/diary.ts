@@ -134,6 +134,10 @@ export class Diary {
     return null;
   }
 
+  async delete(id: string): Promise<void> {
+    const result = await this.database.ex('run', `DELETE FROM [diary] WHERE rowid=?`, id);
+  }
+
   private allColumns() {
     return 'ROWID as id, body, timestamp, location, start, end, board, tide';
   }

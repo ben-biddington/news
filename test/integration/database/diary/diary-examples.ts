@@ -156,3 +156,33 @@ describe('[diary] Can list all', () => {
     expect((await diary.list()).length).to.eql(5);
   });
 });
+
+describe('[diary] Can delete', () => {
+  let diary = null;
+
+  beforeEach(async () => {
+    const tempFile = await temp.open();
+
+    diary = new Diary(tempFile.path, new ConsoleLog({ allowTrace: false }));
+
+    await diary.init();
+  });
+
+  it('default to empty', async () => {
+    expect((await diary.list()).length).to.eql(0);
+  });
+
+  it('for example', async () => {
+    const items = await Promise.all([
+      diary.enter({ body: 'ABC', tide: 'High at 11' }),
+      diary.enter({ body: 'DEF', tide: 'High at 11' }),
+      diary.enter({ body: 'GHI', tide: 'High at 11' }),
+      diary.enter({ body: 'JKL', tide: 'High at 11' }),
+      diary.enter({ body: 'MNO', tide: 'High at 11' }),
+    ]);
+
+    await diary.delete(items[0].id);
+
+    expect((await diary.list()).length).to.eql(4);
+  });
+});

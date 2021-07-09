@@ -35,12 +35,14 @@
 
   view.onRender(e => console.log(`[render] ${JSON.stringify(e)}`));
 
-  const addScript = attr => {
+  const addScript = (attr, onLoadHandler = null) => {
     const scriptTag = document.createElement('script');
 
     Object.keys(attr).forEach(key => {
       scriptTag.setAttribute(key, attr[key]);
     });
+
+    scriptTag.onload = onLoadHandler;
 
     document.body.appendChild(scriptTag);
   }
@@ -147,7 +149,13 @@
 
       addCss(   { href: '/assets/css/solid.css' });
       addScript({ src: 'https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@latest/dist/hlsjs-playback.min.js' });
-      addScript({ src: '/assets/dist/adapters.web.solid.bundle.js' });
+      addScript({ 
+        src: '/assets/dist/adapters.web.solid.bundle.js',
+      }, () => { 
+          solid.mount(document.getElementById("application"));
+          console.log('Mounting');
+         }
+      );
     }
     else {
       vanilla.render(document, application);

@@ -206,6 +206,10 @@ const Application = () => {
     </>
 };
 
-render(() => <Application />, document.getElementById("application"));
+export const mount = (el) => {
+  render(() => <Application />, el);
+}
+
+//render(() => <Application />, document.getElementById("application"));
 
 module.exports.Application = Application;

@@ -4,6 +4,7 @@ module.exports = {
   mode: 'development',
   entry: {
     'solid' : './src/adapters/dist/adapters/web/gui/flavours/solid/index.jsx',
+    'diary' : './src/adapters/dist/adapters/web/gui/flavours/solid/diary.jsx',
   },
   output: {
     path: distPath,

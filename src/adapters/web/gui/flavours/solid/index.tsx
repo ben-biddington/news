@@ -11,6 +11,7 @@ import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
 import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
+import { DiaryApplication } from "./diary";
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -208,6 +209,10 @@ const Application = () => {
 
 export const mount = (el) => {
   render(() => <Application />, el);
+}
+
+export const mountDiary = (el) => {
+  render(() => <DiaryApplication />, el);
 }
 
 //render(() => <Application />, document.getElementById("application"));

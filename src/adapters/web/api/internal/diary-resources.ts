@@ -29,6 +29,16 @@ export const apply = (app: express.Application) => {
       res.status(200).json(list);
     });
   });
+
+  app.delete('/diary/:id', async (req, res) => {
+    return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
+      const list: DiaryEntry[] = await diary().list();
+
+      log.info(`Deleting diary entry with id <${req.params.id}>`);
+
+      res.status(200).json(list);
+    });
+  });
 }
 
 const diary = () => {

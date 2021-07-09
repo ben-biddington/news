@@ -46,3 +46,20 @@ describe('Can list diary entries', async () => {
     expect(body.length).to.not.be.undefined;
   });
 });
+
+describe('Can delete diary entries', async () => {
+  it('for example', async () => {
+    const deletable = await postJson(
+      'http://localhost:8080/diary', 
+      { 'Content-type': 'application/json' }, 
+      { 
+        body: 'This can be deleted', 
+      });
+      
+    const id = JSON.parse(deletable.body).id;
+    
+    const result = await _delete(`http://localhost:8080/diary/${id}`);
+      
+    expect(result.statusCode).to.eql(200);
+  });
+});

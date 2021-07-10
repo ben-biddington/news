@@ -2,7 +2,7 @@ import { createSignal } from "solid-js"
 import { mergeProps } from "solid-js/web"
 import { DiaryEntry, Session } from "../../../../../../../core/diary/diary-entry"
 import { toNewZealandTime } from "../../../../../../../core/date";
-import { format, set } from 'date-fns'
+import { format, set, parse } from 'date-fns'
 import { enNZ } from 'date-fns/locale'
 
 export type Props = {
@@ -17,9 +17,10 @@ type SessionTimes = {
 export const Edit = (props: Props) => {
   props = mergeProps({ entry: { id: 'draft', timestamp: new Date()}}, props);
 
-  const [dateHint, setDateHint]         = createSignal<string>(null);
-  const [sessionDate, setSessionDate]   = createSignal<Date>(props.entry?.session?.start || new Date());
-  const [sessionTimes, setSessionTimes] = createSignal<SessionTimes>({ start: '09.00', end: '11.00'});
+  const [dateHint, setDateHint]             = createSignal<string>(null);
+  const [sessionDate, setSessionDate]       = createSignal<Date>(props.entry?.session?.start || new Date());
+  const [sessionDayText, setSessionDayText] = createSignal<string>(null);
+  const [sessionTimes, setSessionTimes]     = createSignal<SessionTimes>({ start: '09.00', end: '11.00'});
 
   const id = (name: string) => {
     return `${props.entry.id}-${name}`;
@@ -30,24 +31,35 @@ export const Edit = (props: Props) => {
   const timeText      = (date: Date) => format(toNewZealandTime(date), 'p'      , { locale: enNZ });
 
   const onDateChange = (event) => {
-    try {
-      setDateHint(timeText(new Date(event.target.value)));
-    } catch {
-      setDateHint(`Invalid: ${event.target.value}`);
-    }
-  }
-
-  const calculateSession = () => {
-    // Try and make a valid date and time
-    //const result = set(new Date())
+    setSessionDayText(event.target.value);
+    calculateSession();
   }
 
   const onStartTimeChanged = (e) => {
     setSessionTimes(v => ({...v, start: e.target.value}));
+    calculateSession();
   }
 
   const onEndTimeChanged = (e) => {
     setSessionTimes(v => ({...v, end: e.target.value}));
+    calculateSession();
+  }
+
+  const calculateSession = () => {
+    // Try and make a valid date and time
+    try {
+      const sessionDay = new Date(sessionDayText());
+      const startTime = parse(sessionTimes().start, 'kk.mm', new Date());
+      const endTime   = parse(sessionTimes().end  , 'kk.mm', new Date());
+
+      const startDateAndTime  = set(sessionDay, { hours: startTime.getHours(), minutes: startTime.getMinutes() });
+      const endDateAndTime    = set(sessionDay, { hours: endTime.getHours()  , minutes: endTime.getMinutes() });
+
+      setDateHint(`${dayText(startDateAndTime)} ${timeText(startDateAndTime)} - ${timeText(endDateAndTime)}`);
+    }
+    catch {
+
+    }
   }
 
   return <>

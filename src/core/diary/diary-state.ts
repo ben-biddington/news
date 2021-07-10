@@ -1,5 +1,5 @@
 import { DiaryEntry } from "./diary-entry";
 
-export type DiaryState {
+export type DiaryState = {
   entries: DiaryEntry[];
 } 

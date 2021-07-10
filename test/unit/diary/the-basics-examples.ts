@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 import { DiaryEntry } from '../../../src/core/diary/diary-entry';
-import { DiaryPortsBuilder } from '../../../src/core/diary/diary-ports';
+import { DiaryPorts, DiaryPortsBuilder } from '../../../src/core/diary/diary-ports';
 import { DiaryState } from '../../../src/core/diary/diary-state';
 import { DiaryApplication, IDiaryApplication } from '../../../src/core/diary/diary-application'
 
@@ -17,6 +17,52 @@ describe('The diary application', async () => {
     listener.mustHave(entry);
   });
 });
+
+describe('The diary application', async () => {
+  it('deleting', async () => {
+    const ports = new MockDiaryPorts();
+
+    const application = new DiaryApplication(ports);
+  
+    await application.delete('xxx');
+
+    ports.mustHaveBeenAskedToDelete('xxx');
+  });
+});
+
+describe('Building ports', async () => {
+  it('for example', async () => {
+    const expected = () => Promise.resolve();
+
+    const ports = DiaryPortsBuilder.devNull().
+      withList(() => Promise.resolve([])).
+      withDelete(expected);
+
+    expect(ports.build().delete).to.eql(expected);
+  });
+});
+
+class MockDiaryPorts implements DiaryPorts {
+  private deletes: string[] = [];
+
+  add(entry: DiaryEntry): Promise<void> {
+    return Promise.resolve();
+  }
+  get(id: string): Promise<DiaryEntry> {
+    return Promise.resolve(null);
+  }
+  delete(id: string): Promise<void> {
+    this.deletes.push(id);
+    return Promise.resolve();
+  }
+  list(): Promise<DiaryEntry[]> {
+    return Promise.resolve([]);
+  }
+
+  mustHaveBeenAskedToDelete(id: string) {
+    expect(this.deletes).to.contain(id);
+  }
+}
 
 class MockListener {
   private history: DiaryState[] = [];

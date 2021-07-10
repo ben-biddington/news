@@ -1,17 +1,23 @@
 const port = 8080;
+const express = require('express');
 
 const { StructuredLog, LogEntry } = require('../../dist/adapters/web/api/internal/structured-log');
 const { SocketNotifier } = require('./internal/sockets');
 const { QueryStringToggles } = require('../toggling/query-string-toggles');
-const express = require('express')
 
 const { Deleted } = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
-const { Cache } = require('../../database/cache');
 const { Timespan } = require('../../../core/dist/timespan');
 const { addBookmark } = require('../../news-adapters');
 
-const app = express();
+const { init: initialiseCaching, cachedFile, cached, cacheControlHeaders } 
+  = require('../../dist/adapters/web/api/internal/caching');
+const { init: initialiseDiary, apply: useDiary } 
+  = require('../../dist/adapters/web/api/internal/resources/diary-resources');
+const { apply: useWeather } 
+  = require('../../dist/adapters/web/api/internal/resources/weather-resources');
+
+  const app = express();
 const io = new SocketNotifier(1080);
 
 app.use(express.static('src/adapters/web/gui'));
@@ -19,7 +25,6 @@ app.use(express.json());
 
 const deleted = new Deleted('./news.db');
 const bookmarks = new Bookmarks('./bookmarks.db');
-const cache = new Cache('./cache.db');
 const log = console.log;
 const fs = require('fs');
 const util = require('util');
@@ -27,17 +32,20 @@ const util = require('util');
 const readFile = util.promisify(fs.readFile);
 
 const initialise = async () => {
-  await Promise.all([deleted.init(), bookmarks.init(), cache.init()]);
-
-  const { init: initDeleted } = require('./internal/deleted-items-resource');
+  await Promise.all([
+    deleted.init(), 
+    bookmarks.init(), 
+    initialiseCaching(),
+    initialiseDiary()
+  ]);
+  
+  useDiary(app);
+  useWeather(app);
+  
+  const { init: initDeleted } = require('./internal/resources/deleted-items-resource');
 
   initDeleted(app, log, deleted);
 }
-
-const cacheControlHeaders = (maxAge = 60) => ({
-  'Cache-Control': 'public',
-  'max-age': maxAge
-});
 
 app.delete(/news\/items/, async (req, res) => {
 
@@ -241,7 +249,7 @@ const resize = async (log, opts) => {
 
 app.get('/wellington-weather/week', async (req, res) => {
   return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, log => {
-    return cached(req, res, log, () => {
+    return cached({req, res, log}, () => {
       const { sevenDays } = require('../../dist/adapters/web/metservice');
       const { get } = require('../../internet');
 
@@ -250,70 +258,10 @@ app.get('/wellington-weather/week', async (req, res) => {
   });
 });
 
-app.get(/sea-temp/, async (req, res) => {
-  return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'sea-temp' }, log => {
-    const id = req.path.substring(req.path.lastIndexOf('/') + 1);
-
-    return cached(req, res, log, async () => {
-      const { get } = require('../../dist/adapters/web/sea-temp');
-
-      return await get(id);
-    });
-  });
-});
-
-const { init: initialiseDiary, apply } = require('../../dist/adapters/web/api/internal/diary-resources');
-
-initialiseDiary();
-apply(app);
-
 const returnFile = (res, file) => {
   setHeaders(res, cacheControlHeaders(600));
   res.status(200).write(file, 'binary');
   res.end();
-}
-
-const cachedFile = async (cacheKey, fn) => {
-  if (process.env.NO_CACHE)
-    return await fn();
-
-  let file = await cache.get(cacheKey);
-
-  if (file)
-    return file;
-
-  file = await fn();
-
-  await cache.add(cacheKey, file, Timespan.fromMinutes(120));
-
-  return file;
-}
-
-const cached = async (req, res, log, fn) => {
-  const key = req.path;
-
-  const cachedItem = await cache.get(key);
-
-  const cachePeriod = Timespan.fromMinutes(60);
-
-  if (cachedItem) {
-    log.info(`[cache] [hit] <${key}>`);
-    res.status(200).json(JSON.parse(cachedItem) /* see test/integration/database/cache-examples.ts for why we're stringifying */);
-    return;
-  }
-
-  const newItem = await fn();
-
-  await cache.add(
-    key,
-    JSON.stringify(newItem) /* see test/integration/database/cache-examples.ts for why we're stringifying */,
-    cachePeriod);
-
-  log.info(`[cache] [miss] <${key}>`);
-
-  setHeaders(res, cacheControlHeaders(600));
-
-  res.status(200).json(newItem);
 }
 
 initialise().then(() => app.listen(port, () =>

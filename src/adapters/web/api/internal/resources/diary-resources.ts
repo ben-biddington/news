@@ -1,8 +1,8 @@
 import express = require('express');
-import { StructuredLog } from './structured-log';
-import { Diary } from '../../../database/diary';
-import { ConsoleLog } from '../../../../core/logging/log';
-import { DiaryEntry } from '../../../../core/diary/diary-entry';
+import { StructuredLog } from '../structured-log';
+import { Diary } from '../../../../database/diary';
+import { ConsoleLog } from '../../../../../core/logging/log';
+import { DiaryEntry } from '../../../../../core/diary/diary-entry';
 
 export const init = () => diary().init();
 
@@ -35,6 +35,8 @@ export const apply = (app: express.Application) => {
       const list: DiaryEntry[] = await diary().list();
 
       log.info(`Deleting diary entry with id <${req.params.id}>`);
+
+      await diary().delete(req.params.id);
 
       res.status(200).json(list);
     });

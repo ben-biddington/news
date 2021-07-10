@@ -6,6 +6,7 @@ const { NewsItem }                      = require('../../core/dist/news-item');
 const { FetchBasedInternet }            = require('../dist/adapters/web/fetch-based-internet');
 
 const { createPorts } = require('../dist/adapters/application/createPorts');
+const { create: createDiaryApplication } = require('../dist/adapters/application/real-diary-application');
 
 //
 // [i] This is where the real application is bootstrapped from
@@ -24,4 +25,6 @@ const { SocketSync } = require('../web/gui/socket-sync');
 const { UIEvents } = require('../web/gui/ui-events');
 const { Title } = require('../web/gui/title');
 
-module.exports = { application, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketSync, UIEvents, Title, ConcreteNewsApplication }
+const diaryApplication = () => createDiaryApplication(new FetchBasedInternet());
+
+module.exports = { application, diaryApplication, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketSync, UIEvents, Title, ConcreteNewsApplication }

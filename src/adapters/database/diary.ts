@@ -158,5 +158,5 @@ const migrate = async (database: Database) => {
   await addColumn(database, 'start'   , 'date');
   await addColumn(database, 'end'     , 'date');
   await addColumn(database, 'board'   , 'text');
-  await addColumn(database, 'tide'   , 'text');
+  await addColumn(database, 'tide'    , 'text');
 }

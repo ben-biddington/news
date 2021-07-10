@@ -11,7 +11,8 @@ import { Weather } from './components/Weather';
 import { Toolbar } from './components/Toolbar';
 import { BookmarksPanel } from './components/BookmarksPanel';
 import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
-import { DiaryApplication } from "./diary";
+import { DiaryApplicationView } from "./diary";
+import { DiaryApplication } from "../../../../../core/diary/diary-application";
 
 type UIOptions = { 
   showMarineWeather: boolean,
@@ -180,25 +181,30 @@ const Application = () => {
             <Weather forecasts={weather()} today={new Date()} link="https://www.metservice.com/towns-cities/locations/wellington/7-days" />
           </div>
           <div class="row p-2 justify-content-center">
-            <div class="m-2 water-temp">
-              <ul class="list-group list-group-horizontal">
-                <For each={seaTemp()} children={
-                  (temp: WaterTemperature): Element => {
-                    return <>
-                      <li class="list-group-item">
-                        <span style="width: 16px">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
-                            <path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
-                            <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
-                          </svg>
-                          {temp.name} {temp.temperature}°C
-                        </span>
-                      </li>
-                    </>
-                  }
-                } />
-              </ul>
-            </div>
+            <Show when={seaTemp().length > 0} children={
+              <>
+                <div class="m-2 water-temp">
+                <ul class="list-group list-group-horizontal">
+                  <For each={seaTemp()} children={
+                    (temp: WaterTemperature): Element => {
+                      return <>
+                        <li class="list-group-item">
+                          <span style="width: 16px">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-thermometer-half" viewBox="0 0 16 16">
+                              <path d="M9.5 12.5a1.5 1.5 0 1 1-2-1.415V6.5a.5.5 0 0 1 1 0v4.585a1.5 1.5 0 0 1 1 1.415z"/>
+                              <path d="M5.5 2.5a2.5 2.5 0 0 1 5 0v7.55a3.5 3.5 0 1 1-5 0V2.5zM8 1a1.5 1.5 0 0 0-1.5 1.5v7.987l-.167.15a2.5 2.5 0 1 0 3.333 0l-.166-.15V2.5A1.5 1.5 0 0 0 8 1z"/>
+                            </svg>
+                            {temp.name} {temp.temperature}°C
+                          </span>
+                        </li>
+                      </>
+                    }
+                  } />
+                </ul>
+                </div>
+              </>
+            } />
+            
             <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
           </div>
         </div>
@@ -211,10 +217,8 @@ export const mount = (el) => {
   render(() => <Application />, el);
 }
 
-export const mountDiary = (el) => {
-  render(() => <DiaryApplication />, el);
+export const mountDiary = (el, application: DiaryApplication) => {
+  render(() => <DiaryApplicationView application={application} />, el);
 }
-
-//render(() => <Application />, document.getElementById("application"));
 
 module.exports.Application = Application;

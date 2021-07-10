@@ -4,6 +4,7 @@ import { Store } from "./internal/store";
 
 export interface IDiaryApplication {
   list(): Promise<void>;
+  delete(id: string): Promise<void>;
   subscribe(listener: (state: DiaryState) => void): void;
 }
 
@@ -28,7 +29,11 @@ export class DiaryApplication implements IDiaryApplication {
     this.store.subscribe(listener);
   }
 
-  public async list() {
+  public delete = async (id: string) => {
+    return this.ports.delete(id).then(this.list);
+  }
+
+  public list = async () => {
     this.store.set({ entries: await this.ports.list() });
   }
 }

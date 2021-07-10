@@ -1,4 +1,6 @@
-export class FetchBasedInternet {
+import { Internet } from '../../core/ports/internet';
+
+export class FetchBasedInternet implements Internet {
   async delete(url, headers) {
     //@ts-ignore
     return fetch(url, { headers, method: 'delete' }).

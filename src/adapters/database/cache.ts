@@ -1,7 +1,11 @@
-const { Database } = require('../../adapters/dist/adapters/database/internal/database');
-const { DevNullLog } = require('../../core/dist/logging/log');
+import { Database }   from './internal/database';
+import { DevNullLog, Log } from '../../core/logging/log';
 
-class Cache {
+export class Cache {
+  private _database: Database;
+  private _log: Log;
+  private _tableName: string;
+
   constructor(fileName, log = new DevNullLog()) {
     this._database = new Database(fileName);
     this._log = log;
@@ -54,5 +58,3 @@ class Cache {
       });
   }
 }
-
-module.exports = { Cache };

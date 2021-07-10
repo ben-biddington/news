@@ -1,7 +1,5 @@
 // https://www.metservice.com/towns-cities/locations/wellington/7-days
 export const icon = (name, size = 32) => {
-  console.log(`Finding icon for ${JSON.stringify(name, null, 2)}`);
-
   if (!icons[name]) {
     console.log(`Unable to find symbol for name <${name}>`);
   }

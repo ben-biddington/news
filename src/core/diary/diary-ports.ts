@@ -16,7 +16,11 @@ export class DiaryPortsBuilder {
   }
 
   public withList(list: () => Promise<DiaryEntry[]>): DiaryPortsBuilder {
-    return new  DiaryPortsBuilder({ ...this.ports, list });
+    return new DiaryPortsBuilder({ ...this.ports, list });
+  }
+
+  public withDelete(_delete: (id: string) => Promise<void>): DiaryPortsBuilder {
+    return new DiaryPortsBuilder({ ...this.ports, delete: _delete });
   }
   
   public build(): DiaryPorts {

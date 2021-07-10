@@ -155,8 +155,9 @@
       }, 
       () => {
         solid.mount(document.getElementById("application"));
+
         if (window.toggles.get('diary')) {
-          solid.mountDiary(document.getElementById("diary"));
+          solid.mountDiary(document.getElementById("diary"), real.diaryApplication());
         }
       });
     }

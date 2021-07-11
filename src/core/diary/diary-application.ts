@@ -1,10 +1,13 @@
+import { DiaryEntry } from "./diary-entry";
 import { DiaryPorts, DiaryPortsBuilder } from "./diary-ports";
 import { DiaryState } from "./diary-state";
 import { Store } from "./internal/store";
+import stringify from "../stringify";
 
 export interface IDiaryApplication {
-  list(): Promise<void>;
-  delete(id: string): Promise<void>;
+  list():                       Promise<void>;
+  save(diaryEntry: DiaryEntry): Promise<DiaryEntry>;
+  delete(id: string):           Promise<void>;
   subscribe(listener: (state: DiaryState) => void): void;
 }
 
@@ -35,5 +38,19 @@ export class DiaryApplication implements IDiaryApplication {
 
   public list = async () => {
     this.store.set({ entries: await this.ports.list() });
+  }
+
+  public save = async (diaryEntry: DiaryEntry) : Promise<DiaryEntry> => {
+    console.log(`Saving changes`, stringify(diaryEntry));
+
+    const result = await diaryEntry.id 
+      ? this.ports.save(diaryEntry) 
+      : this.ports.add(diaryEntry);
+
+    this.store.set({ entries: await this.ports.list() });
+
+    console.log(`Returning`, stringify(result));
+
+    return result;
   }
 }

@@ -154,10 +154,10 @@
         src: '/assets/dist/adapters.web.solid.bundle.js',
       }, 
       () => {
-        solid.mount(document.getElementById("application"));
-
         if (window.toggles.get('diary')) {
-          solid.mountDiary(document.getElementById("diary"), real.diaryApplication());
+          solid.mountDiary(document.getElementById("application"), real.diaryApplication());
+        } else {
+          solid.mount(document.getElementById("application"));
         }
       });
     }

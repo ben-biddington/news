@@ -20,6 +20,23 @@ export const apply = (app: express.Application) => {
     });
   });
 
+  app.put('/diary/:entryId', async (req, res) => {
+    return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
+      
+      const entryId = req.params.entryId;
+
+      const value = { ...req.body, id: entryId };
+
+      log.info(`Updating diary entry <${entryId}>`);
+
+      log.info(JSON.stringify(value , null, 2));
+
+      const result = await diary().update(value);
+      
+      res.status(200).json(result);
+    });
+  });
+
   app.get(/diary/, async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
       const list: DiaryEntry[] = await diary().list();

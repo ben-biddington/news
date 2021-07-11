@@ -37,7 +37,7 @@ export class Diary {
       'run',
       `
       INSERT INTO [diary] 
-        (body, timestamp, location, start, end, board, tide) 
+        (body, timestamp, location, start, end, board, tide)
       VALUES 
         (@body, DATETIME('now'), @location, @start, @end, @board, @tide)`, 
       {
@@ -61,10 +61,24 @@ export class Diary {
 
     await this.database.ex(
       'run',
-      `UPDATE [diary] SET body=@body WHERE ROWID=@id`, 
+      `
+        UPDATE [diary] 
+        SET 
+          body=@body,
+          location=@location, 
+          start=@start, 
+          end=@end, 
+          board=@board, 
+          tide=@tide
+        WHERE ROWID=@id`, 
       {
-          '@id':    entry.id,
-          '@body':  entry.body,
+          '@id':        entry.id,
+          '@body':      entry.body,
+          '@location':  entry.location,
+          '@start':     entry.session?.start,
+          '@end':       entry.session.end,
+          '@board':     entry.board,
+          '@tide':      entry.tide,
       });
     
     return this.get(entry.id);
@@ -98,7 +112,7 @@ export class Diary {
 
   async list(): Promise<DiaryEntry[]> {
     const results = await this.database.ex(
-      'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY timestamp DESC LIMIT 50`);
+      'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY timestamp ASC LIMIT 50`);
 
     return results.map((result) => ({
       id: result.id, 

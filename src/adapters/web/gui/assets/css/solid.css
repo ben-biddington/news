@@ -52,7 +52,7 @@ span.youtube { color: red }
 #news .news-controls { background-color: inherit; border: 0; border-bottom-color: #f0f0f0; border-bottom-width: 1; border-style: solid; }
 #news .news-controls li { border: 0; background-color: inherit; }
 #news .news-controls li.icon { min-width: 50; }
-#news .icon { width:16; height: 16; }
+.icon { width:16; height: 16; }
 #news .source { font-size: 1.1em }
 #news .age { min-width: 100; display: inline-block; text-align: center; margin-top: 2px}
 #marine-weather .card { text-align: center; background-color: rgb(218, 224, 229, 0.2); }

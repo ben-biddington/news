@@ -1,12 +1,15 @@
-import { createSignal } from "solid-js"
+import { createEffect, createMemo, createSignal } from "solid-js"
 import { mergeProps } from "solid-js/web"
 import { DiaryEntry, Session } from "../../../../../../../core/diary/diary-entry"
-import { toNewZealandTime } from "../../../../../../../core/date";
+import { formatNewZealandTimeOfDay, toNewZealandTime } from "../../../../../../../core/date";
 import { format, set, parse } from 'date-fns'
 import { enNZ } from 'date-fns/locale'
+import stringify from '../../../../../../../core/stringify';
 
 export type Props = {
-  entry?: DiaryEntry  
+  entry?: DiaryEntry,
+  onSave?: (diaryEntry: DiaryEntry) => void;
+  onCancel?: () => void;
 }
 
 type SessionTimes = {
@@ -14,23 +17,72 @@ type SessionTimes = {
   end: string;
 }
 
-export const Edit = (props: Props) => {
-  props = mergeProps({ entry: { id: 'draft', timestamp: new Date()}}, props);
+const blank = (): DiaryEntry => ({ 
+  body: undefined,
+  timestamp: new Date(),
+});
 
-  const [dateHint, setDateHint]             = createSignal<string>(null);
-  const [sessionDate, setSessionDate]       = createSignal<Date>(props.entry?.session?.start || new Date());
-  const [sessionDayText, setSessionDayText] = createSignal<string>(null);
-  const [sessionTimes, setSessionTimes]     = createSignal<SessionTimes>({ start: '09.00', end: '11.00'});
+const defaultSessionTimes: SessionTimes = {
+  start:  '9.00',
+  end:    '11.00'
+};
 
-  const id = (name: string) => {
-    return `${props.entry.id}-${name}`;
+type Time = {
+  hours: number;
+  minutes: number;
+}
+
+const parseTime = (text: string): Time => {
+  return {
+    hours: parseInt(text.split(':')[0]),
+    minutes: parseInt(text.split(':')[1])
   }
+}
 
+export const Edit = (props: Props) => {
+  props = mergeProps({
+      onSave: () => {}, 
+      onCancel: () => {}, 
+      entry: blank(),
+    }, 
+    props);
+  
   const dateTimeText  = (date: Date) => format(toNewZealandTime(date), 'PPPppp' , { locale: enNZ });
-  const dayText       = (date: Date) => format(toNewZealandTime(date), 'PPPP'   , { locale: enNZ });
+  const dayText       = (date: Date) => format(toNewZealandTime(date), 'PPP'   , { locale: enNZ });
   const timeText      = (date: Date) => format(toNewZealandTime(date), 'p'      , { locale: enNZ });
 
+  const toSessionTimes = (session: Session): SessionTimes => {
+    return {
+      start: session?.start  ? formatNewZealandTimeOfDay(session.start)  : defaultSessionTimes.start,
+      end: session?.end      ? formatNewZealandTimeOfDay(session.end)    : defaultSessionTimes.end,
+    }
+  }
+
+  const [dateHint, setDateHint]             = createSignal<string>(dayText(props.entry?.session?.start || new Date()));
+  const [sessionDate, setSessionDate]       = createSignal<Date>(props.entry?.session?.start || new Date());
+  const [sessionDayText, setSessionDayText] = createSignal<string>(dayText(sessionDate()));
+  const [sessionTimes, setSessionTimes]     = createSignal<SessionTimes>(toSessionTimes(props.entry?.session));
+  const [session, setSession]               = createSignal<Session>(props.entry.session);
+  const [body, setBody]                     = createSignal<string>(props.entry.body);
+  const [board, setBoard]                   = createSignal<string>(props.entry.board);
+  const [location, setLocation]             = createSignal<string>(props.entry.location);
+  const [tide, setTide]                     = createSignal<string>(props.entry.tide);
+
+  const id = (name: string) => `${props.entry.id}-${name}`;
+
+  const save = () => {
+    props.onSave({ 
+      id: props.entry.id, 
+      body: body(), 
+      session: session(),
+      board: board(),
+      location: location(),
+      tide: tide()
+    });
+  }
+
   const onDateChange = (event) => {
+    console.log('onDateChange', event.target.value);
     setSessionDayText(event.target.value);
     calculateSession();
   }
@@ -46,61 +98,100 @@ export const Edit = (props: Props) => {
   }
 
   const calculateSession = () => {
-    // Try and make a valid date and time
     try {
-      const sessionDay = new Date(sessionDayText());
-      const startTime = parse(sessionTimes().start, 'kk.mm', new Date());
-      const endTime   = parse(sessionTimes().end  , 'kk.mm', new Date());
+      const sessionDay  = new Date(sessionDayText());
+      
+      const startTime   = parseTime(sessionTimes().start);
+      const endTime     = parseTime(sessionTimes().end);
 
-      const startDateAndTime  = set(sessionDay, { hours: startTime.getHours(), minutes: startTime.getMinutes() });
-      const endDateAndTime    = set(sessionDay, { hours: endTime.getHours()  , minutes: endTime.getMinutes() });
+      const startDateAndTime  = set(sessionDay, { hours: startTime.hours, minutes: startTime.minutes });
+      const endDateAndTime    = set(sessionDay, { hours: endTime.hours, minutes: endTime.minutes });
+
+      console.log('start', stringify(startTime), 'end', stringify(endTime));
+      console.log('sessionDay', sessionDay, 'startDateAndTime', startDateAndTime);
 
       setDateHint(`${dayText(startDateAndTime)} ${timeText(startDateAndTime)} - ${timeText(endDateAndTime)}`);
+      setSession({ start: startDateAndTime, end: endDateAndTime }); 
     }
-    catch {
-
+    catch (e) { 
+      // console.log(e)
     }
   }
+
+  const dateLabel = createMemo(() => {
+    if (!session())
+      return;
+
+    return `${dayText(session().start)} ${timeText(session().start)} - ${timeText(session().end)}`;
+  });
+
+  createEffect(() => {
+    console.log(stringify(props.entry));
+  })
 
   return <>
     <form>
       <div class="form-group">
         <div class="row">
           <div class="col-2">
-            <input
+            <input title="Date"
               onchange={onDateChange}
               type="text" class="form-control" id={id('date')} placeholder="Date" 
               value={dayText(sessionDate())} />
-              <small class="form-text text-muted">{dateHint()}</small>
           </div>
-          <div class="col-2">
-            <input
-              onchange={onStartTimeChanged}
+          <div class="col-2"> 
+            <input title="Start time"
+              oninput={onStartTimeChanged}
               type="text" class="form-control" id={id('start')} placeholder="Start" 
-              value={sessionTimes().start} />
-              <small class="form-text text-muted">{dateHint()}</small>
+              value={sessionTimes().start} size={5} />
           </div>
           <div class="col-2">
-            <input
-              onchange={onEndTimeChanged}
-              type="text" class="form-control" id={id('end')} placeholder="Start" 
-              value={sessionTimes().end} />
-              <small class="form-text text-muted">{dateHint()}</small>
+            <input title="End time"
+              oninput={onEndTimeChanged}
+              type="text" class="form-control" id={id('end')} placeholder="End"
+              value={sessionTimes().end} size={5} />
           </div>
           <div class="col-2">
-            <input 
+            <input title="Tide"
+              oninput={(e) => setTide(e.target.value)}
+              type="text" class="form-control" id={id('tide')} placeholder="Tide" 
+              value={props.entry.tide} />
+          </div>
+          <div class="col-2">
+            <input title="Board"
+              oninput={(e) => setBoard(e.target.value)}
               type="text" class="form-control" id={id('board')} placeholder="Board" 
               value={props.entry.board} />
           </div>
           <div class="col-2">
-            <input 
+            <input title="Location"
+              oninput={(e) => setLocation(e.target.value)}
               type="text" class="form-control" id={id('location')} placeholder="Location" 
               value={props.entry.location} />
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="submit" class="btn btn-primary">Cancel</button>
+        <div class="row">
+          <div class="col-12 p-2">
+            <small class="form-text text-muted">{dateLabel()}</small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <textarea
+              onchange={(e) => setBody(e.target.value)}
+              type="text" class="form-control" id={id('body')} placeholder="..." 
+              value={body()} />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 mt-1">
+            <button type="button" onclick={save} class="btn btn-primary">Save</button>
+            <button type="button" onclick={props.onCancel} class="btn btn-primary">Cancel</button>
+          </div>
+        </div>
       </div>
     </form>
   </>

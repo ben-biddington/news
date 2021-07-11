@@ -18,8 +18,8 @@ describe('The diary application', async () => {
   });
 });
 
-describe('The diary application', async () => {
-  it('deleting', async () => {
+describe('The diary application and deleting', async () => {
+  it('for example', async () => {
     const ports = new MockDiaryPorts();
 
     const application = new DiaryApplication(ports);
@@ -27,6 +27,29 @@ describe('The diary application', async () => {
     await application.delete('xxx');
 
     ports.mustHaveBeenAskedToDelete('xxx');
+  });
+});
+
+describe('The diary application and adding/saving', async () => {
+  it('adds when id is undefined', async () => {
+    const ports = new MockDiaryPorts();
+
+    const application = new DiaryApplication(ports);
+  
+    await application.save({ body: 'A new entry' })
+
+    ports.mustHaveBeenAskedToAdd();
+  });
+
+  it('saves when id is present', async () => {
+    const ports = new MockDiaryPorts();
+
+    const application = new DiaryApplication(ports);
+  
+    await application.save({ id: 'id-1', body: 'A new entry' })
+
+    ports.mustNotHaveBeenAskedToAdd();
+    ports.mustHaveBeenAskedToSave('id-1');
   });
 });
 
@@ -44,9 +67,16 @@ describe('Building ports', async () => {
 
 class MockDiaryPorts implements DiaryPorts {
   private deletes: string[] = [];
+  private adds: DiaryEntry[] = [];
+  private saves: DiaryEntry[] = [];
 
-  add(entry: DiaryEntry): Promise<void> {
-    return Promise.resolve();
+  add(entry: DiaryEntry): Promise<DiaryEntry> {
+    this.adds.push(entry);
+    return Promise.resolve(entry);
+  }
+  save(entry: DiaryEntry): Promise<DiaryEntry> {
+    this.saves.push(entry);
+    return Promise.resolve(entry);
   }
   get(id: string): Promise<DiaryEntry> {
     return Promise.resolve(null);
@@ -61,6 +91,18 @@ class MockDiaryPorts implements DiaryPorts {
 
   mustHaveBeenAskedToDelete(id: string) {
     expect(this.deletes).to.contain(id);
+  }
+
+  mustNotHaveBeenAskedToAdd() {
+    expect(this.adds.length).to.eql(0);
+  }
+
+  mustHaveBeenAskedToAdd() {
+    expect(this.adds.length).to.be.greaterThan(0);
+  }
+
+  mustHaveBeenAskedToSave(id: string) {
+    expect(this.saves.map(it => it.id)).to.contain(id);
   }
 }
 

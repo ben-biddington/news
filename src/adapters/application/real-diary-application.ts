@@ -1,24 +1,26 @@
 import { IDiaryApplication, DiaryApplication } from '../../core/diary/diary-application';
-import { DiaryPorts, DiaryPortsBuilder } from '../../core/diary/diary-ports';
+import { DiaryEntry } from '../../core/diary/diary-entry';
+import { DiaryPortsBuilder } from '../../core/diary/diary-ports';
 import { Internet } from '../../core/ports/internet';
 
-export const create = (internet: Internet): IDiaryApplication => {
-  const _ports = ports(internet);
-
-  console.log(_ports);
-
-  return new DiaryApplication(_ports);
-};
+export const create = (internet: Internet): IDiaryApplication => new DiaryApplication(ports(internet));
 
 const ports = (internet: Internet) => {
   return DiaryPortsBuilder.devNull()
-    .withList(() => {
-      return internet.get('/diary', {}).
-        then(reply => {
-          return JSON.parse(reply.body);
-        })
-    })
-    .withDelete(async (id: string) => {
-      await internet.delete(`/diary/${id}`, {});
-    }).build();
+    .withAdd(async (entry: DiaryEntry) => 
+      internet.post('/diary', headers(), entry).then(reply => JSON.parse(reply.body))
+    )
+    .withSave(async (entry: DiaryEntry) => 
+      internet.put(`/diary/${entry.id}`, headers(), entry).then(reply => JSON.parse(reply.body))
+    )
+    .withList(() => 
+      internet.get('/diary', {}).then(reply => JSON.parse(reply.body))
+    )
+    .withDelete((id: string) => internet.delete(`/diary/${id}`, {}))
+    .build();
 }
+
+const headers = () => ({
+  'Accept': 'application/json',
+  'Content-Type': 'application/json',
+});

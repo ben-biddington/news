@@ -65,10 +65,6 @@ export class MarineWeather {
 
   // [i] https://stackoverflow.com/questions/49344517/sqlite-compare-dates-without-timestamp
   private async find(filterOptions: FilterOptions = null): Promise<Screenshot[]> {
-    const midnight = set(filterOptions.dateMatching, { hours: 0, minutes: 0 });
-
-    console.log(`Filtering to screenshots matching between <${midnight}> and <${filterOptions.dateMatching}>`);
-
       // await this.database.ex(
       //   'all',
       //   `
@@ -98,9 +94,9 @@ export class MarineWeather {
         }
         ).
       then(rows => {
-        rows.forEach(row => {
-          console.log(new Date(row.timestamp));
-        });
+        // rows.forEach(row => {
+        //   console.log(row.timestamp);
+        // });
 
         return rows.map(row => {
           return {
@@ -111,12 +107,12 @@ export class MarineWeather {
       });
   }
 
-  private dateString(date: Date) {
-    return format(date, 'yyyy-MM-dd'); // YYYY-MM-DD
+  private dateString(date: Date) {              // https://date-fns.org/v2.22.1/docs/format
+    return format(date, 'yyyy-MM-dd');          // YYYY-MM-DD
   }
 
-  private dateTimeString(date: Date) {
-    return format(date, 'yyyy-MM-ddTHH:mm'); // YYYY-MM-DD
+  private dateTimeString(date: Date) {          // https://date-fns.org/v2.22.1/docs/format
+    return format(date, "yyyy-MM-dd'T'HH:mm");  // YYYY-MM-DD
   }
 }
 

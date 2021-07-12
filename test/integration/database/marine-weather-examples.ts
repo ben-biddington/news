@@ -48,10 +48,12 @@ describe('[marine-weather] Can store screenshots', () => {
 
     await marineWeather.addScreenshot({ file, timestamp: new Date('02-Nov-1999')});
 
-    //console.log(stringify(await marineWeather.listScreenshots({ dateMatching: new Date('02-Nov-1999') })));
+    expect((await marineWeather.listScreenshots({ dateMatching: new Date('01-Nov-1999 23:59:59') })).length).to.eql(0);
 
     expect((await marineWeather.listScreenshots({ dateMatching: new Date('02-Nov-1999 00:00:00') })).length).to.eql(1);
-    expect((await marineWeather.listScreenshots({ dateMatching: new Date('02-Nov-1999 00:00:01') })).length).to.eql(1);
+    expect((await marineWeather.listScreenshots({ dateMatching: new Date('02-Nov-1999 12:00:00') })).length).to.eql(1);
     expect((await marineWeather.listScreenshots({ dateMatching: new Date('02-Nov-1999 23:59:59') })).length).to.eql(1);
+
+    expect((await marineWeather.listScreenshots({ dateMatching: new Date('03-Nov-1999 00:00:00') })).length).to.eql(0);
   });
 });

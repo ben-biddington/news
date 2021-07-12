@@ -1,7 +1,7 @@
-const { WebInteractor } = require('./web-interactor');
+import { WebInteractor } from './web-interactor';
 const path = require('path');
 
-const wellington = async (opts = {}) => {
+export const wellington = async (opts: any = {}) => {
   const options = {
     headless: true,
     ...opts
@@ -32,7 +32,7 @@ const wellington = async (opts = {}) => {
   }
 }
 
-const forecast = (ports, name, opts = {}) => get(ports, name, opts);
+export const forecast = (ports, name, opts = {}) => get(ports, name, opts);
 
 const get = async (ports, name, opts) => {
   const { log } = ports;
@@ -67,6 +67,3 @@ const get = async (ports, name, opts) => {
     path: fullPath
   }
 }
-
-module.exports.wellington = wellington;
-module.exports.forecast = forecast;

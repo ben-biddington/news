@@ -7,7 +7,6 @@ const { QueryStringToggles } = require('../toggling/query-string-toggles');
 
 const { Deleted } = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
-const { Timespan } = require('../../../core/dist/timespan');
 const { addBookmark } = require('../../news-adapters');
 
 const { init: initialiseCaching, cachedFile, cached, cacheControlHeaders } 
@@ -16,8 +15,9 @@ const { init: initialiseDiary, apply: useDiary }
   = require('../../dist/adapters/web/api/internal/resources/diary-resources');
 const { apply: useWeather } 
   = require('../../dist/adapters/web/api/internal/resources/weather-resources');
-
-  const app = express();
+const { init: initialiseMarineWeather, apply: useMarineWeather } 
+  = require('../../dist/adapters/web/api/internal/resources/marine-weather-resources');
+const app = express();
 const io = new SocketNotifier(1080);
 
 app.use(express.static('src/adapters/web/gui'));
@@ -36,11 +36,13 @@ const initialise = async () => {
     deleted.init(), 
     bookmarks.init(), 
     initialiseCaching(),
-    initialiseDiary()
+    initialiseDiary(),
+    initialiseMarineWeather()
   ]);
   
   useDiary(app);
   useWeather(app);
+  useMarineWeather(app)
   
   const { init: initDeleted } = require('./internal/resources/deleted-items-resource');
 
@@ -157,43 +159,6 @@ app.delete(/bookmarks/, async (req, res) => {
 
 const path = require('path');
 
-app.get(/marine-weather/, async (req, res) => {
-  return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
-    const placeName = req.path.substring(req.path.lastIndexOf('/') + 1);
-    const temp = require('temp');
-
-    log.info(`${req.path} -> <${placeName}>`);
-
-    const cacheKey = req.path;
-
-    const originalFile = await cachedFile(cacheKey , async () => {
-      const { forecast } = require('../marine-weather');
-      const filePath = temp.path({ suffix: '.png' });
-      const result = await forecast({ log }, placeName.length > 0 ? placeName : 'wellington', { path: filePath });
-
-      return readFile(result.path);
-    });
-
-    if (req.query["width"]) {
-      const resizeOptions = { 
-        sourceFileBuffer: originalFile, 
-        targetFileName: path.join(temp.dir, `marine-weather-${placeName}.png`),
-        width: parseInt(req.query["width"])
-      };
-      
-      log.info(`Resizing to <${resizeOptions.targetFileName}> with width <${req.query["width"]}>`);
-
-      await resize(log, resizeOptions);
-
-      log.info(`Returning <${resizeOptions.targetFileName}>`);
-
-      return returnFile(res, await readFile(resizeOptions.targetFileName));
-    }
-
-    returnFile(res, originalFile);
-  });
-});
-
 app.get(/windfinder/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'windfinder' }, async log => {
     const placeName = req.path.substring(req.path.lastIndexOf('/') + 1);
@@ -232,20 +197,6 @@ app.get(/screenshot/, async (req, res) => {
     returnFile(res, originalFile);
   });
 });
-
-// [i] https://ahmadawais.com/resize-optimize-images-javascript-node/
-const resize = async (log, opts) => {  
-  const { sourceFileBuffer, targetFileName, width } = opts;
-  
-  const Jimp = require('jimp');
-
-  const image = await Jimp.read(sourceFileBuffer);
-  await image.resize(width, Jimp.AUTO);
-  await image.quality(100);
-  await image.writeAsync(targetFileName);
-
-  log.info(`[resize] ${Object.keys(image)}`);
-}
 
 app.get('/wellington-weather/week', async (req, res) => {
   return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'wellington-weather' }, log => {

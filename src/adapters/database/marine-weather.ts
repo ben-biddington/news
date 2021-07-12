@@ -3,8 +3,11 @@ import { DevNullLog, Log } from '../../core/logging/log';
 import { format, set, parse, getUnixTime } from 'date-fns'
 
 export type Screenshot = {
+  id?: string;
   timestamp: Date;
   file: Buffer;
+  name?: string;
+  hash?: string;
 }
 
 export type FilterOptions = {
@@ -38,11 +41,17 @@ export class MarineWeather {
   async addScreenshot(screenshot: Screenshot) : Promise<void> {
     return this.database.ex(
       'run',
-      `INSERT INTO [screenshots] (datestamp, timestamp, file) VALUES (@datestamp, @timestamp, @file)`, 
+      `
+        INSERT INTO [screenshots] 
+          (datestamp, timestamp, file, name, hash) 
+        VALUES 
+          (@datestamp, @timestamp, @file, @name, @hash)`, 
       {
           '@datestamp': this.dateString(screenshot.timestamp),
           '@timestamp': this.dateTimeString(screenshot.timestamp),
           '@file':      screenshot.file,
+          '@name':      screenshot.name,
+          '@hash':      this.hash(screenshot.file),
       });
   }
 
@@ -50,17 +59,12 @@ export class MarineWeather {
     if (filterOptions)
       return this.find(filterOptions);
 
+    this.log.info(`[marine-weather-database] Listing all available screenshots`);
+
     return this.database.ex(
       'all',
-      `SELECT timestamp,file from [screenshots] ORDER BY datestamp`).
-      then(rows => {
-        return rows.map(row => {
-          return {
-            timestamp: row.timestamp,
-            file: row.file 
-          }
-        })
-      });
+      `SELECT ${this.columns} from [screenshots] ORDER BY datestamp`).
+      then(this.map);
   }
 
   // [i] https://stackoverflow.com/questions/49344517/sqlite-compare-dates-without-timestamp
@@ -78,12 +82,13 @@ export class MarineWeather {
       //       console.log('ts', row.ts, 'timestamp', row.timestamp);
       //     })
       //   });
+    this.log.info(`[marine-weather-database] Finding screenshots for date <${this.dateString(filterOptions.dateMatching)}>`);
 
     return this.database.ex(
       'all',
       `
         SELECT 
-          timestamp,file 
+          ${this.columns} 
         FROM 
           [screenshots] 
         WHERE 
@@ -94,17 +99,26 @@ export class MarineWeather {
         }
         ).
       then(rows => {
-        // rows.forEach(row => {
-        //   console.log(row.timestamp);
-        // });
+        rows.forEach(row => {
+          this.log.trace(`[marine-weather-database] timestamp: ${row.timestamp}, name: ${row.name}`);
+        });
 
-        return rows.map(row => {
-          return {
-            timestamp: row.timestamp,
-            file: row.file 
-          }
-        })
+        return this.map(rows);
       });
+  }
+
+  private readonly columns: string = 'rowid,timestamp,file,name,hash';
+
+  private map(rows: any): Screenshot[] {
+    return rows.map(row => {
+      return {
+        id: row.rowid,
+        timestamp: row.timestamp,
+        file: row.file, 
+        name: row.name,
+        hash: row.hash,
+      }
+    });
   }
 
   private dateString(date: Date) {              // https://date-fns.org/v2.22.1/docs/format
@@ -113,6 +127,16 @@ export class MarineWeather {
 
   private dateTimeString(date: Date) {          // https://date-fns.org/v2.22.1/docs/format
     return format(date, "yyyy-MM-dd'T'HH:mm");  // YYYY-MM-DD
+  }
+
+  private hash(file: Buffer) {
+    const crypto = require('crypto');
+  
+    const hashSum = crypto.createHash('sha256');
+    
+    hashSum.update(file);
+  
+    return hashSum.digest('hex');
   }
 }
 
@@ -128,4 +152,6 @@ const migrate = async (database: Database) => {
   }
 
   await addColumn(database, 'file', 'blob');
+  await addColumn(database, 'name', 'text');
+  await addColumn(database, 'hash', 'text');
 }

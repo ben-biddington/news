@@ -3,7 +3,10 @@ import { Timespan } from '../../../../core/timespan';
 
 let cache: Cache;
 
-export const init = () => cache = new Cache('./cache.db');
+export const init = () => {
+  cache = new Cache('./cache.db');
+  return cache.init();
+}
 
 export const cachedFile = async (cacheKey, fn) => {
   if (process.env.NO_CACHE)

@@ -6,7 +6,6 @@ import { MarineWeather, Screenshot } from '../../../src/adapters/database/marine
 import { readFileSync } from 'fs';
 import { resolve, join } from 'path';
 import { ConsoleLog } from '@test/../src/core/logging/log';
-import stringify from '@test/../src/core/stringify';
 
 describe('[marine-weather] Can store screenshots', () => {
   let marineWeather: MarineWeather = null;
@@ -22,11 +21,17 @@ describe('[marine-weather] Can store screenshots', () => {
   it('can add a single screenshot', async () => {
     const file = readFileSync(resolve(join(__dirname, './diary/samples/2021-07-09.png')));
 
-    await marineWeather.addScreenshot({ file, timestamp: new Date()});
+    await marineWeather.addScreenshot({ 
+      file,
+      timestamp: new Date(),
+      name: 'lyall-bay'
+    });
 
-    const attachments: Screenshot[] = await marineWeather.listScreenshots();
+    const screenshots: Screenshot[] = await marineWeather.listScreenshots();
 
-    expect(attachments.length).to.eql(1);
+    expect(screenshots.length).to.eql(1);
+    expect(screenshots[0].name).to.eql('lyall-bay');
+    expect(screenshots[0].hash).to.eql('aeb74c577ab34a0ea68320d10cdd7b32e4d609a92009e2ba45b0e8239ee8fe92');
   });
 
   it('can query for screenshots by date', async () => {

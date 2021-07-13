@@ -10,6 +10,7 @@ export class Diary {
   constructor(filename: string, log: Log = new DevNullLog()) {
     this.log = log;
     this.database = new Database(filename);
+    log.info(`Using database file at <${filename}>`);
   }
 
   async init() {

@@ -1,7 +1,7 @@
 import express = require('express');
 import { StructuredLog } from '../structured-log';
 import { Diary } from '../../../../database/diary';
-import { ConsoleLog } from '../../../../../core/logging/log';
+import { ConsoleLog, Log } from '../../../../../core/logging/log';
 import { DiaryEntry } from '../../../../../core/diary/diary-entry';
 
 export const init = () => diary().init();
@@ -39,7 +39,7 @@ export const apply = (app: express.Application) => {
 
   app.get(/diary/, async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
-      const list: DiaryEntry[] = await diary().list();
+      const list: DiaryEntry[] = await diary(log).list();
 
       log.info(`Returning <${list.length}> diary entries`);
 
@@ -60,6 +60,6 @@ export const apply = (app: express.Application) => {
   });
 }
 
-const diary = () => {
-  return new Diary('./surf-diary.db', new ConsoleLog({ allowTrace: false }));
+const diary = (log: Log = new ConsoleLog({ allowTrace: false })) => {
+  return new Diary(`${process.env.HOME}/news/databases/surf-diary.db`, log);
 }

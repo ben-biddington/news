@@ -23,8 +23,8 @@ const io = new SocketNotifier(1080);
 app.use(express.static('src/adapters/web/gui'));
 app.use(express.json());
 
-const deleted = new Deleted('./news.db');
-const bookmarks = new Bookmarks('./bookmarks.db');
+const deleted = new Deleted(`${process.env.HOME}/news/databases/news.db`);
+const bookmarks = new Bookmarks(`${process.env.HOME}/news/databases/bookmarks.db`);
 const log = console.log;
 const fs = require('fs');
 const util = require('util');

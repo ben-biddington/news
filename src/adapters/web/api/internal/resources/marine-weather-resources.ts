@@ -13,6 +13,7 @@ import { MarineWeather as MarineWeatherDatabase } from '../../../../database/mar
 export const init = () => database().init();
 
 export const apply = (app: express.Application) => {
+  // /marine-weather/search?date=2021-07-13
   app.get('/marine-weather/search', async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'marine-weather-search' }, async log => {
       const date      = new Date(req.query['date'].toString());
@@ -28,8 +29,9 @@ export const apply = (app: express.Application) => {
     });
   });
 
+  // /marine-weather/titahi-bay/2021-07-13
   app.get('/marine-weather/:placeName/:date', async (req, res) => {
-    return StructuredLog.around(req, res, { prefix: 'marine-weather-find-by-plave-and-date' }, async log => {
+    return StructuredLog.around(req, res, { prefix: 'marine-weather-find-by-place-and-date' }, async log => {
       const date      = req.params.date;
       const placeName = req.params.placeName;
 
@@ -37,10 +39,16 @@ export const apply = (app: express.Application) => {
 
       const files = await database(log).listScreenshots({ dateMatching: new Date(date), name: placeName });
 
-      const latestScreenshot = files[files.length - 1]; 
+      if (files.length == 0)
+      {
+        log.info(`Did not find any screenshots`);
+        return res.status(200).json([]);
+      }
+
+      const latestScreenshot = files[files.length - 1];
 
       log.info(`Found <${files.length}> files for date <${date}>`);
-      log.info(`Returning the most recent <${latestScreenshot.id}, ${latestScreenshot.name}, ${latestScreenshot.hash}>`);
+      log.info(`Returning the most recent <${latestScreenshot.id}, ${latestScreenshot.timestamp}, ${latestScreenshot.name}, ${latestScreenshot.hash}>`);
       
       res.set('X-screenshot', `totalCount: ${files.length}, timestamp: ${latestScreenshot.timestamp}, hash: ${latestScreenshot.hash}`);  
 
@@ -48,6 +56,7 @@ export const apply = (app: express.Application) => {
     });
   });
 
+  // /marine-weather/titahi-bay
   app.get('/marine-weather/:placeName', async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
       const placeName = req.params.placeName;
@@ -124,7 +133,7 @@ const resize = async (log, opts) => {
 }
 
 const database = (log: Log = new ConsoleLog({ allowTrace: false })): MarineWeatherDatabase => {
-  return new MarineWeatherDatabase('./marine-weather.db', log);
+  return new MarineWeatherDatabase(`${process.env.HOME}/news/databases/marine-weather.db`, log);
 }
 
 const returnFile = (res, file) => {

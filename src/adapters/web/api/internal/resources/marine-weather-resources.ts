@@ -2,12 +2,13 @@ import express = require('express');
 import { StructuredLog } from '../structured-log';
 import { cacheControlHeaders, cachedFile } from '../caching';
 import { ConsoleLog, Log } from '../../../../../core/logging/log';
+const temp = require('temp');
 const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const path = require('path');
 import { forecast } from '../../../marine-weather';
-import { MarineWeather as MarineWeatherDatabase, Screenshot } from '../../../../database/marine-weather'
+import { MarineWeather as MarineWeatherDatabase } from '../../../../database/marine-weather'
 
 export const init = () => database().init();
 
@@ -17,7 +18,7 @@ export const apply = (app: express.Application) => {
       const date      = new Date(req.query['date'].toString());
       const placeName = req.query['placeName'];
 
-      log.info(`Finding file for date <${date}> and place name <${placeName}>`);
+      log.info(`Finding files for date <${date}> and place name <${placeName}>`);
 
       const files = await database(log).listScreenshots({ dateMatching: new Date(date) });
 
@@ -27,10 +28,29 @@ export const apply = (app: express.Application) => {
     });
   });
 
+  app.get('/marine-weather/:placeName/:date', async (req, res) => {
+    return StructuredLog.around(req, res, { prefix: 'marine-weather-find-by-plave-and-date' }, async log => {
+      const date      = req.params.date;
+      const placeName = req.params.placeName;
+
+      log.info(`Finding file for date <${date}> and place name <${placeName}>`);
+
+      const files = await database(log).listScreenshots({ dateMatching: new Date(date), name: placeName });
+
+      const latestScreenshot = files[files.length - 1]; 
+
+      log.info(`Found <${files.length}> files for date <${date}>`);
+      log.info(`Returning the most recent <${latestScreenshot.id}, ${latestScreenshot.name}, ${latestScreenshot.hash}>`);
+      
+      res.set('X-screenshot', `totalCount: ${files.length}, timestamp: ${latestScreenshot.timestamp}, hash: ${latestScreenshot.hash}`);  
+
+      returnFile(res, latestScreenshot.file);
+    });
+  });
+
   app.get('/marine-weather/:placeName', async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'marine-weather' }, async log => {
       const placeName = req.params.placeName;
-      const temp = require('temp');
 
       if (placeName.length == 0) {
         return res.status(400).json(

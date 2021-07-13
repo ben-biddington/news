@@ -1,10 +1,11 @@
 import { createEffect, createMemo, createSignal } from "solid-js"
-import { mergeProps } from "solid-js/web"
+import { mergeProps, Show } from "solid-js/web"
 import { DiaryEntry, Session } from "../../../../../../../core/diary/diary-entry"
 import { formatNewZealandTimeOfDay, toNewZealandTime } from "../../../../../../../core/date";
 import { format, set, parse } from 'date-fns'
 import { enNZ } from 'date-fns/locale'
 import stringify from '../../../../../../../core/stringify';
+import { Image } from '../../components/Image';
 
 export type Props = {
   entry?: DiaryEntry,
@@ -58,15 +59,16 @@ export const Edit = (props: Props) => {
     }
   }
 
-  const [dateHint, setDateHint]             = createSignal<string>(dayText(props.entry?.session?.start || new Date()));
-  const [sessionDate, setSessionDate]       = createSignal<Date>(props.entry?.session?.start || new Date());
-  const [sessionDayText, setSessionDayText] = createSignal<string>(dayText(sessionDate()));
-  const [sessionTimes, setSessionTimes]     = createSignal<SessionTimes>(toSessionTimes(props.entry?.session));
-  const [session, setSession]               = createSignal<Session>(props.entry.session);
-  const [body, setBody]                     = createSignal<string>(props.entry.body);
-  const [board, setBoard]                   = createSignal<string>(props.entry.board);
-  const [location, setLocation]             = createSignal<string>(props.entry.location);
-  const [tide, setTide]                     = createSignal<string>(props.entry.tide);
+  const [dateHint, setDateHint]               = createSignal<string>(dayText(props.entry?.session?.start || new Date()));
+  const [sessionDate, setSessionDate]         = createSignal<Date>(props.entry?.session?.start || new Date());
+  const [sessionDayText, setSessionDayText]   = createSignal<string>(dayText(sessionDate()));
+  const [sessionTimes, setSessionTimes]       = createSignal<SessionTimes>(toSessionTimes(props.entry?.session));
+  const [session, setSession]                 = createSignal<Session>(props.entry.session);
+  const [body, setBody]                       = createSignal<string>(props.entry.body);
+  const [board, setBoard]                     = createSignal<string>(props.entry.board);
+  const [location, setLocation]               = createSignal<string>(props.entry.location);
+  const [tide, setTide]                       = createSignal<string>(props.entry.tide);
+  const [showScreenshots, setShowScreenshots] = createSignal<boolean>(false);
 
   const id = (name: string) => `${props.entry.id}-${name}`;
 
@@ -82,7 +84,6 @@ export const Edit = (props: Props) => {
   }
 
   const onDateChange = (event) => {
-    console.log('onDateChange', event.target.value);
     setSessionDayText(event.target.value);
     calculateSession();
   }
@@ -108,7 +109,7 @@ export const Edit = (props: Props) => {
       const endDateAndTime    = set(sessionDay, { hours: endTime.hours, minutes: endTime.minutes });
 
       console.log('start', stringify(startTime), 'end', stringify(endTime));
-      console.log('sessionDay', sessionDay, 'startDateAndTime', startDateAndTime);
+      console.log('sessionDate', sessionDate, 'startDateAndTime', startDateAndTime);
 
       setDateHint(`${dayText(startDateAndTime)} ${timeText(startDateAndTime)} - ${timeText(endDateAndTime)}`);
       setSession({ start: startDateAndTime, end: endDateAndTime }); 
@@ -173,6 +174,17 @@ export const Edit = (props: Props) => {
 
         <div class="row">
           <div class="col-12 p-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+              onchange={() => setShowScreenshots(false == showScreenshots())} 
+              checked={showScreenshots() ? 'checked': ''} value="" id={id('show-screenshots')} />
+            <label class="form-check-label" for={id('show-screenshots')}>Screenshots</label>
+          </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 p-2">
             <small class="form-text text-muted">{dateLabel()}</small>
           </div>
         </div>
@@ -185,6 +197,25 @@ export const Edit = (props: Props) => {
               value={body()} />
           </div>
         </div>
+
+        {/* @todo: Only when creating new entries, otherwise show attachments? */}
+        <Show when={showScreenshots()} children={
+          <div class="row justify-content-center p-2">
+            <div class="card shadow w-75 m-1">
+              <div class="card-header"><strong><a target="_blank" href={`https://www.marineweather.co.nz/forecasts/lyall-bay`}>Lyall Bay</a></strong></div>
+              <div class="card-body shadow-sm" style="text-align:center">
+                <Image width={670} height={537}  src={`/marine-weather/lyall-bay/${format(sessionDate(), 'yyyy-MM-dd')}`} alt="Marine weather" />
+              </div>
+            </div>
+
+            <div class="card shadow w-75 m-1">
+              <div class="card-header"><strong><a target="_blank" href={`https://www.marineweather.co.nz/forecasts/titahi-bay`}>Titahi Bay</a></strong></div>
+              <div class="card-body shadow-sm" style="text-align:center">
+                <Image width={670} height={537}  src={`/marine-weather/titahi-bay/${format(sessionDate(), 'yyyy-MM-dd')}`} alt="Marine weather" />
+              </div>
+            </div>
+          </div>
+        } />
 
         <div class="row">
           <div class="col-12 mt-1">

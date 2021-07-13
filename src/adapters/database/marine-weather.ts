@@ -11,7 +11,8 @@ export type Screenshot = {
 }
 
 export type FilterOptions = {
-  dateMatching: Date;
+  dateMatching?: Date;
+  name?: string;
 }
 
 // [i] https://www.sqlitetutorial.net/sqlite-date/
@@ -69,20 +70,18 @@ export class MarineWeather {
 
   // [i] https://stackoverflow.com/questions/49344517/sqlite-compare-dates-without-timestamp
   private async find(filterOptions: FilterOptions = null): Promise<Screenshot[]> {
-      // await this.database.ex(
-      //   'all',
-      //   `
-      //     SELECT 
-      //       strftime('%s', timestamp) as ts, timestamp
-      //     FROM 
-      //       [screenshots] 
-      //     ORDER BY timestamp`).
-      //   then(rows => {
-      //     return rows.map(row => {
-      //       console.log('ts', row.ts, 'timestamp', row.timestamp);
-      //     })
-      //   });
     this.log.info(`[marine-weather-database] Finding screenshots for date <${this.dateString(filterOptions.dateMatching)}>`);
+
+    let whereClause = 'datestamp = @date';
+
+    let args = {
+      '@date': this.dateString(filterOptions.dateMatching)
+    }
+
+    if (filterOptions.name) {
+      whereClause += ' AND name = @name';
+      args['@name'] = filterOptions.name
+    }
 
     return this.database.ex(
       'all',
@@ -90,13 +89,11 @@ export class MarineWeather {
         SELECT 
           ${this.columns} 
         FROM 
-          [screenshots] 
+          [screenshots]
         WHERE 
-          datestamp = @date
+          ${whereClause}
         ORDER BY timestamp`, 
-        {
-          '@date': this.dateString(filterOptions.dateMatching)
-        }
+        args
         ).
       then(rows => {
         rows.forEach(row => {

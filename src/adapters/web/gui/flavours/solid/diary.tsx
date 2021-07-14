@@ -45,8 +45,8 @@ export const DiaryApplicationView = (props: Props) => {
   }
 
   return <>
-    <div id="diary" class="shadow container w-75">
-      <table class="table">
+    <div id="diary" class="shadow container-lg">
+      <table class="table w-90">
         <thead>
           <tr>
             <td colspan="3">
@@ -70,7 +70,7 @@ export const DiaryApplicationView = (props: Props) => {
           <For each={diaryEntries()} children={(item: DiaryEntry, i) => 
             <>
             <tr>
-              <td width="100" style="vertical-align: middle;text-align: center;">
+              <td style="vertical-align: middle;text-align: center;">
                 {formatNewZealandDate(item.session?.start)}
               </td>
               <td style="vertical-align: middle;text-align: center;">

@@ -14,7 +14,7 @@ function build {
   fi
   
   echo -e "[webpack] Building $1 \t\t<$2>"
-  webpack --config $config
+  npx webpack --config $config
 }
 
 function buildMint {

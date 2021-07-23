@@ -7,7 +7,6 @@ const { QueryStringToggles } = require('../toggling/query-string-toggles');
 
 const { Deleted } = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
-const { addBookmark } = require('../../news-adapters');
 
 const { init: initialiseCaching, cachedFile, cached, cacheControlHeaders } 
   = require('../../dist/adapters/web/api/internal/caching');
@@ -122,12 +121,9 @@ app.get(/^rnz/, async (req, res) =>
 app.post(/bookmarks/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'bookmarks' }, async log => {
 
-    const toggles = new QueryStringToggles(req.url);
-    const bookmark = req.body;
+    await bookmarks.add(req.body);
 
-    await addBookmark({ log, toggles }, req.body);
-
-    res.status(200).json(bookmark);
+    res.status(200).json(await bookmarks.list());
   });
 });
 

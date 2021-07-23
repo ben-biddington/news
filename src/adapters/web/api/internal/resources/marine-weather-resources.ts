@@ -8,7 +8,7 @@ const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const path = require('path');
 import { forecast } from '../../../marine-weather';
-import { MarineWeather as MarineWeatherDatabase } from '../../../../database/marine-weather'
+import { MarineWeather as MarineWeatherDatabase, Screenshot } from '../../../../database/marine-weather'
 
 export const init = () => database().init();
 
@@ -78,7 +78,7 @@ export const apply = (app: express.Application) => {
 
         const file = await readFile(result.path);
         
-        database().addScreenshot({ name: placeName, timestamp: new Date(), file});
+        addScreenshot(log, { name: placeName, timestamp: new Date(), file});
 
         log.info(`Added file to database`);
 
@@ -133,7 +133,33 @@ const resize = async (log, opts) => {
 }
 
 const database = (log: Log = new ConsoleLog({ allowTrace: false })): MarineWeatherDatabase => {
-  return new MarineWeatherDatabase(`${process.env.HOME}/news/databases/marine-weather.db`, log);
+  const diskStorage = `${process.env.HOME}/news/databases/marine-weather/attachments`;
+  return new MarineWeatherDatabase(`${process.env.HOME}/news/databases/marine-weather.db`, diskStorage, log);
+}
+
+const addScreenshot = async (log: Log, screenshot: Screenshot) => {
+  const db = database();
+
+  const fileHash = hash(screenshot.file);
+
+  const count = await db.listScreenshots({ name: screenshot.name, hash: fileHash }).then(it => it.length);
+
+  if (count === 0) {
+    log.info(`Saving screenshot to database because one does not exist yet with name <${screenshot.name}> and hash <${fileHash}>`);
+    return db.addScreenshot(screenshot);
+  } else {
+    log.info(`Not saving screenshot to database because one with the same name <${screenshot.name}> and hash <${fileHash}> already exists`);
+  }
+}
+
+const hash = (file: Buffer) => {
+  const crypto = require('crypto');
+
+  const hashSum = crypto.createHash('sha256');
+  
+  hashSum.update(file);
+
+  return hashSum.digest('hex');
 }
 
 const returnFile = (res, file) => {

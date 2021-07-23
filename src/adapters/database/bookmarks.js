@@ -20,7 +20,7 @@ class Bookmarks {
             'run', 
             `REPLACE INTO ${this._tableName} (id, title, timestamp, url, source) VALUES (@id, @title, DATETIME('now'), @url, @source)`, 
             {
-                '@id'    : bookmark.id, 
+                '@id'    : bookmark.id.toString(), 
                 '@title' : bookmark.title, 
                 '@url'   : bookmark.url, 
                 '@source': bookmark.source

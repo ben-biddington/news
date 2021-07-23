@@ -16,6 +16,6 @@ export const MarineWeatherPanel = () => {
   );
 
   return <>
-    <For each={[ 'wellington', 'titahi-bay', 'paekakariki' ]} children={single} />
+    <For each={[ 'wellington', 'titahi-bay', 'paekakariki', 'city-reef' ]} children={single} />
   </>
 }

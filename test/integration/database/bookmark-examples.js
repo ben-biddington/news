@@ -6,7 +6,7 @@ temp.track();
 const { Bookmarks } = require('../../../src/adapters/database/bookmarks');
 const { Bookmark }  = require('../../../src/core/dist/bookmark');
 
-describe('[bookmarks] Can store bookmarks', () => {
+describe.only('[bookmarks] Can store bookmarks', () => {
     let tempFile, bookmarks = null;
 
     before(async () => {

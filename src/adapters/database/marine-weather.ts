@@ -1,6 +1,8 @@
 import { Database } from './internal/database';
 import { DevNullLog, Log } from '../../core/logging/log';
 import { format, set, parse, getUnixTime } from 'date-fns'
+const path = require('path');
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
 
 export type Screenshot = {
   id?: string;
@@ -8,20 +10,24 @@ export type Screenshot = {
   file: Buffer;
   name?: string;
   hash?: string;
+  filePath?: string;
 }
 
 export type FilterOptions = {
   dateMatching?: Date;
   name?: string;
+  hash?: string;
 }
 
 // [i] https://www.sqlitetutorial.net/sqlite-date/
 export class MarineWeather {
   private database: Database;
   private log: Log;
+  private storageDirectory: string;
 
-  constructor(filename: string, log: Log = new DevNullLog()) {
+  constructor(filename: string, rootDirectory: string, log: Log = new DevNullLog()) {
     this.log = log;
+    this.storageDirectory = rootDirectory;
     this.database = new Database(filename);
   }
 
@@ -37,30 +43,41 @@ export class MarineWeather {
       `);
     
     await migrate(this.database);
+
+    this.log.trace(`[marine-weather-database] Storing files at <${this.storageDirectory}>`);
   }
 
   async addScreenshot(screenshot: Screenshot) : Promise<void> {
+    const hash      = this.hash(screenshot.file);
+    const dateStamp = this.dateString(screenshot.timestamp);
+    const fileDir   = path.join(this.storageDirectory, screenshot.name);
+    const filePath  = path.join(fileDir, `${dateStamp}-${this.timeString(screenshot.timestamp)}`);
+
+    if (false == existsSync(fileDir)){
+      mkdirSync(fileDir, { recursive: true });
+    }
+
+    writeFileSync(filePath, screenshot.file);
+
     return this.database.ex(
       'run',
       `
         INSERT INTO [screenshots] 
-          (datestamp, timestamp, file, name, hash) 
+          (datestamp, timestamp, name, hash, filePath) 
         VALUES 
-          (@datestamp, @timestamp, @file, @name, @hash)`, 
+          (@datestamp, @timestamp, @name, @hash, @filePath)`, 
       {
-          '@datestamp': this.dateString(screenshot.timestamp),
+          '@datestamp': dateStamp,
           '@timestamp': this.dateTimeString(screenshot.timestamp),
-          '@file':      screenshot.file,
           '@name':      screenshot.name,
-          '@hash':      this.hash(screenshot.file),
+          '@hash':      hash,
+          '@filePath':  filePath
       });
   }
 
   async listScreenshots(filterOptions: FilterOptions = null): Promise<Screenshot[]> {
     if (filterOptions)
       return this.find(filterOptions);
-
-    this.log.info(`[marine-weather-database] Listing all available screenshots`);
 
     return this.database.ex(
       'all',
@@ -70,18 +87,28 @@ export class MarineWeather {
 
   // [i] https://stackoverflow.com/questions/49344517/sqlite-compare-dates-without-timestamp
   private async find(filterOptions: FilterOptions = null): Promise<Screenshot[]> {
-    this.log.info(`[marine-weather-database] Finding screenshots for date <${this.dateString(filterOptions.dateMatching)}>`);
+    let whereClauses = [];
 
-    let whereClause = 'datestamp = @date';
+    let args = { }
 
-    let args = {
-      '@date': this.dateString(filterOptions.dateMatching)
-    }
+    if (filterOptions.dateMatching) {
+      whereClauses.push('datestamp = @date');
+      args['@date'] = this.dateString(filterOptions.dateMatching);
+    } 
 
     if (filterOptions.name) {
-      whereClause += ' AND name = @name';
-      args['@name'] = filterOptions.name
+      whereClauses.push('name = @name');
+      args['@name'] = filterOptions.name;
     }
+
+    if (filterOptions.hash) {
+      whereClauses.push('hash = @hash');
+      args['@hash'] = filterOptions.hash;
+    }
+
+    const whereClause = whereClauses.join(' AND ');
+
+    this.log.trace(`[marine-weather-database] ${whereClause} ${JSON.stringify(filterOptions, null, 2)}`);
 
     return this.database.ex(
       'all',
@@ -104,16 +131,16 @@ export class MarineWeather {
       });
   }
 
-  private readonly columns: string = 'rowid,timestamp,file,name,hash';
+  private readonly columns: string = 'rowid,timestamp,name,hash,filePath';
 
   private map(rows: any): Screenshot[] {
     return rows.map(row => {
       return {
         id: row.rowid,
         timestamp: row.timestamp,
-        file: row.file, 
         name: row.name,
         hash: row.hash,
+        filePath: row.filePath,
       }
     });
   }
@@ -124,6 +151,10 @@ export class MarineWeather {
 
   private dateTimeString(date: Date) {          // https://date-fns.org/v2.22.1/docs/format
     return format(date, "yyyy-MM-dd'T'HH:mm");  // YYYY-MM-DD
+  }
+
+  private timeString(date: Date) {              // https://date-fns.org/v2.22.1/docs/format
+    return format(date, "HH.mm");               // YYYY-MM-DD
   }
 
   private hash(file: Buffer) {
@@ -148,7 +179,8 @@ const migrate = async (database: Database) => {
     }
   }
 
-  await addColumn(database, 'file', 'blob');
-  await addColumn(database, 'name', 'text');
-  await addColumn(database, 'hash', 'text');
+  await addColumn(database, 'file'    , 'blob');
+  await addColumn(database, 'name'    , 'text');
+  await addColumn(database, 'hash'    , 'text');
+  await addColumn(database, 'filePath', 'text');
 }

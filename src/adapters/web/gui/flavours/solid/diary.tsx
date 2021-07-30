@@ -16,6 +16,7 @@ export const DiaryApplicationView = (props: Props) => {
   const [creatingNew, setCreatingNew]           = createSignal<boolean>(false);
   
   props.application.subscribe((state) => {
+    console.log(state.entries);
     setDiaryEntries(state.entries);
   });
 

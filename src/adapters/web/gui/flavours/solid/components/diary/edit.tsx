@@ -79,7 +79,13 @@ export const Edit = (props: Props) => {
       session: session(),
       board: board(),
       location: location(),
-      tide: tide()
+      tide: tide(), 
+      images: showScreenshots() 
+        ? [ 
+            `/marine-weather/wellington/${format(sessionDate(), 'yyyy-MM-dd')}`, 
+            `/marine-weather/titahi-bay/${format(sessionDate(), 'yyyy-MM-dd')}` 
+          ]
+        : []
     });
   }
 
@@ -109,7 +115,7 @@ export const Edit = (props: Props) => {
       const endDateAndTime    = set(sessionDay, { hours: endTime.hours, minutes: endTime.minutes });
 
       console.log('start', stringify(startTime), 'end', stringify(endTime));
-      console.log('sessionDate', sessionDate, 'startDateAndTime', startDateAndTime);
+      console.log('sessionDate', sessionDate(), 'sessionDay', sessionDayText(), 'startDateAndTime', startDateAndTime);
 
       setDateHint(`${dayText(startDateAndTime)} ${timeText(startDateAndTime)} - ${timeText(endDateAndTime)}`);
       setSession({ start: startDateAndTime, end: endDateAndTime }); 
@@ -204,7 +210,7 @@ export const Edit = (props: Props) => {
             <div class="card shadow w-75 m-1">
               <div class="card-header"><strong><a target="_blank" href={`https://www.marineweather.co.nz/forecasts/lyall-bay`}>Lyall Bay</a></strong></div>
               <div class="card-body shadow-sm" style="text-align:center">
-                <Image width={670} height={537}  src={`/marine-weather/lyall-bay/${format(sessionDate(), 'yyyy-MM-dd')}`} alt="Marine weather" />
+                <Image width={670} height={537}  src={`/marine-weather/wellington/${format(sessionDate(), 'yyyy-MM-dd')}`} alt="Marine weather" />
               </div>
             </div>
 

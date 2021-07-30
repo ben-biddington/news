@@ -2,7 +2,7 @@ import { Database } from './internal/database';
 import { DevNullLog, Log } from '../../core/logging/log';
 import { format, set, parse, getUnixTime } from 'date-fns'
 const path = require('path');
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 
 export type Screenshot = {
   id?: string;
@@ -141,6 +141,7 @@ export class MarineWeather {
         name: row.name,
         hash: row.hash,
         filePath: row.filePath,
+        file: readFileSync(row.filePath)
       }
     });
   }

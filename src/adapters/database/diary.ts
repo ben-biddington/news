@@ -113,7 +113,7 @@ export class Diary {
 
   async list(): Promise<DiaryEntry[]> {
     const results = await this.database.ex(
-      'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY timestamp ASC LIMIT 50`);
+      'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY start DESC LIMIT 50`);
 
     return results.map((result) => ({
       id: result.id, 

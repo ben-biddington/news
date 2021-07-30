@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const get = (url, headers = {}) => {
   const request   = require("request");
   
@@ -45,6 +47,28 @@ const postJson = (url, headers = {}, body = {}) => {
   });
 };
 
+// https://github.com/request/request#forms
+const postFile = (url, headers, file) => {
+  const request   = require("request");
+
+  const formData = {
+    attachments: [
+      file
+    ]
+  }
+
+  return new Promise(function(resolve, reject) {
+    request.post({ url: url, formData: formData }, (error, reply, body) => {
+      if (error){
+        reject(error);
+        return;
+      }
+
+      resolve(convertReply(reply, body));
+    });  
+  });
+}
+
 class Internet {
   constructor() {}
   
@@ -75,6 +99,7 @@ class Internet {
 module.exports.get  = get;
 module.exports.post = post;
 module.exports.postJson = postJson;
+module.exports.postFile = postFile;
 module.exports.Internet = Internet;
 
 module.exports.del = (url, headers = {}) => {

@@ -16,11 +16,15 @@ const { apply: useWeather }
   = require('../../dist/adapters/web/api/internal/resources/weather-resources');
 const { init: initialiseMarineWeather, apply: useMarineWeather } 
   = require('../../dist/adapters/web/api/internal/resources/marine-weather-resources');
+
+const fileUpload = require('express-fileupload');
+
 const app = express();
 const io = new SocketNotifier(1080);
 
 app.use(express.static('src/adapters/web/gui'));
 app.use(express.json());
+app.use(fileUpload());
 
 const deleted = new Deleted(`${process.env.HOME}/news/databases/news.db`);
 const bookmarks = new Bookmarks(`${process.env.HOME}/news/databases/bookmarks.db`);
@@ -123,7 +127,7 @@ app.post(/bookmarks/, async (req, res) => {
 
     await bookmarks.add(req.body);
 
-    res.status(200).json(await bookmarks.list());
+    res.status(200).json(await bookmarks.get(req.body.id));
   });
 });
 

@@ -10,7 +10,7 @@ export class Diary {
   constructor(filename: string, log: Log = new DevNullLog()) {
     this.log = log;
     this.database = new Database(filename);
-    log.info(`Using database file at <${filename}>`);
+    log.trace(`Using database file at <${filename}>`);
   }
 
   async init() {
@@ -86,26 +86,35 @@ export class Diary {
   }
 
   async attach(diaryEntryId: number, attachment: Attachment) : Promise<void> {
+    this.log.info(`[diary-db] Adding attachment for diary entry <${diaryEntryId}> <${typeof attachment.file}>`);
+
     return this.database.ex(
       'run',
       `INSERT INTO [attachment] (diaryEntryId, file) VALUES (@diaryEntryId, @file)`, 
       {
           '@diaryEntryId': diaryEntryId,
-          '@file':  attachment.file,
+          '@file': attachment.file,
       });
   }
 
-  async attachments(diaryEntryId: number, attachment: Attachment) : Promise<Attachment[]> {
+  async attachments(diaryEntryId: number) : Promise<Attachment[]> {
+    this.log.info(`[diary-db] Listing attachments for diary entry <${diaryEntryId}>`);
+
     return this.database.ex(
       'all',
-      `SELECT * from [attachment] WHERE diaryEntryId=@diaryEntryId`, 
+      `SELECT ROWID from [attachment] WHERE diaryEntryId=@diaryEntryId`, 
       {
           '@diaryEntryId': diaryEntryId,
       }).then(rows => {
+        
+        this.log.info(`[diary-db] Found <${rows.length}> attachments for diary entry <${diaryEntryId}>`);
+
         return rows.map(row => {
+          this.log.info(`[diary-db] Found <${JSON.stringify(row, null, 2)}>`);
+
           return {
+            id: row.rowid,
             diaryEntryId: diaryEntryId, 
-            file: row.file 
           }
         })
       });
@@ -150,7 +159,12 @@ export class Diary {
   }
 
   async delete(id: string): Promise<void> {
-    const result = await this.database.ex('run', `DELETE FROM [diary] WHERE rowid=?`, id);
+    await this.deleteAttachments(id);
+    await this.database.ex('run', `DELETE FROM [diary] WHERE rowid=?`, id);
+  }
+
+  async deleteAttachments(id: string): Promise<void> {
+    await this.database.ex('run', `DELETE FROM [attachment] WHERE diaryEntryId=?`, id);
   }
 
   private allColumns() {

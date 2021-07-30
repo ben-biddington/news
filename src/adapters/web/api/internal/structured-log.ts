@@ -14,12 +14,12 @@ export class StructuredLog {
   private _prefix: string;
 
   constructor(req, res, opts = { trace: false, prefix: '' }) {
+    this.statusCode = res.statusCode;
     this.path = req.path;
     this.verb = req.method;
     this.headers = req.headers;
     this.logs = [];
     this.errors = [];
-    this.statusCode = res.statusCode;
     this.responseHeaders = res.headers || [];
     this._trace = opts.trace;
     this._prefix = opts.prefix ? `${opts.prefix}` : '';

@@ -1,3 +1,4 @@
+import { Attachment } from '../../core/diary/attachment';
 import { IDiaryApplication, DiaryApplication } from '../../core/diary/diary-application';
 import { DiaryEntry } from '../../core/diary/diary-entry';
 import { DiaryPortsBuilder } from '../../core/diary/diary-ports';
@@ -13,6 +14,11 @@ const ports = (internet: Internet) => {
     .withSave(async (entry: DiaryEntry) => 
       internet.put(`/diary/${entry.id}`, headers(), entry).then(reply => JSON.parse(reply.body))
     )
+    .withAttach(async (attachment: Attachment) => {
+      // internet.post(`/diary/${entry.id}`, headers(), entry).then(reply => JSON.parse(reply.body))
+      console.log(`[diary-api] @todo: attach file requires binary post, attachment: <${attachment}>`);
+      return Promise.resolve();
+    })
     .withList(() => 
       internet.get('/diary', {}).then(reply => JSON.parse(reply.body))
     )

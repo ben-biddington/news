@@ -1,3 +1,4 @@
+import { Attachment } from "./attachment";
 import { DiaryEntry } from "./diary-entry";
 
 export class DiaryPortsBuilder {
@@ -27,6 +28,10 @@ export class DiaryPortsBuilder {
     return new DiaryPortsBuilder({ ...this.ports, save });
   }
 
+  public withAttach(attach: (attachment: Attachment) => Promise<void>): DiaryPortsBuilder {
+    return new DiaryPortsBuilder({ ...this.ports, attach });
+  }
+
   public withDelete(_delete: (id: string) => Promise<any>): DiaryPortsBuilder {
     return new DiaryPortsBuilder({ ...this.ports, delete: _delete });
   }
@@ -39,6 +44,7 @@ export class DiaryPortsBuilder {
 export const devNull = () => ({
   add:    (entry: DiaryEntry)   => Promise.resolve(entry),
   save:   (entry: DiaryEntry)   => Promise.resolve(entry),
+  attach: (attachment: Attachment) => Promise.resolve(),
   get:    (id: string)          => Promise.resolve(null),
   delete: (id: string)          => Promise.resolve(),
   list:   ()                    => Promise.resolve([]),
@@ -47,6 +53,7 @@ export const devNull = () => ({
 export type DiaryPorts = {
   add(entry: DiaryEntry): Promise<DiaryEntry>;
   save(entry: DiaryEntry): Promise<DiaryEntry>;
+  attach(attachment: Attachment): Promise<void>;
   get(id: string): Promise<DiaryEntry | null>;
   delete(id: string): Promise<void>;
   list(): Promise<DiaryEntry[]>;

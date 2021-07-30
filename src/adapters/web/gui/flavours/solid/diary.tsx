@@ -5,6 +5,7 @@ import { formatNewZealandDate } from "../../../../../core/date";
 import stringify from "../../../../../core/stringify";
 import { Edit } from './components/diary/edit';
 import { formatDuration, intervalToDuration } from 'date-fns';
+import { Attachment } from "../../../../../core/diary/attachment";
 
 export type Props = {
   application: DiaryApplication
@@ -31,6 +32,10 @@ export const DiaryApplicationView = (props: Props) => {
 
   const save = async (diaryEntry: DiaryEntry) => {
     edit(await props.application.save(diaryEntry));
+  }
+
+  const attach = async (attachment: Attachment) => {
+    await props.application.attach(attachment);
   }
 
   const edit = (diaryEntry: DiaryEntry) => setCurrentlyEditing(diaryEntry);
@@ -63,7 +68,7 @@ export const DiaryApplicationView = (props: Props) => {
             <>
               <tr>
                 <td colspan={3}>
-                  <Edit onSave={save} onCancel={cancel} entry={currentlyEditing()} />
+                  <Edit onSave={save} onAttach={attach} onCancel={cancel} entry={currentlyEditing()} />
                 </td>
               </tr>
             </>

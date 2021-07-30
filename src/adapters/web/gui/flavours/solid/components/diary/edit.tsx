@@ -6,10 +6,12 @@ import { format, set, parse } from 'date-fns'
 import { enNZ } from 'date-fns/locale'
 import stringify from '../../../../../../../core/stringify';
 import { Image } from '../../components/Image';
+import { Attachment } from "../../../../../../../core/diary/attachment";
 
 export type Props = {
   entry?: DiaryEntry,
   onSave?: (diaryEntry: DiaryEntry) => void;
+  onAttach?: (attachment: Attachment) => void;
   onCancel?: () => void;
 }
 
@@ -136,9 +138,19 @@ export const Edit = (props: Props) => {
     console.log(stringify(props.entry));
   })
 
+  const onPaste = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log(e.clipboardData.items);
+    console.log(e.clipboardData.items[0]);
+
+    props.onAttach({ diaryEntryId: parseInt(props.entry.id), file: e.clipboardData.items[0].getAsFile() })
+  }
+
   return <>
     <form>
-      <div class="form-group">
+      <div class="form-group" onPaste={onPaste}>
         <div class="row">
           <div class="col-2">
             <input title="Date"

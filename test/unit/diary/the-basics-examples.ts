@@ -3,6 +3,7 @@ import { DiaryEntry } from '../../../src/core/diary/diary-entry';
 import { DiaryPorts, DiaryPortsBuilder } from '../../../src/core/diary/diary-ports';
 import { DiaryState } from '../../../src/core/diary/diary-state';
 import { DiaryApplication, IDiaryApplication } from '../../../src/core/diary/diary-application'
+import { Attachment } from '@test/../src/core/diary/attachment';
 
 describe('The diary application', async () => {
   it('listing publishes whatever the list port returns', async () => {
@@ -77,6 +78,9 @@ class MockDiaryPorts implements DiaryPorts {
   save(entry: DiaryEntry): Promise<DiaryEntry> {
     this.saves.push(entry);
     return Promise.resolve(entry);
+  }
+  attach(attachment: Attachment): Promise<void> {
+    throw new Error('Method not implemented.');
   }
   get(id: string): Promise<DiaryEntry> {
     return Promise.resolve(null);

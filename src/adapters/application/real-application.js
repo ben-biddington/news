@@ -24,7 +24,8 @@ const { QueryStringSettings } = require('../dist/adapters/web/query-string-setti
 const { SocketSync } = require('../web/gui/socket-sync');
 const { UIEvents } = require('../web/gui/ui-events');
 const { Title } = require('../web/gui/title');
+const { ConsoleLog } = require('../../core/dist/logging/log');
 
-const diaryApplication = () => createDiaryApplication(new FetchBasedInternet());
+const diaryApplication = () => createDiaryApplication(new FetchBasedInternet(new ConsoleLog()));
 
 module.exports = { application, diaryApplication, Ports, QueryStringToggles, QueryStringSettings, NewsItem, SocketSync, UIEvents, Title, ConcreteNewsApplication }

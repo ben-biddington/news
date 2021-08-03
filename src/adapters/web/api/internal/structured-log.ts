@@ -42,6 +42,7 @@ export class StructuredLog {
     finally {
       stopwatch.stop();
 
+      log.statusCode = res.statusCode;
       log.duration = `${stopwatch.elapsed}ms`;
 
       console.log(JSON.stringify(log, null, 2));
@@ -60,7 +61,7 @@ export class StructuredLog {
     this.errors.push(
       {
         message: e.toString(),
-        stackTrace: e.stack.split("\n")
+        stackTrace: e.stack?.split("\n")
       });
   }
 

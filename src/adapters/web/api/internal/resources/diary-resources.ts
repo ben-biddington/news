@@ -3,6 +3,8 @@ import { StructuredLog } from '../structured-log';
 import { Diary } from '../../../../database/diary';
 import { ConsoleLog, Log } from '../../../../../core/logging/log';
 import { DiaryEntry } from '../../../../../core/diary/diary-entry';
+import ca from 'date-fns/locale/ca';
+import { resize } from '../images';
 
 export const init = () => diary().init();
 
@@ -20,29 +22,37 @@ export const apply = (app: express.Application) => {
     });
   });
 
+  // [i] `req.files` is populated from multipart/form-data posts
   app.post('/diary/:entryId/attachments', async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
-      //@ts-ignore
-      const files = req.files;
-    
-      //@ts-ignore
-      if (!files || Object.keys(files).length === 0) {
-        return res.status(400).send('No files were uploaded.');
-      }
-
-      log.info(`Files list <${files}>, <${Object.keys(files)}>, <${Object.keys(files.attachments)}>`);
-
-      const file = files.attachments; // <name,data,size,encoding,tempFilePath,truncated,mimetype,md5,mv>
-
-      const entryId: number = parseInt(req.params.entryId);
-
-      log.info(`Adding attachment to diary entry <${entryId}> it has name <${file.name}> and size <${file.size}B>`);
-
-      await diary(log).attach(entryId, { diaryEntryId: entryId, file: file.data });
-
-      log.info(`Done`);
+      try {
+        //@ts-ignore
+        const files = req.files;
       
-      res.status(200).json();
+        // //@ts-ignore
+        if (!files || Object.keys(files).length === 0) {
+          log.error(`No files supplied. Expected 'request.files' to be something.`);
+          return res.status(400).send('No files were uploaded.');
+        }
+
+        const fileNames = Object.keys(files);
+
+        log.info(`Uploaded file names <${fileNames}>`);
+
+        const file = files[fileNames[0]]; // <name,data,size,encoding,tempFilePath,truncated,mimetype,md5,mv>
+
+        const entryId: number = parseInt(req.params.entryId);
+
+        log.info(`Adding attachment to diary entry <${entryId}> it has name <${file.name}> and size <${file.size}B>`);
+
+        await diary(log).attach(entryId, { diaryEntryId: entryId, file: file.data });
+
+        res.status(200).json();
+      }
+      catch(e) {
+        log.error(e);
+        res.status(500).json(e);
+      }
     });
   });
 
@@ -58,6 +68,44 @@ export const apply = (app: express.Application) => {
       res.status(200).json(attachments.map(it => `/diary/${req.params.entryId}/attachments/${it.id}`));
     });
   });
+
+  app.get('/diary/:entryId/attachments/:attachmentId', async (req, res) => {
+    return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
+
+      log.info(`Finding attachment id <${req.params.attachmentId}> for diary entry <${req.params.entryId}>`);
+
+      const attachment = await diary(log).attachment(parseInt(req.params.attachmentId));
+
+      if (!attachment)
+        return res.status(404).json(`Attachment with id <${req.params.attachmentId}> not found`);
+
+      let file = attachment.file;
+
+      if (req.query["width"]) {
+        const resizeOptions = { 
+          sourceFileBuffer: file, 
+          width: parseInt(req.query["width"].toString())
+        };
+        
+        log.info(`Resizing attachment to width <${resizeOptions.width}>`);
+  
+        file = await resize(resizeOptions);
+      }
+
+      return returnFile(log, res, file);
+    });
+  });
+
+  const returnFile = (log: StructuredLog, res, file) => {
+    try {
+      res.status(200).write(file, 'binary');
+    } catch(e) {
+      log.error(e);
+      res.status(500).json(e);
+    } finally {
+      res.end();
+    }
+  }
 
   app.delete('/diary/:entryId/attachments', async (req, res) => {
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
@@ -86,12 +134,20 @@ export const apply = (app: express.Application) => {
   });
 
   app.get(/diary/, async (req, res) => {
+    const getImageUrls = async (diaryEntry: DiaryEntry): Promise<string[]> => {
+      const attachments = await diary().attachments(parseInt(diaryEntry.id));
+
+      return attachments.map(attachment => `/diary/${diaryEntry.id}/attachments/${attachment.id}`);
+    }
+
     return StructuredLog.around(req, res, { prefix: 'diary' }, async log => {
       const list: DiaryEntry[] = await diary(log).list();
 
-      log.info(`Returning <${list.length}> diary entries`);
+      const listWithImages = await Promise.all(list.map(async it => ({ ...it, images: (await getImageUrls(it)) })));
 
-      res.status(200).json(list);
+      log.info(`Returning <${listWithImages.length}> diary entries`);
+
+      res.status(200).json(listWithImages);
     });
   });
 

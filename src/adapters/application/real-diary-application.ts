@@ -15,9 +15,13 @@ const ports = (internet: Internet) => {
       internet.put(`/diary/${entry.id}`, headers(), entry).then(reply => JSON.parse(reply.body))
     )
     .withAttach(async (attachment: Attachment) => {
-      // internet.post(`/diary/${entry.id}`, headers(), entry).then(reply => JSON.parse(reply.body))
-      console.log(`[diary-api] @todo: attach file requires binary post, attachment: <${attachment}>`);
-      return Promise.resolve();
+      await internet.post(
+        `/diary/${attachment.diaryEntryId}/attachments`, 
+        {
+          'Content-type': 'multipart/form-data'
+        }, 
+        attachment.file
+      );
     })
     .withList(() => 
       internet.get('/diary', {}).then(reply => JSON.parse(reply.body))

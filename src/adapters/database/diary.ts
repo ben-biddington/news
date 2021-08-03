@@ -120,6 +120,24 @@ export class Diary {
       });
   }
 
+  async attachment(attachmentId: number) : Promise<Attachment> {
+    this.log.info(`[diary-db] Finding attachment with id <${attachmentId}>`);
+
+    return this.database.ex(
+      'get',
+      `SELECT ROWID,diaryEntryId,file from [attachment] WHERE ROWID=@attachmentId`, 
+      {
+          '@attachmentId': attachmentId,
+      }).then(row => {
+        
+        return {
+          id: row.rowid,
+          diaryEntryId: row.diaryEntryId,
+          file: row.file, 
+        }
+      });
+  }
+
   async list(): Promise<DiaryEntry[]> {
     const results = await this.database.ex(
       'all', `SELECT ${this.allColumns()} FROM [diary] ORDER BY start DESC LIMIT 50`);
@@ -134,7 +152,7 @@ export class Diary {
         end:    result.end   ? new Date(result.end): null 
       },
       board: result.board,
-      tide: result.tide
+      tide: result.tide,
     }));
   }
 

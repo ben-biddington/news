@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal } from "solid-js"
-import { mergeProps, Show } from "solid-js/web"
+import { mergeProps, Show, For } from "solid-js/web"
 import { DiaryEntry, Session } from "../../../../../../../core/diary/diary-entry"
 import { formatNewZealandTimeOfDay, toNewZealandTime } from "../../../../../../../core/date";
 import { format, set, parse } from 'date-fns'
@@ -7,6 +7,7 @@ import { enNZ } from 'date-fns/locale'
 import stringify from '../../../../../../../core/stringify';
 import { Image } from '../../components/Image';
 import { Attachment } from "../../../../../../../core/diary/attachment";
+import { ConsoleLog } from "../../../../../../../core/logging/log";
 
 export type Props = {
   entry?: DiaryEntry,
@@ -71,6 +72,8 @@ export const Edit = (props: Props) => {
   const [location, setLocation]               = createSignal<string>(props.entry.location);
   const [tide, setTide]                       = createSignal<string>(props.entry.tide);
   const [showScreenshots, setShowScreenshots] = createSignal<boolean>(false);
+  const [isDraggingOver, setIsDraggingOver]   = createSignal<boolean>(false);
+  const [isUploading, setIsUploading]         = createSignal<boolean>(false);
 
   const id = (name: string) => `${props.entry.id}-${name}`;
 
@@ -138,19 +141,55 @@ export const Edit = (props: Props) => {
     console.log(stringify(props.entry));
   })
 
+  const processUploads = async (items: any[]) => {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+
+      if (item.kind === 'file') {
+        setIsUploading(true);
+        await props.onAttach({ diaryEntryId: parseInt(props.entry.id), file: item.getAsFile() });
+        setIsUploading(false);
+      } else if (item.kind === 'string') {
+        if (item.type === 'text/plain') {
+          // This is where you copy and image from the file system and you actually get a string like:
+          //
+          //  x-special/nautilus-clipboard
+          //  copy
+          //  file:///home/ben/news/databases/marine-weather/attachments/titahi-bay/2021-07-27-18.16
+          //
+          // These don't work in Hangouts either.
+          //
+          // Solution: use drag and drop instead
+        }
+      }
+    }
+  }
+
   const onPaste = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    console.log(e.clipboardData.items);
-    console.log(e.clipboardData.items[0]);
-
-    props.onAttach({ diaryEntryId: parseInt(props.entry.id), file: e.clipboardData.items[0].getAsFile() })
+    processUploads(e.clipboardData.items);
   }
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    processUploads(e.dataTransfer.items);
+  }
+
+  const styles = createMemo(() => {
+    return isDraggingOver() ? 'border: 2px solid gray' : '2px solid white';
+  });
 
   return <>
     <form>
-      <div class="form-group" onPaste={onPaste}>
+      <div class="form-group" style={styles()} 
+        onPaste={onPaste} 
+        onDrop={e => { onDrop(e); setIsDraggingOver(false); }}
+        onDragOver={()  => setIsDraggingOver(true)}
+        onDragEnter={() => setIsDraggingOver(true)}
+        onDragEnd={()   => setIsDraggingOver(false)}
+        onDragExit={()  => setIsDraggingOver(false)}>
         <div class="row">
           <div class="col-2">
             <input title="Date"
@@ -215,6 +254,18 @@ export const Edit = (props: Props) => {
               value={body()} />
           </div>
         </div>
+
+        <Show when={props.entry?.images?.length > 0} children={
+          <For each={props.entry?.images} children={
+            (url) => <>
+             <div class="row">
+              <div class="col-12 p-2">
+                <img src={`${url}?width=500`} />
+              </div>
+            </div>
+            </>
+          }  />
+        } />
 
         {/* @todo: Only when creating new entries, otherwise show attachments? */}
         <Show when={showScreenshots()} children={

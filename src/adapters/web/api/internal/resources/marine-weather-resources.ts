@@ -9,6 +9,7 @@ const readFile = util.promisify(fs.readFile);
 const path = require('path');
 import { forecast } from '../../../marine-weather';
 import { MarineWeather as MarineWeatherDatabase, Screenshot } from '../../../../database/marine-weather'
+import { resize } from '../images';
 
 export const init = () => database().init();
 
@@ -88,17 +89,14 @@ export const apply = (app: express.Application) => {
       if (req.query["width"]) {
         const resizeOptions = { 
           sourceFileBuffer: originalFile, 
-          targetFileName: path.join(temp.dir, `marine-weather-${placeName}.png`),
           width: parseInt(req.query["width"].toString())
         };
         
-        log.info(`Resizing to <${resizeOptions.targetFileName}> with width <${req.query["width"]}>`);
+        log.info(`Resizing image to width <${resizeOptions.width}>`);
   
-        await resize(log, resizeOptions);
-  
-        log.info(`Returning <${resizeOptions.targetFileName}>`);
-  
-        return returnFile(res, await readFile(resizeOptions.targetFileName));
+        const file = await resize(resizeOptions);
+
+        return returnFile(res, file);
       }
   
       returnFile(res, originalFile);
@@ -116,20 +114,6 @@ export const apply = (app: express.Application) => {
       return res.status(200).json(files);
     });
   });
-}
-
-// [i] https://ahmadawais.com/resize-optimize-images-javascript-node/
-const resize = async (log, opts) => {  
-  const { sourceFileBuffer, targetFileName, width } = opts;
-  
-  const Jimp = require('jimp');
-
-  const image = await Jimp.read(sourceFileBuffer);
-  await image.resize(width, Jimp.AUTO);
-  await image.quality(100);
-  await image.writeAsync(targetFileName);
-
-  log.info(`[resize] ${Object.keys(image)}`);
 }
 
 const database = (log: Log = new ConsoleLog({ allowTrace: false })): MarineWeatherDatabase => {
@@ -164,8 +148,13 @@ const hash = (file: Buffer) => {
 
 const returnFile = (res, file) => {
   setHeaders(res, cacheControlHeaders(600));
-  res.status(200).write(file, 'binary');
-  res.end();
+  try {
+    res.status(200).write(file, 'binary');
+  } catch(e) {
+    res.status(500).json(e);
+  } finally {
+    res.end();
+  }
 }
 
 const setHeaders = (res, headers) => {

@@ -1,3 +1,8 @@
+const fs = require('fs');
+const util = require('util');
+
+fs.mkdirSync(`${process.env.HOME}/news/databases`, { recursive: true });
+
 const port = 8080;
 const express = require('express');
 
@@ -29,8 +34,6 @@ app.use(fileUpload());
 const deleted = new Deleted(`${process.env.HOME}/news/databases/news.db`);
 const bookmarks = new Bookmarks(`${process.env.HOME}/news/databases/bookmarks.db`);
 const log = console.log;
-const fs = require('fs');
-const util = require('util');
 
 const readFile = util.promisify(fs.readFile);
 

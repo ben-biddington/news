@@ -98,9 +98,7 @@ describe('Can add attachments', async () => {
   });
 
   after(async () => {
-    after(async () => {
-      await cleanup();
-    });
+    await cleanup();
   });
 
   it('for example', async () => {

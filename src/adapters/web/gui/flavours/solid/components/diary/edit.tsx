@@ -141,11 +141,16 @@ export const Edit = (props: Props) => {
     console.log(stringify(props.entry));
   })
 
-  const processUploads = async (items: any[]) => {
+  const processUploads = async (e) => {
+    const items = e.clipboardData.items;
+
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
 
       if (item.kind === 'file') {
+        e.preventDefault();
+        e.stopPropagation();
+        
         setIsUploading(true);
         await props.onAttach({ diaryEntryId: parseInt(props.entry.id), file: item.getAsFile() });
         setIsUploading(false);
@@ -166,15 +171,11 @@ export const Edit = (props: Props) => {
   }
 
   const onPaste = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    processUploads(e.clipboardData.items);
+    processUploads(e);
   }
 
   const onDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    processUploads(e.dataTransfer.items);
+    processUploads(e);
   }
 
   const styles = createMemo(() => {

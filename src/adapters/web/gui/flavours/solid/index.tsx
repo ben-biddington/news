@@ -63,8 +63,6 @@ const Application = () => {
     const loadToggles = async (): Promise<void> => {
       const toggles       = await application.toggles.list();
   
-      console.log('Setting UI options');
-
       setUiOptions({
         showMarineWeather:  toggles.showMarineWeather.isOn,
         showBookmarks:      toggles.showBookmarks.isOn,
@@ -205,7 +203,11 @@ const Application = () => {
               </>
             } />
             
-            <Show when={uiOptions().showMarineWeather} children={<MarineWeatherPanel />} />
+            <Show 
+              when={uiOptions().showMarineWeather} 
+              children={<MarineWeatherPanel 
+              names={[ 'wellington', 'titahi-bay', 'the-cut', 'paekakariki', 'city-reef' ]} 
+              onSortChange={() => {}} />} />
           </div>
         </div>
       </div>

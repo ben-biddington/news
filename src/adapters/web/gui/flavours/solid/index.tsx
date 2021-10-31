@@ -206,7 +206,12 @@ const Application = () => {
             <Show 
               when={uiOptions().showMarineWeather} 
               children={<MarineWeatherPanel 
-              names={[ 'wellington', 'titahi-bay', 'riversdale-beach', 'castlepoint', 'paekakariki', 'city-reef' ]} // 'the-cut' 
+              names={[ 
+                'wellington', 'titahi-bay', 
+                'riversdale-beach', 'castlepoint', 
+                'paekakariki', 
+                'city-reef', 
+                'robin-hood', 'the-cut' ]} // 'the-cut' 
               onSortChange={() => {}} />} />
           </div>
         </div>

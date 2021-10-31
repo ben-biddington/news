@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ansi-escapes": "^5.0.0",
     "commander": "^8.3.0",
     "request": "^2.88.2",
-    "socks-proxy-agent": "^6.1.0"
+    "socks-proxy-agent": "^6.1.0",
+    "terminal-block-fonts": "^1.0.2"
   }
 }

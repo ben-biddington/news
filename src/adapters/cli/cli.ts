@@ -83,6 +83,8 @@ program.
       console.log(`[${new Date().toTimeString()}] [inf] stopping...`);
       await kill();
       console.log(`[${new Date().toTimeString()}] [inf] stopped`);
+
+      process.exit(0);
     }, runtimeInMs)
   });
 

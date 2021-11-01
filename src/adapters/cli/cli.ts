@@ -13,9 +13,25 @@ program.
   name('node dist/cli.js').
   version('0.0.1');
 
-const getUrl = async (opts: { useTor: boolean }) => {
-  const reply = await createGet({ useTor: opts.useTor })
-  ({ url: `https://playback.dacast.com/content/access?contentId=89450_c_581715&provider=dacast` });
+// https://playback.dacast.com/content/access?contentId=89450_c_442604&provider=dacast
+type Beaches = {
+  'titahi-bay': string;
+  'lyall-bay': string;
+  default: string;
+}
+
+const beaches = {
+  'titahi-bay': '442604',
+  'lyall-bay': '581715',
+  default: 'lyall-bay'
+}
+
+const getUrl = async (opts: { useTor: boolean, beach: string }) => {
+  
+  const beachName = beaches[opts.beach] || beaches.default;
+  
+  const reply = await createGet({ useTor: opts.useTor })({ 
+    url: `https://playback.dacast.com/content/access?contentId=89450_c_${beachName}&provider=dacast` });
 
   return JSON.parse(reply.body).hls;
 }
@@ -25,10 +41,11 @@ const getUrl = async (opts: { useTor: boolean }) => {
 //
 program.
   command("watch").
+  argument('[beach]'      , 'The beach name'              , 'lyall-bay').
   argument('[duration]'   , 'How many minutes to play for', 10).
   description('Open VLC GUI with the video playing').
   option('    --use-tor', 'use tor', false).
-  action(async (duration: number, cmd: any) => {
+  action(async (beach: string, duration: number, cmd: any) => {
     const ports = { fileSize: (name: string) => fs.existsSync(name) ? fs.statSync(name).size/(1000 * 1000) : 0 };  
     
     const recordingOpts: RecordingOptions =  { 
@@ -48,7 +65,7 @@ program.
       false,
       [],
       (m) => messages.push(`[${new Date().toTimeString()}] [inf] ${m}`),
-      () => getUrl({ useTor: cmd.useTor }));
+      () => getUrl({ useTor: cmd.useTor, beach }));
 
     const report = new RunningReport(ports, recordingOpts);
 

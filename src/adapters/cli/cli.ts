@@ -1,8 +1,10 @@
 import { Command }  from 'commander'
-import { createGet, get } from './internet';
 import { spawn } from 'child_process';
-import { on } from 'events';
-import { propagateChangeConfirmed } from 'mobx/dist/internal';
+import * as fs from 'fs';
+
+import { createGet, get } from './internet';
+import { printOptionsIf, printRecordingOptions } from './internal/printing';
+import { RunningReport, runningReport } from './internal/running-report';
 
 const program = new Command();
 
@@ -13,7 +15,6 @@ program.
 //
 // vlc `node dist/cli.js start`
 //
-
 program.
   command("start").
   description('Open VLC GUI with the video playing').
@@ -27,13 +28,23 @@ program.
     console.log(url);
   });
 
+//
+// npx tsc && node dist/cli.js record 20 --use-tor
+//
 program.
   command("record").
-  argument('[duration]' , 'How many minutes to record for', 10).
-  argument('[file]'     , 'The file to write to', 'test.mp4').
-  option('    --use-tor', 'use tor', false).
+  argument('[duration]'   , 'How many minutes to record for', 10).
+  argument('[file]'       , 'The file to write to'          , 'test.mp4').
+  option('-m  --muxer <muxer>'    , 'The muxer to use'      , 'ts').
+  option('-v  --verbose'  , 'verbose output'                , false).
+  option('    --use-tor'  , 'use tor'                       , false).
+  option('-d  --dry-run'  , 'dry run'                       , false).
+  option('    --no-record', 'turn off recording'            , false).
   description('Record to file').
   action(async (duration: number, file: string, cmd: any) => {
+    const ports = { fileSize: (name: string) => fs.existsSync(name) ? fs.statSync(name).size/(1000 * 1000) : 0 };  
+    const recordingOpts =  { muxer: cmd.muxer, recording: cmd.record, durationInMinutes: duration, file: file, expectedSizeInMb: duration * 6 };
+
     const getUrl = async () => {
       const reply = await createGet({ useTor: cmd.useTor })
       ({ url: `https://playback.dacast.com/content/access?contentId=89450_c_581715&provider=dacast` });
@@ -46,39 +57,29 @@ program.
     const runtimeInMs = duration * 60 * 1000;
 
     // https://wiki.videolan.org/VLC_command-line_help/
-    const args = [`--sout=file/ts:${file}`, '--sout-file-append'];
+    const args = cmd.record ? [ `--sout=file/${recordingOpts.muxer}:${file}`, '--sout-file-append' ] : [];
 
     const kill = vlc(
+      cmd.record == true,
       args,
       (m) => messages.push(`[${new Date().toTimeString()}] [inf] ${m}`),
       getUrl);
 
-    console.log( 
-      `Running for ${runtimeInMs}ms`, 
-      `Writing to <${file}>`,
-      `Expected size <${duration * 6}MB>`,
-      '' 
-    );
+    printOptionsIf(cmd.verbose, cmd);
 
-    const pulse = setInterval(() => {
-      process.stdout.write(`.`);
-    }, 1000 * 5);
+    if (cmd.dryRun) {
+      process.exit(0);
+      return;
+    }
 
-    const timers = [
-      setInterval(() => process.stdout.write(' [30s] '), 1000 * 30),
-      setInterval(() => process.stdout.write('\n'), 1000 * 180),
-    ];
+    const report = new RunningReport(ports, recordingOpts);
+
+    report.start();
 
     const timeout = setTimeout(async () => {
-      clearInterval(pulse);
-      timers.forEach(clearInterval);
+      await report.stop();
+
       clearTimeout(timeout);
-
-      console.log('\n');
-
-      if (messages.length > 0) {
-        messages.forEach(console.log);
-      }
 
       console.log(`[${new Date().toTimeString()}] [inf] stopping...`);
       await kill();
@@ -88,11 +89,13 @@ program.
     }, runtimeInMs)
   });
 
-const vlc = (args: string[], handler: (data) => void, getUrl: () => Promise<string>) => {
+const vlc = (headless: boolean, args: string[], handler: (data) => void, getUrl: () => Promise<string>) => {
   let process;
 
+  const executable = headless ? 'nvlc' : 'vlc';
+
   const start = async () => {
-    process = spawn('vlc', [...args, (await getUrl())]);
+    process = spawn(executable, [...args, (await getUrl())]);
 
     process.on('data'    , handler);
     process.on('message' , handler);
@@ -108,16 +111,15 @@ const vlc = (args: string[], handler: (data) => void, getUrl: () => Promise<stri
 
   const pulse = setInterval(() => {
     handler(`[vlc] Restarting after ${intervalMs/60}ms`);
-    process.kill();
+    process?.kill();
     start();
   }, intervalMs); // 5 mins
 
   return () => {
     handler(`[vlc] [kill] Killing`);
     clearInterval(pulse);
-    process.kill();
+    process?.kill();
   };
 }
 
 program.parse(process.argv);
-

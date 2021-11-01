@@ -9,10 +9,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ansi-escapes": "^5.0.0",
+    "chalk": "^4.1.2",
+    "cli-table3": "^0.6.0",
     "commander": "^8.3.0",
+    "date-fns": "^2.25.0",
     "request": "^2.88.2",
     "socks-proxy-agent": "^6.1.0",
     "terminal-block-fonts": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/date-fns": "^2.6.0",
+    "@types/node": "^16.11.6"
   }
 }

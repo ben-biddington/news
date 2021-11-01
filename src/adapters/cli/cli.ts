@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { createGet, get } from './internet';
 import { printOptionsIf, printRecordingOptions } from './internal/printing';
 import { RunningReport, runningReport } from './internal/running-report';
+import { RecordingOptions } from './internal/recording-options';
 
 const program = new Command();
 
@@ -12,20 +13,58 @@ program.
   name('node dist/cli.js').
   version('0.0.1');
 
+const getUrl = async (opts: { useTor: boolean }) => {
+  const reply = await createGet({ useTor: opts.useTor })
+  ({ url: `https://playback.dacast.com/content/access?contentId=89450_c_581715&provider=dacast` });
+
+  return JSON.parse(reply.body).hls;
+}
+
 //
-// vlc `node dist/cli.js start`
+// vlc `node dist/cli.js watch`
 //
 program.
-  command("start").
+  command("watch").
+  argument('[duration]'   , 'How many minutes to play for', 10).
   description('Open VLC GUI with the video playing').
   option('    --use-tor', 'use tor', false).
-  action(async (cmd: any) => {
-    const reply = await createGet({ useTor: cmd.useTor })
-      ({ url: `https://playback.dacast.com/content/access?contentId=89450_c_581715&provider=dacast` });
+  action(async (duration: number, cmd: any) => {
+    const ports = { fileSize: (name: string) => fs.existsSync(name) ? fs.statSync(name).size/(1000 * 1000) : 0 };  
     
-    const url = JSON.parse(reply.body).hls;
+    const recordingOpts: RecordingOptions =  { 
+      muxer: cmd.muxer, 
+      recording: cmd.record, 
+      durationInMinutes: duration, 
+      dryRun: cmd.dryRun,
+      expectedSizeInMb: 0,
+      file: 'playing on screen'
+     };
 
-    console.log(url);
+    const messages = [];
+
+    const runtimeInMs = duration * 60 * 1000;
+
+    const kill = cmd.dryRun ? () => Promise.resolve() : vlc(
+      false,
+      [],
+      (m) => messages.push(`[${new Date().toTimeString()}] [inf] ${m}`),
+      () => getUrl({ useTor: cmd.useTor }));
+
+    const report = new RunningReport(ports, recordingOpts);
+
+    report.start();
+
+    const timeout = setTimeout(async () => {
+      await report.stop();
+
+      clearTimeout(timeout);
+
+      console.log(`[${new Date().toTimeString()}] [inf] stopping...`);
+      await kill();
+      console.log(`[${new Date().toTimeString()}] [inf] stopped`);
+
+      process.exit(0);
+    }, cmd.dryRun ? 500 : runtimeInMs)
   });
 
 //
@@ -43,7 +82,14 @@ program.
   description('Record to file').
   action(async (duration: number, file: string, cmd: any) => {
     const ports = { fileSize: (name: string) => fs.existsSync(name) ? fs.statSync(name).size/(1000 * 1000) : 0 };  
-    const recordingOpts =  { muxer: cmd.muxer, recording: cmd.record, durationInMinutes: duration, file: file, expectedSizeInMb: duration * 6 };
+    const recordingOpts: RecordingOptions =  { 
+      muxer: cmd.muxer, 
+      recording: cmd.record, 
+      durationInMinutes: duration, 
+      file: file,
+      expectedSizeInMb: duration * 6,
+      dryRun: cmd.dryRun
+     };
 
     const getUrl = async () => {
       const reply = await createGet({ useTor: cmd.useTor })
@@ -59,18 +105,13 @@ program.
     // https://wiki.videolan.org/VLC_command-line_help/
     const args = cmd.record ? [ `--sout=file/${recordingOpts.muxer}:${file}`, '--sout-file-append' ] : [];
 
-    const kill = vlc(
+    const kill = cmd.dryRun ? () => Promise.resolve() : vlc(
       cmd.record == true,
       args,
       (m) => messages.push(`[${new Date().toTimeString()}] [inf] ${m}`),
       getUrl);
 
     printOptionsIf(cmd.verbose, cmd);
-
-    if (cmd.dryRun) {
-      process.exit(0);
-      return;
-    }
 
     const report = new RunningReport(ports, recordingOpts);
 
@@ -86,7 +127,7 @@ program.
       console.log(`[${new Date().toTimeString()}] [inf] stopped`);
 
       process.exit(0);
-    }, runtimeInMs)
+    }, cmd.dryRun ? 500 : runtimeInMs)
   });
 
 const vlc = (headless: boolean, args: string[], handler: (data) => void, getUrl: () => Promise<string>) => {

@@ -62,16 +62,23 @@ export class RunningReport {
 
   private createReport() {
     const table = new Table({
-      colWidths: [15, 20, 20],
+      colWidths: [15, 15, 30],
       style: {
         compact: false,
         border: [ ]
       }
     });
   
+    const label = () => {
+      if (this.opts.dryRun)
+        return chalk.bgWhite.black.bold.dim('  dry-run  ');
+
+      return this.opts.recording ? chalk.bgRed.whiteBright.bold('    on    ') : chalk.bgWhite.black.bold.dim('    off    ');
+    }
+
     table.push([ 'recording', 'duration', 'running', 'file', 'expected size', 'size' ]);
     table.push([ 
-      this.opts.recording ? chalk.bgRed.whiteBright.bold('  on  ') : chalk.bgWhite.black.bold.dim('  off  '),
+      { content: label(), hAlign: 'center' },
       `${this.opts.durationInMinutes} minutes`, 
       formatInterval({ start: this.startedAt, end: new Date()}),
       this.opts.file, 
@@ -124,10 +131,10 @@ const formatInterval = (interval: { start: Date, end: Date }) => {
   const milliseconds = (interval.end as Date).getTime() - (interval.start as Date).getTime();
 
   const format = [
-    { filter: (it: number)  => it < 1000 * 60         , format: [ 'seconds' ]},
-    { filter: (it: number)  => it < 1000 * 60 * 60    , format: [ 'minutes' ]},
-    { filter: (it: number)  => it < 1000 * 60 * 60 * 4, format: [ 'hours', 'minutes' ]},
-    { filter: (_: number)   => true                   , format: [ 'days', 'hours' ]},
+    { filter: (it: number)  => it < 1000 * 60         , format: [ 'seconds' ]},             // < 1 minute
+    { filter: (it: number)  => it < 1000 * 60 * 60    , format: [ 'minutes', 'seconds' ]},  // < 1 hour
+    { filter: (it: number)  => it < 1000 * 60 * 60 * 4, format: [ 'hours', 'minutes' ]},    // < 4 hours
+    { filter: (_: number)   => true                   , format: [ 'days', 'hours' ]},       // default
   ].find(({ filter })       => filter(milliseconds))?.format;
 
   return formatDuration(intervalToDuration(interval), { format });

@@ -4,4 +4,5 @@ export type RecordingOptions = {
   expectedSizeInMb: number;
   recording: boolean;
   muxer: string;
+  dryRun: boolean;
 }

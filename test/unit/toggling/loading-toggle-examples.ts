@@ -12,7 +12,8 @@ describe('Loading toggles', () => {
       showDeleted:        { name: 'show-deleted'        , isOn: true },
       showBlocked:        { name: 'show-deleted'        , isOn: true },
       showBookmarks:      { name: 'show-bookmarks'      , isOn: true },
-      showMarineWeather:  { name: 'show-marine-weather' , isOn: true }
+      showMarineWeather:  { name: 'show-marine-weather' , isOn: true },
+      showVideo:          { name: 'show-video'          , isOn: true },
     }
 
     const toggleSource = new MockToggles(expected);

@@ -17,6 +17,7 @@ class QueryStringToggles extends ToggleSource {
       showBookmarks:      { name: 'show-bookmarks'      , isOn: this.get('show-bookmarks') },
       showMarineWeather:  { name: 'show-marine-weather' , isOn: this.get('show-marine-weather') },
       showwindFinder:     { name: 'show-wind-finder'    , isOn: this.get('show-wind-finder') },
+      showVideo:          { name: 'show-video'          , isOn: this.get('show-video') },
     }
   }
 }

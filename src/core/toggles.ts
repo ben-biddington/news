@@ -5,4 +5,5 @@ export interface Toggles {
   showBlocked: Toggle;
   showBookmarks: Toggle;
   showMarineWeather: Toggle;
+  showVideo: Toggle;
 }

@@ -61,7 +61,8 @@ export class Application {
       showDeleted:        { name: 'show-deleted'        , isOn: false },
       showBlocked:        { name: 'show-blocked'        , isOn: true  },
       showBookmarks:      { name: 'show-bookmarks'      , isOn: false },
-      showMarineWeather:  { name: 'show-marine-weather' , isOn: false }
+      showMarineWeather:  { name: 'show-marine-weather' , isOn: false },
+      showVideo:          { name: 'show-video'          , isOn: false }
     };
 
     this._toggleSource = this._ports.toggles;
@@ -255,7 +256,7 @@ export class Application {
         const list = await this._toggleSource.list();
         
         if (list) {
-          this._toggles = list;
+          this._toggles = {...this._toggles, ...list};
         }
       }
 

@@ -13,17 +13,35 @@ import { BookmarksPanel } from './components/BookmarksPanel';
 import { HttpLiveStreamingRadio } from './components/radio/HttpLiveStreamingRadio';
 import { DiaryApplicationView } from "./diary";
 import { DiaryApplication } from "../../../../../core/diary/diary-application";
+import { Surf2SurfPanel } from "./components/Surf2SurfPanel";
+import { FetchBasedInternet } from '../../../fetch-based-internet'
 
 type UIOptions = { 
   showMarineWeather: boolean,
+  showVideo: boolean,
   showBookmarks: boolean
+}
+// @todo: this is a port and so does not belong here. Surface it from core somehow.
+const surf2Surf = async (id: string) => {
+  const internet = new FetchBasedInternet(null);
+
+  const url = `https://playback.dacast.com/content/access?contentId=89450_c_${id}&provider=dacast`;
+
+  const reply = await internet.get(url, {})
+  
+  console.group('surf2Surf');
+  console.log(url);
+  console.log(JSON.stringify(reply, null, 2));
+  console.groupEnd();
+
+  return JSON.parse(reply.body).hls;
 }
 
 const Application = () => {
-  //@ts-ignore
+  // @ts-ignore
   const application: Core = window.application;
   const [itemDeleted, setItemDeleted]           = createSignal<boolean>();
-  const [uiOptions, setUiOptions]               = createSignal<UIOptions>({ showMarineWeather: false, showBookmarks: false });
+  const [uiOptions, setUiOptions]               = createSignal<UIOptions>({ showMarineWeather: false, showBookmarks: false, showVideo: false });
   const [bookmarks, setBookmarks]               = createSignal<Bookmark[]>([]);
   const [lobstersNews, setLobstersNews]         = createSignal<NewsItem[]>([]);
   const [hackerNews, setHackerNews]             = createSignal<NewsItem[]>([]);
@@ -66,6 +84,7 @@ const Application = () => {
       setUiOptions({
         showMarineWeather:  toggles.showMarineWeather.isOn,
         showBookmarks:      toggles.showBookmarks.isOn,
+        showVideo:          toggles.showVideo.isOn
       })
     }
 
@@ -202,17 +221,25 @@ const Application = () => {
                 </div>
               </>
             } />
+
+            <Show 
+              when={uiOptions().showVideo} 
+              children={
+                <Surf2SurfPanel 
+                  beach={{ id: '581715', name: 'wellington' }}
+                  getUrl={surf2Surf} />} />
             
             <Show 
               when={uiOptions().showMarineWeather} 
               children={<MarineWeatherPanel 
-              names={[ 
-                'wellington', 'titahi-bay', 
-                'riversdale-beach', 'castlepoint', 
-                'paekakariki', 
-                'city-reef', 
-                'robin-hood', 'the-cut' ]} // 'the-cut' 
-              onSortChange={() => {}} />} />
+                names={[ 
+                  'wellington', 'titahi-bay', 
+                  'riversdale-beach', 'castlepoint', 
+                  'paekakariki', 
+                  'city-reef', 
+                  'robin-hood', 'the-cut' ]} 
+                onSortChange={() => {}} />} />
+            
           </div>
         </div>
       </div>

@@ -1,10 +1,16 @@
 import { DevNullLog, Log } from '../../core/logging/log';
 import { Internet, Response } from '../../core/ports/internet';
 
+export type Options = {
+  noCors?: boolean;
+}
+
 export class FetchBasedInternet implements Internet {
-  private log: Log;
-  
-  constructor(log: Log = new DevNullLog()) {
+  private readonly log: Log;
+  private readonly opts: Options;
+
+  constructor(log: Log = new DevNullLog(), opts: Options = { }) {
+    this.opts = { noCors: false, ...opts };
     this.log = log;
   }
 
@@ -59,9 +65,18 @@ export class FetchBasedInternet implements Internet {
       });
   }
 
-  async get(url, headers) {
+  get = async (url, headers) => {
     //@ts-ignore
-    return fetch(url, { headers }).
-      then(async reply => ({ statusCode: reply.status, headers: { empty: 'on purpose' }, body: (await reply.text()) }));;
-  }
+    const reply = await fetch(url, { mode: this.opts.noCors ? 'no-cors' : 'cors', headers });
+
+    const body = await reply.text(); 
+
+    console.log('[FetchBasedInternet]', url, JSON.stringify(body, null, 2));
+
+    return  { 
+      statusCode: reply.status, 
+      headers: { empty: `reply headers for <${url}> left empty on purpose` }, 
+      body 
+    };
+  };
 }

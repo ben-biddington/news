@@ -1,4 +1,4 @@
-import { createMemo, createResource, createSignal } from "solid-js";
+import { createSignal } from "solid-js";
 import { Player } from '@clappr/core';
 
 export type Props = {
@@ -11,21 +11,23 @@ export type Beach = {
   id: string;
 }
 
+// [i] https://m3u8player.net/, https://d2ce82tpc3p734.cloudfront.net/v1/manifest/b1f4432f8f95be9e629d97baabfed15b8cacd1f8/TVNZ_1/d4a139de-dc20-408b-b78c-bca80bf7e43f/4.m3u8
 export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
   const playerId = `surf2surf-${beach.id}`;
-
-  const [url] = createResource(beach.id, getUrl);
+  
   const [playing    , setPlaying]     = createSignal<boolean>(false);
   const [player     , setPlayer]      = createSignal<Player>();
   const [initialised, setInitialised] = createSignal<boolean>(false);
   const [status, setStatus]           = createSignal<string>();
-  
-  const onClick = () => {
+
+  const onClick = async () => {
     if (!initialised()) {
        // https://github.com/clappr/clappr-core#events
+       // https://github.com/clappr/clappr-core#hammer_and_wrench-configuration
       const displayOptions = {
         playInline: true,
         width: 670,
+        poster: 'https://www.surf2surf.com/reports/showimage.php?id=167&ts=1635968270',
         playback : {
           controls: true,
           preload: true,
@@ -33,14 +35,17 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
       }
 
       const eventHandlers = {
-        onReady:  () => setStatus('ready'),
-        onPlay:   () => { setStatus('playing'); console.log('playing'); },
-        onError:  () => setStatus('error'),
-        onStop:   () => setStatus('stopped'), // replace with image
+        events: { 
+          onReady:  () => { setStatus('loading...'); },
+          onPause:  () => { player().stop(); },
+          onPlay:   () => { setStatus('playing'); },
+          onError:  () => { setStatus('error'); },
+          onStop:   () => { setStatus('stopped'); setPlaying(false) }
+        }
       };
 
       const opts = {
-        source: { source: url(), mimeType: 'video/mp4' }, 
+        source: { source: await getUrl(beach.id), mimeType: 'video/mp4' }, 
         parentId: `#${playerId}`, 
         ...displayOptions,
         ...eventHandlers,
@@ -63,32 +68,12 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
     }
   };
 
-  const cssClasses = createMemo(() => playing() ? 'flex-fill btn btn-primary active shadow-sm' : 'flex-fill btn btn-primary shadow-sm');
-  const badgeClasses = createMemo(() => playing() ? 'badge badge-light' : 'badge badge-success');
-
-  const icon = createMemo(() => playing() 
-    ? 
-    <>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
-        <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z"/>
-        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-      </svg>
-    </>
-    : 
-    <>
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-        <path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z"/>
-        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-      </svg>
-    </> 
-  );
-
   return <>
     <div class="row" style="margin-bottom:2px">
       <div class="col">
         <div class="card shadow">
           <div class="card-header">
-            <strong>{beach.name}</strong>
+            <strong>{beach.name}</strong> <span style="color: silver">{status()}</span>
           </div>
           <div class="card-body shadow-sm" style="text-align: center">
             {/* 

@@ -46,20 +46,14 @@ export class FetchBasedInternet implements Internet {
     const reply = await fetch(url, { headers: {}, method: 'post', body: formData }).
       then(async reply => ({ statusCode: reply.status, headers, body: (await reply.text()) }));
 
-    this.log.info(`[FetchBasedInternet] Reply status <${reply.statusCode}>`);
-
     return reply;
   }
 
   async put(url, headers, body) {
-    console.log('[FetchBasedInternet]', url, JSON.stringify(body, null, 2));
-
     //@ts-ignore
     return fetch(url, { headers, method: 'put', body: JSON.stringify(body) }).
       then(async reply => {
         const body = await reply.text();
-
-        console.log('[FetchBasedInternet] body:', body);
 
         return { statusCode: reply.status, headers: { empty: 'on purpose' }, body };
       });
@@ -70,8 +64,6 @@ export class FetchBasedInternet implements Internet {
     const reply = await fetch(url, { mode: this.opts.noCors ? 'no-cors' : 'cors', headers });
 
     const body = await reply.text(); 
-
-    console.log('[FetchBasedInternet]', url, JSON.stringify(body, null, 2));
 
     return  { 
       statusCode: reply.status, 

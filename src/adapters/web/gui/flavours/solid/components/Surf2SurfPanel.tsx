@@ -26,6 +26,10 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
       const displayOptions = {
         playInline: true,
         width: 670,
+        playback : {
+          controls: true,
+          preload: true,
+        }
       }
 
       const eventHandlers = {
@@ -107,9 +111,9 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
             </svg>
           </div>
           <div class="card-body shadow-sm" style="text-align:center">
-            <button type="button" onclick={onClick} class={cssClasses()}>
+            {/* <button type="button" onclick={onClick} class={cssClasses()}>
               {beach.name} <span class={badgeClasses}>{icon()}</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

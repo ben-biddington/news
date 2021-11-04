@@ -27,7 +27,7 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
       const displayOptions = {
         playInline: true,
         width: 670,
-        poster: 'https://www.surf2surf.com/reports/showimage.php?id=167&ts=1635968270',
+        poster: '/assets/img/lyall-bay-2021-4-nov.jpeg',
         playback : {
           controls: true,
           preload: true,
@@ -88,12 +88,20 @@ export const Surf2SurfPanel = ({ beach, getUrl }: Props) => {
 
             <div id={playerId} style={`text-align: center; width: 670; display:${playing() ? 'block' : 'none'}`}></div> 
 
-            <svg xmlns="http://www.w3.org/2000/svg" width={670} height={360} fill="#1e1e1e" 
-              style={`display:${playing() ? 'none' : 'block'}; background-color: black; padding: 75px; cursor: pointer;`}
-              onclick={onClick}
-              class="bi bi-image" viewBox="0 0 16 16">
-              <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM6 5.883a.5.5 0 0 1 .757-.429l3.528 2.117a.5.5 0 0 1 0 .858l-3.528 2.117a.5.5 0 0 1-.757-.43V5.884z"/>
-            </svg>
+            <div 
+              style={
+                `display:${playing() ? 'none' : 'block'}; ` + 
+                `background-image: url('/assets/img/lyall-bay-2021-4-nov.png')`
+              }>
+              <svg xmlns="http://www.w3.org/2000/svg" width={670} height={360} fill="#1e1e1e" 
+                style={
+                  `padding: 75px; cursor: pointer;`
+                }
+                onclick={onClick}
+                class="bi bi-image" viewBox="0 0 16 16">
+                <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM6 5.883a.5.5 0 0 1 .757-.429l3.528 2.117a.5.5 0 0 1 0 .858l-3.528 2.117a.5.5 0 0 1-.757-.43V5.884z"/>
+              </svg>
+            </div>
           </div>
           <div class="card-body shadow-sm" style="text-align:center">
             {/* <button type="button" onclick={onClick} class={cssClasses()}>

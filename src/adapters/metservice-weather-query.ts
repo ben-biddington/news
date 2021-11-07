@@ -1,4 +1,3 @@
-import { template } from 'solid-js/web';
 import { WaterTemperature, WeatherForecast, WeatherQuery} from '../core/weather';
 
 export class MetserviceWeatherQuery implements WeatherQuery {

@@ -9,7 +9,7 @@ export const apply = (app: express.Application) => {
     return StructuredLog.around(req, res, { trace: process.env.TRACE, prefix: 'sea-temp' }, log => {
       const name = req.params.name; // 'lyall-bay' for example
   
-      return cached({req, res, log, duration: Timespan.fromDays(3)}, () => get(name));
+      return cached({req, res, log, duration: Timespan.fromDays(3)}, () => get({ log }, name));
     });
   });
 }

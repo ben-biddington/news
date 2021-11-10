@@ -15,8 +15,10 @@ export class MetserviceWeatherQuery implements WeatherQuery {
   
   async seaTemperature(): Promise<WaterTemperature[]> {
     return await Promise.all([
-      this.get('/sea-temp/titahi-bay' ).then(reply => ({ name: 'Tītahi Bay', temperature: JSON.parse(reply.body)})),
-      this.get('/sea-temp/lyall-bay'  ).then(reply => ({ name: 'Lyall Bay', temperature: JSON.parse(reply.body)}))
+      this.get('/sea-temp/titahi-bay'   ).then(reply => ({ name: 'Tītahi Bay'   , temperature: JSON.parse(reply.body)})),
+      this.get('/sea-temp/lyall-bay'    ).then(reply => ({ name: 'Lyall Bay'    , temperature: JSON.parse(reply.body)})),
+      this.get('/sea-temp/castlepoint'  ).then(reply => ({ name: 'Castle Point' , temperature: JSON.parse(reply.body)})),
+      this.get('/sea-temp/kaikoura'     ).then(reply => ({ name: 'Kaikoura'     , temperature: JSON.parse(reply.body)})),
     ]);
   }
 }

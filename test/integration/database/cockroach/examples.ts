@@ -1,8 +1,13 @@
 const temp = require('temp');
 import { settings } from '../../support/support';
 import { Client } from 'pg';
+import { ConsoleLog, Log } from '../../../../src/core/logging/log';
+import { Bookmark } from '@test/../src/core/bookmark';
 
-// https://cockroachlabs.cloud/cluster/4d91eff2-d0d4-484c-a34d-65c9ff331401/overview?cluster-type=serverless
+//
+// [i] https://cockroachlabs.cloud/cluster/4d91eff2-d0d4-484c-a34d-65c9ff331401/overview?cluster-type=serverless
+//     log in with github
+//
 
 const onlyWhenConnectionStringAvailable = (
   what: string | undefined,
@@ -10,6 +15,61 @@ const onlyWhenConnectionStringAvailable = (
   const test = what ? it : it.skip; 
   name = what ? name : `[skipped because connection string was not provided] ${name}`
   return test(name, () => block(what));
+}
+
+class CockroachBookmarksDatabase {
+  private readonly client: Client;
+  private readonly log: Log;
+
+  constructor({ log }: { log: Log }, connectionString: string) {
+    this.log = log;
+    this.client = new Client({
+      connectionString,
+      ssl: true,
+    }); 
+  }
+
+  async init(): Promise<void> {
+    await this.client.connect();
+    await this.run('CREATE DATABASE IF NOT EXISTS bookmarks');
+    await this.run(`
+      CREATE TABLE IF NOT EXISTS bookmarks 
+        (
+          id text PRIMARY KEY, 
+          title text, 
+          timestamp date, 
+          url text, 
+          source text
+        )`);
+  }
+
+  // https://node-postgres.com/features/queries
+  async add(bookmark: Bookmark) {
+    await this.run(
+    `
+      INSERT INTO bookmarks (id, title, timestamp, url, source) 
+      VALUES ($1, $2, now(), $3, $4)
+    `, 
+      bookmark.id.toString(), 
+      bookmark.title, 
+      bookmark.url, 
+      bookmark.source
+    );
+  }
+
+  async drop(): Promise<void> {
+    await this.run('DROP DATABASE bookmarks');
+    return this.client?.end();
+  }
+
+  dispose(): Promise<void> {
+    return this.client?.end();
+  }
+
+  private async run(query: string, ...params: any[]): Promise<void> {
+    this.log.trace(`[db] ${query} ${JSON.stringify(params, null, 2)}`);
+    await this.client.query(query, params);
+  }
 }
 
 // COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb` npm run test.integration -- --grep cock
@@ -25,8 +85,30 @@ describe('[db] Can use cockroach db', () => {
       await client.connect();
     }
     finally {
-      await client?.end()
+      await client?.end();
     }
+  });
+
+  onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
+    'can create "CockroachBookmarksDatabase"', async (connectionString) => {
+    
+      const database = new CockroachBookmarksDatabase({ log: new ConsoleLog({ allowTrace: true }) }, connectionString);
+
+      try {
+        await database.init();
+
+        await database.add({
+          id: 'bookmark-1',
+          source: '',
+          url: 'http://abc',
+          title: 'abc'
+        })
+
+        await database.drop();
+      }
+      finally {
+        await database.dispose();
+      }
   });
 
   // Connection error

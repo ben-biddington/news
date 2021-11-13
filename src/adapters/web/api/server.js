@@ -8,10 +8,10 @@ const express = require('express');
 
 const { StructuredLog, LogEntry } = require('../../dist/adapters/web/api/internal/structured-log');
 const { SocketNotifier } = require('./internal/sockets');
-const { QueryStringToggles } = require('../toggling/query-string-toggles');
 
 const { Deleted } = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
+const { CockroachBookmarksDatabase } = require('../../dist/adapters/database/cockroachdb/bookmarks');
 
 const { init: initialiseCaching, cachedFile, cached, cacheControlHeaders } 
   = require('../../dist/adapters/web/api/internal/caching');
@@ -32,7 +32,15 @@ app.use(express.json());
 app.use(fileUpload());
 
 const deleted = new Deleted(`${process.env.HOME}/news/databases/news.db`);
+
 const bookmarks = new Bookmarks(`${process.env.HOME}/news/databases/bookmarks.db`);
+
+// Run with -- COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb`
+const cockroachBookmarks = new CockroachBookmarksDatabase(
+  { }, 
+  { connectionString: process.env.COCKROACH_CONNECTION_STRING } 
+);
+
 const log = console.log;
 
 const readFile = util.promisify(fs.readFile);
@@ -41,6 +49,7 @@ const initialise = async () => {
   await Promise.all([
     deleted.init(), 
     bookmarks.init(), 
+    cockroachBookmarks.init(),
     initialiseCaching(),
     initialiseDiary(),
     initialiseMarineWeather()
@@ -128,7 +137,10 @@ app.get(/^rnz/, async (req, res) =>
 app.post(/bookmarks/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'bookmarks' }, async log => {
 
-    await bookmarks.add(req.body);
+    await Promise.all([
+      bookmarks.add(req.body),
+      cockroachBookmarks.add(req.body)
+    ]);
 
     res.status(200).json(await bookmarks.get(req.body.id));
   });
@@ -137,9 +149,13 @@ app.post(/bookmarks/, async (req, res) => {
 app.get(/bookmarks/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'bookmarks' }, async log => {
 
-    const list = await bookmarks.list();
+    const [list, cockroachList] = await Promise.all([
+      bookmarks.list(),
+      cockroachBookmarks.list()
+    ]);
 
     log.info(new LogEntry(`Found <${list.length}> bookmarks`));
+    log.info(new LogEntry(`Found <${cockroachList.length}> bookmarks in cockroachdb`));
 
     res.status(200).json(list);
   });
@@ -154,13 +170,17 @@ app.delete(/bookmarks/, async (req, res) => {
 
     log.info(`deleting <${id}>`);
 
-    await bookmarks.del(id);
+    await Promise.all([
+      bookmarks.del(id),
+      cockroachBookmarks.delete(id)
+    ]);
 
     res.status(200).json(await bookmarks.list());
   });
 });
 
 const path = require('path');
+const { DevNullLog } = require('../../dist/core/logging/log');
 
 app.get(/windfinder/, async (req, res) => {
   return StructuredLog.around(req, res, { prefix: 'windfinder' }, async log => {
@@ -220,3 +240,7 @@ const returnFile = (res, file) => {
 
 initialise().then(() => app.listen(port, () =>
   console.log(`Server running on ${port}...`)));
+
+process.on('exit', () => {
+  cockroachBookmarks?.dispose();
+});

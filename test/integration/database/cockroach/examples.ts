@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 import { settings } from '../../support/support';
 import { ConsoleLog, Log } from '../../../../src/core/logging/log';
 import { Bookmark } from '@test/../src/core/bookmark';
-import CockroachBookmarksDatabase from '../../../../src/adapters/database/cockroachdb/bookmarks';
+import { CockroachBookmarksDatabase } from '../../../../src/adapters/database/cockroachdb/bookmarks';
 
 //
 // [i] https://cockroachlabs.cloud/cluster/4d91eff2-d0d4-484c-a34d-65c9ff331401/overview?cluster-type=serverless
@@ -66,7 +66,37 @@ describe('[db] Can use cockroach db', () => {
       const all = await database.list();
 
       expect(all.map(it => it.id)).to.eql([ 'bookmark-1', 'bookmark-2', 'bookmark-3' ]);
-    });
+  });
+
+  onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
+    'can delete bookmarks', async () => {
+      await database.init();
+
+      await database.add(
+        {
+          id: 'bookmark-1',
+          source: 'lobsters',
+          url: 'http://abc',
+          title: `abc-${new Date().getTime()}`
+        },
+        {
+          id: 'bookmark-2',
+          source: 'lobsters',
+          url: 'http://abc',
+          title: `abc-${new Date().getTime()}`
+        },
+        {
+          id: 'bookmark-3',
+          source: 'lobsters',
+          url: 'http://abc',
+          title: `abc-${new Date().getTime()}`
+        }
+      );
+
+      await database.delete('bookmark-2');
+
+      expect((await database.list()).map(it => it.id)).to.eql([ 'bookmark-1', 'bookmark-3' ]);
+  });
 
   onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
     'can add bookmarks', async () => {

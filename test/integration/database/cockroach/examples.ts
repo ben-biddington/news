@@ -1,6 +1,6 @@
-const temp = require('temp');
+const expect = require('chai').expect;
 import { settings } from '../../support/support';
-import { Client } from 'pg';
+import { Client, QueryResult } from 'pg';
 import { ConsoleLog, Log } from '../../../../src/core/logging/log';
 import { Bookmark } from '@test/../src/core/bookmark';
 
@@ -17,11 +17,21 @@ const onlyWhenConnectionStringAvailable = (
   return test(name, () => block(what));
 }
 
+type Options = {
+  connectionString: string;
+  databaseName: string;
+}
+
+// COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb` npm run test.integration -- --grep cock
 class CockroachBookmarksDatabase {
   private readonly client: Client;
   private readonly log: Log;
+  private readonly databaseName;
+  private readonly tableName;
 
-  constructor({ log }: { log: Log }, connectionString: string) {
+  constructor({ log }: { log: Log }, { connectionString, databaseName = 'news' }: Options) {
+    this.databaseName = databaseName;
+    this.tableName = `${this.databaseName}.bookmarks`;
     this.log = log;
     this.client = new Client({
       connectionString,
@@ -31,9 +41,9 @@ class CockroachBookmarksDatabase {
 
   async init(): Promise<void> {
     await this.client.connect();
-    await this.run('CREATE DATABASE IF NOT EXISTS bookmarks');
+    await this.run(`CREATE DATABASE IF NOT EXISTS ${this.databaseName}`);
     await this.run(`
-      CREATE TABLE IF NOT EXISTS bookmarks 
+      CREATE TABLE IF NOT EXISTS ${this.tableName} 
         (
           id text PRIMARY KEY, 
           title text, 
@@ -44,71 +54,148 @@ class CockroachBookmarksDatabase {
   }
 
   // https://node-postgres.com/features/queries
-  async add(bookmark: Bookmark) {
-    await this.run(
-    `
-      INSERT INTO bookmarks (id, title, timestamp, url, source) 
-      VALUES ($1, $2, now(), $3, $4)
-    `, 
-      bookmark.id.toString(), 
-      bookmark.title, 
-      bookmark.url, 
-      bookmark.source
+  async add(...bookmarks: Bookmark[]) {
+    await Promise.all(
+      bookmarks.map(bookmark => {
+        this.run(
+          `
+            INSERT INTO ${this.tableName} (id, title, timestamp, url, source) 
+            VALUES ($1, $2, now(), $3, $4)
+          `, 
+            bookmark.id.toString(), 
+            bookmark.title, 
+            bookmark.url, 
+            bookmark.source
+          );
+      })
     );
   }
 
+  async get(id: string) : Promise<Bookmark> {
+    const rows = (await this.run(
+    `
+      SELECT 
+        id, title, timestamp, url, source 
+      FROM
+        ${this.tableName}
+      WHERE
+        id=$1
+    `, 
+      id, 
+    )).rows;
+
+    return this.map(rows[0])
+  }
+
+  async list() : Promise<Bookmark[]> {
+    const result = await this.run(
+      `
+        SELECT 
+          id, title, timestamp, url, source 
+        FROM
+          ${this.tableName}
+      `
+    );
+
+    return result.rows.map(this.map);
+  }
+
+  private map(row: any) {
+    return {
+      id: row['id'],
+      title: row['title'],
+      url: row['url'],
+      source: row['source'],
+    };
+  }
+
   async drop(): Promise<void> {
-    await this.run('DROP DATABASE bookmarks');
-    return this.client?.end();
+    await this.run(`DROP DATABASE ${this.databaseName}`);
+    return this.dispose();
   }
 
   dispose(): Promise<void> {
     return this.client?.end();
   }
 
-  private async run(query: string, ...params: any[]): Promise<void> {
+  private async run(query: string, ...params: any[]): Promise<QueryResult> {
     this.log.trace(`[db] ${query} ${JSON.stringify(params, null, 2)}`);
-    await this.client.query(query, params);
+    
+    try {
+      return await this.client.query(query, params);
+    } catch (e) {
+      throw new Error(`Query failed\n${query}\n${JSON.stringify(params, null, 2)}\n\n${e}`);
+    }
   }
 }
 
 // COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb` npm run test.integration -- --grep cock
 describe('[db] Can use cockroach db', () => {
-  onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
-    'can connect to remote database', async (connectionString) => {
-    const client = new Client({
-      connectionString,
-      ssl: true,
-    });
+  let log: Log;
+  let database: CockroachBookmarksDatabase;
 
+  beforeEach(() => {
+    log       = new ConsoleLog({ allowTrace: false });
+    database  = new CockroachBookmarksDatabase(
+      { log }, 
+      { connectionString: settings.cockroachDbConnectionString, databaseName: 'newsTest' } 
+    );
+  });
+
+  afterEach(async () => {
     try {
-      await client.connect();
-    }
-    finally {
-      await client?.end();
+      await database.drop();
+    } finally {
+      await database.dispose();
     }
   });
 
   onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
-    'can create "CockroachBookmarksDatabase"', async (connectionString) => {
-    
-      const database = new CockroachBookmarksDatabase({ log: new ConsoleLog({ allowTrace: true }) }, connectionString);
+    'can list bookmarks', async () => {
+      await database.init();
 
-      try {
-        await database.init();
-
-        await database.add({
+      await database.add(
+        {
           id: 'bookmark-1',
-          source: '',
+          source: 'lobsters',
           url: 'http://abc',
-          title: 'abc'
-        })
+          title: `abc-${new Date().getTime()}`
+        },
+        {
+          id: 'bookmark-2',
+          source: 'lobsters',
+          url: 'http://abc',
+          title: `abc-${new Date().getTime()}`
+        },
+        {
+          id: 'bookmark-3',
+          source: 'lobsters',
+          url: 'http://abc',
+          title: `abc-${new Date().getTime()}`
+        }
+      );
 
-        await database.drop();
-      }
-      finally {
-        await database.dispose();
-      }
+      const all = await database.list();
+
+      expect(all.map(it => it.id)).to.eql([ 'bookmark-1', 'bookmark-2', 'bookmark-3' ]);
+    });
+
+  onlyWhenConnectionStringAvailable(settings.cockroachDbConnectionString, 
+    'can add bookmarks', async () => {
+      await database.init();
+
+      const newBookmark: Bookmark = {
+        id: 'bookmark-1',
+        source: 'lobsters',
+        url: 'http://abc',
+        title: `abc-${new Date().getTime()}`
+      };
+
+      await database.add(newBookmark);
+
+      const theStoredBookmark = await database.get('bookmark-1');
+
+      expect(theStoredBookmark).to.eql(newBookmark);
   });
 
   // Connection error

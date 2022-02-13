@@ -1,7 +1,7 @@
 import { expect } from '../../application-unit-test';
 
 import { combineReducers, createStore, Store as ReduxStore } from 'redux'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { ActionCreatorWithoutPayload, ActionCreatorWithPayload, CaseReducerActions, createSlice, PayloadAction, Slice, SliceCaseReducers } from '@reduxjs/toolkit'
 
 type User = { name: string }
 
@@ -10,21 +10,46 @@ interface State {
   items: string [];
 }
 
+type UserActions = {
+  setName: ActionCreatorWithPayload<string> | ActionCreatorWithoutPayload
+}
+
+type ItemsActions = {
+  add: ActionCreatorWithPayload<string> | ActionCreatorWithoutPayload
+}
+
+type Actions = {
+  user: CaseReducerActions<SliceCaseReducers<User>>;
+  items: CaseReducerActions<SliceCaseReducers<string[]>>;
+}
+
 // https://redux-toolkit.js.org/api/createSlice
 // [i] Slices make action creators automatically, which means they're not known until runtime, so types no good.
 
 class Store {
   private reduxStore: ReduxStore;
+  private _userSlice: Slice<User>;
+  private _itemsSlice: Slice<string[]>;
 
   constructor() {
     const initialState = { items: [], user: { name: 'anon' } };
 
+    this._userSlice = this.createUserSlice(initialState.user);
+    this._itemsSlice = this.createItemsSlice(initialState.items);
+
     const reducer = combineReducers({
-      user: this.createUserSlice(initialState.user).reducer,
-      items: this.createItemsSlice(initialState.items).reducer,
+      user: this._userSlice.reducer,
+      items: this._itemsSlice.reducer,
     });
 
     this.reduxStore = createStore(reducer);
+  }
+
+  get actions(): Actions {
+    return {
+      user: this._userSlice.actions,
+      items: this._itemsSlice.actions,
+    };
   }
 
   get state() {
@@ -39,7 +64,7 @@ class Store {
     this.reduxStore.subscribe(() => listener(this.reduxStore.getState()))
   }
 
-  private createUserSlice(initialState: User) {
+  private createUserSlice(initialState: User): Slice<User> {
     return createSlice({
       name: 'user',
       initialState,
@@ -75,6 +100,10 @@ describe('Redux slices', async () => {
     store.dispatch({ type: 'user/setName', payload: 'Ben' });
 
     expect(result.user?.name).to.eql('Ben');
+
+    store.dispatch(store.actions.user.setName('Cyril'));
+
+    expect(result.user?.name).to.eql('Cyril');
   });
 
   it("for example can add items", async () => {

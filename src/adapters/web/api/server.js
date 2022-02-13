@@ -1,3 +1,7 @@
+//
+// COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb` ./run.sh --build
+//
+
 const fs = require('fs');
 const util = require('util');
 
@@ -12,6 +16,7 @@ const { SocketNotifier } = require('./internal/sockets');
 const { Deleted } = require('../../database/deleted');
 const { Bookmarks } = require('../../database/bookmarks');
 const { CockroachBookmarksDatabase } = require('../../dist/adapters/database/cockroachdb/bookmarks');
+const { sync } = require('../../dist/adapters/web/api/internal/tasks/bookmark-sync');
 
 const { init: initialiseCaching, cachedFile, cached, cacheControlHeaders } 
   = require('../../dist/adapters/web/api/internal/caching');
@@ -104,11 +109,13 @@ const forwardGet = async (req, res, replacement, opts = {}) => {
 
   const url = replacement(req);
 
+  const headers = opts.headers || {};
+
   log.info(new LogEntry(`forwarding <${req.path}> to <${url}>`));
 
   const request = require("request");
 
-  await request({ uri: url }, async (error, _, body) => {
+  await request({ uri: url, headers }, async (error, _, body) => {
     if (error) {
       res.send(error);
       log.error(new LogEntry(`${error}`));
@@ -126,7 +133,11 @@ const forwardGet = async (req, res, replacement, opts = {}) => {
 }
 
 app.get(/lobsters/, async (req, res) =>
-  forwardGet(req, res, req => req.path.replace('/lobsters', 'https://lobste.rs'), { prefix: 'lobsters' }));
+  forwardGet(req, res, req => req.path.replace('/lobsters', 'https://lobste.rs'), 
+  { prefix: 'lobsters', headers: {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0'
+  } }));
+
 app.get(/hn/, async (req, res) =>
   forwardGet(req, res, req => req.path.replace('/hn', 'https://hnrss.org'), { prefix: 'hn' }));
 app.get(/youtube/, async (req, res) =>
@@ -238,9 +249,26 @@ const returnFile = (res, file) => {
   res.end();
 }
 
-initialise().then(() => app.listen(port, () =>
-  console.log(`Server running on ${port}...`)));
+const tasks = [];
 
-process.on('exit', () => {
+initialise()
+  .then(() => app.listen(port, () => console.log(`[news] Server running on ${port}...`)))
+  .then(() => {
+    //console.log(`[news] Starting sync task`);
+
+    //tasks.push(sync({ locaBookmarks: bookmarks, cockroachBookmarks }));
+  });
+
+const onExit = () => {
+  console.log('\n\n[news] Exiting');
+
+  console.log('[news] Closing database connections');
   cockroachBookmarks?.dispose();
-});
+
+  console.log(`[news] Quitting <${tasks.length}> tasks`);
+  tasks.forEach(task => task());
+
+  process.exit(0);
+}  
+
+process.on('SIGINT', onExit);

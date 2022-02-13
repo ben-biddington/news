@@ -87,6 +87,7 @@ export class CockroachBookmarksDatabase {
       id, 
     );
   }
+
   async list() : Promise<Bookmark[]> {
     const result = await this.run(
       `

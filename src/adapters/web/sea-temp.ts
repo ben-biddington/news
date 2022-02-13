@@ -45,7 +45,7 @@ export const get = async (
     
     ports.log.info(`[seatemperature.info] finding element`);
 
-    // [i] They changed the page to load really slowly, adds etc. Using reader view is very fast.
+    // [i] They changed the page to load really slowly, ads etc. Using reader view is very fast.
     await driver.findElement(By.css("#readability-page-1"));
 
     ports.log.info(await driver.executeScript(`return document.querySelectorAll('div#readability-page-1 p')[8].innerText`));

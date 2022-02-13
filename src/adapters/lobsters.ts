@@ -5,8 +5,16 @@ export const list = (ports: any = {}, opts: any = {}) => {
   const { get, trace = _ => { } } = ports;
   const { url = 'https://lobste.rs/hottest', count = 50 } = opts;
 
-  return get(`${url}?count=${count}`).
-    then(reply => { trace(reply); return reply; }).
+  const fullUrl = `${url}?count=${count}`;
+
+  // 31-Dec-2021: Lobsters rejects missing User-Agent
+
+  return get(fullUrl, 
+    { 
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:77.0) Gecko/20190101 Firefox/77.0',
+      'Accept': 'application/json'
+    }).
+    then(reply => { trace({ url: fullUrl }); trace(reply); return reply; }).
     then(reply => {
       try {
         return JSON.parse(reply.body);

@@ -1,7 +1,8 @@
 import { expect } from '../../application-unit-test';
 
 import { combineReducers, createStore, Store as ReduxStore } from 'redux'
-import { ActionCreatorWithoutPayload, ActionCreatorWithPayload, CaseReducerActions, createSlice, PayloadAction, Slice, SliceCaseReducers } from '@reduxjs/toolkit'
+import { ActionCreatorWithoutPayload, ActionCreatorWithPayload, CaseReducerActions, 
+  createAction, createSlice, PayloadAction, Slice, SliceCaseReducers } from '@reduxjs/toolkit'
 
 type User = { name: string }
 
@@ -10,8 +11,11 @@ interface State {
   items: string [];
 }
 
+const setUsername: ActionCreatorWithPayload<string> = createAction<string>("user/setName");
+const addItem: ActionCreatorWithPayload<string> = createAction<string>("items/add");
+
 type UserActions = {
-  setName: ActionCreatorWithPayload<string> | ActionCreatorWithoutPayload
+  setName: ActionCreatorWithPayload<string> | ActionCreatorWithoutPayload,
 }
 
 type ItemsActions = {
@@ -104,6 +108,10 @@ describe('Redux slices', async () => {
     store.dispatch(store.actions.user.setName('Cyril'));
 
     expect(result.user?.name).to.eql('Cyril');
+
+    store.dispatch(setUsername('Sally'));
+
+    expect(result.user?.name).to.eql('Sally');
   });
 
   it("for example can add items", async () => {
@@ -115,7 +123,7 @@ describe('Redux slices', async () => {
 
     store.dispatch({ type: 'items/add', payload: 'A' });
     store.dispatch({ type: 'items/add', payload: 'B' });
-    store.dispatch({ type: 'items/add', payload: 'C' });
+    store.dispatch(addItem('C'));
 
     expect(result.user?.name).to.eql('anon');
     expect(result.items).to.eql([ 'A', 'B', 'C' ]);

@@ -103,6 +103,6 @@ build 'solid'       ./src/adapters/web/gui/flavours/solid/webpack.config.js
 
 #build 'ficus'       ./src/adapters/web/gui/flavours/ficus/src/webpack.config.js
 
-bash ./src/adapters/web/gui/flavours/ficus/src/build.sh
+# bash ./src/adapters/web/gui/flavours/ficus/src/build.sh
 
 ls -lh ./src/adapters/web/gui/assets/dist

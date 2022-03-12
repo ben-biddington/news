@@ -9,13 +9,16 @@ type Options = {
   debounce?: boolean;
 }
 
-type PayloadAction<T> = {
+type Action = {
   type: string,
+};
+
+type PayloadAction<T> = Action & {
   payload: T;
 }
 
 // https://github.com/reduxjs/redux-toolkit/blob/master/packages/toolkit/src/createAction.ts#L261
-const createAction = <T>(type: string) => {
+const createPayloadAction = <T>(type: string) => {
   const actionCreator = (payload: T) => {
     return {
       type,
@@ -29,10 +32,23 @@ const createAction = <T>(type: string) => {
   return actionCreator;
 }
 
-const add = createAction<string>('add');
-const del = createAction<string>('del');
-const pause = createAction<string>('pause');
-const unPause = createAction<string>('unpause');
+const createAction = (type: string) => {
+  const actionCreator = () => {
+    return {
+      type,
+    };
+  }
+
+  actionCreator.type = type;
+  actionCreator.toString = () => type;
+
+  return actionCreator;
+}
+
+const add = createPayloadAction<string>('add');
+const del = createPayloadAction<string>('del');
+const pause = createAction('pause');
+const unPause = createAction('unpause');
 
 import { createMachine, interpret, assign, Interpreter, StateMachine } from 'xstate';
 
@@ -40,7 +56,7 @@ class Store {
   private store: Interpreter<State>;
 
   constructor(initialState?: State) {
-    const machine = createMachine<State, PayloadAction<string>>({
+    const machine = createMachine<State, Action>({
       initial: 'active',
       context: initialState ?? {
         items: []
@@ -89,7 +105,7 @@ class Store {
     
   }
 
-  dispatch<T>(action: PayloadAction<T>) {
+  dispatch<T>(action: PayloadAction<T> | Action) {
     this.store.send(action);
   }
 
@@ -134,7 +150,7 @@ describe('[xstate] Subscribing to changes', async () => {
   });
 
   it('action creators', () => {
-    const deleteItem = createAction('del');
+    const deleteItem = createPayloadAction('del');
     
     expect(deleteItem.type).to.eql('del');
     expect(`${deleteItem}`).to.eql('del');
@@ -164,13 +180,13 @@ describe('[xstate] Subscribing to changes', async () => {
 
     store.dispatch(add('B'));
 
-    store.dispatch(pause(''));
+    store.dispatch(pause());
 
     store.dispatch(add('C'));
     
     expect(result).to.eql([ 'A', 'B' ]); // 'C' was ignored
 
-    store.dispatch(unPause(''));
+    store.dispatch(unPause());
 
     store.dispatch(add('C'));
     

@@ -31,24 +31,26 @@ const createAction = <T>(type: string) => {
 
 const add = createAction<string>('add');
 const del = createAction<string>('del');
+const pause = createAction<string>('pause');
+const unPause = createAction<string>('unpause');
 
-import { createMachine, interpret, assign, Interpreter } from 'xstate';
+import { createMachine, interpret, assign, Interpreter, StateMachine } from 'xstate';
 
 class Store {
-  private counterService: Interpreter<State>;
+  private store: Interpreter<State>;
 
-  constructor() {
-    const counterMachine = createMachine<State>({
+  constructor(initialState?: State) {
+    const machine = createMachine<State, PayloadAction<string>>({
       initial: 'active',
-      context: {
+      context: initialState ?? {
         items: []
       },
       states: {
         active: {
           on: {
-            add: { 
+            [add.type]: { 
               actions: [
-                assign({
+                assign({ // https://github.com/statelyai/xstate/blob/main/packages/core/src/actions.ts#L466
                   items: (context, event: PayloadAction<string>) => {
                     if (!!event.payload) {
                       context.items.push(event.payload);
@@ -58,7 +60,7 @@ class Store {
                 })
               ]
             },
-            del: { 
+            [del.type]: { 
               actions: [
                 assign({
                   items: (context, event: PayloadAction<string>) => {
@@ -67,23 +69,36 @@ class Store {
                 })
               ]
             },
-          }
+            [pause.type]: 'paused',
+          },
+        },
+        paused: {
+          on: {
+            [unPause.type]: 'active',
+          },
         }
       }
     });
 
-    this.counterService = interpret(counterMachine)
-      //.onTransition((state) => console.log(state.context))
+    this.store = interpret(machine)
+      //.onTransition((state) => console.log('transition', state.context))
       .start();
   }
 
+  pause() {
+    
+  }
+
   dispatch<T>(action: PayloadAction<T>) {
-    // @ts-ignore
-    this.counterService.send(action);
+    this.store.send(action);
+  }
+
+  get state(): State {
+    return this.store.state.context;
   }
 
   subscribe(listener: (state: State) => void) {
-    this.counterService.subscribe((s) => listener(s.context));
+    this.store.subscribe((s) => listener(s.context));
   }
 }
 
@@ -126,4 +141,40 @@ describe('[xstate] Subscribing to changes', async () => {
 
     expect(deleteItem('A')).to.eql({ type: 'del', payload: 'A' });
   });
+
+  it("supports initial state", async () => {
+    const store = new Store({items: [ 'A' ]});
+
+    let result = [];
+
+    store.subscribe(state => result = state.items);
+
+    store.dispatch(add('B'));
+    store.dispatch(add('C'));
+    
+    expect(result).to.eql([ 'A', 'B', 'C' ]);
+  });
+  
+  it("supports pausing (state transition)", async () => {
+    const store = new Store({items: [ 'A' ]});
+
+    let result = [];
+
+    store.subscribe(state => result = state.items);
+
+    store.dispatch(add('B'));
+
+    store.dispatch(pause(''));
+
+    store.dispatch(add('C'));
+    
+    expect(result).to.eql([ 'A', 'B' ]); // 'C' was ignored
+
+    store.dispatch(unPause(''));
+
+    store.dispatch(add('C'));
+    
+    expect(result).to.eql([ 'A', 'B', 'C' ]);
+  });
+
 });

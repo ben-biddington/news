@@ -14,8 +14,23 @@ type PayloadAction<T> = {
   payload: T;
 }
 
-const add = (item: string) => ({ type: 'add', payload: item });
-const del = (item: string) => ({ type: 'del', payload: item });
+// https://github.com/reduxjs/redux-toolkit/blob/master/packages/toolkit/src/createAction.ts#L261
+const createAction = <T>(type: string) => {
+  const actionCreator = (payload: T) => {
+    return {
+      type,
+      payload
+    };
+  }
+
+  actionCreator.type = type;
+  actionCreator.toString = () => type;
+
+  return actionCreator;
+}
+
+const add = createAction<string>('add');
+const del = createAction<string>('del');
 
 import { createMachine, interpret, assign, Interpreter } from 'xstate';
 
@@ -101,5 +116,14 @@ describe('[xstate] Subscribing to changes', async () => {
     store.dispatch(del('B'));
 
     expect(result).to.eql([ 'A', 'C' ]);
+  });
+
+  it('action creators', () => {
+    const deleteItem = createAction('del');
+    
+    expect(deleteItem.type).to.eql('del');
+    expect(`${deleteItem}`).to.eql('del');
+
+    expect(deleteItem('A')).to.eql({ type: 'del', payload: 'A' });
   });
 });

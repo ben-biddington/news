@@ -1,4 +1,5 @@
 import { expect } from '../../application-unit-test';
+import { produce } from 'immer';
 
 type State = {
   items: string []
@@ -101,20 +102,21 @@ class Store {
       .start();
   }
 
-  pause() {
-    
-  }
-
   dispatch<T>(action: PayloadAction<T> | Action) {
     this.store.send(action);
   }
 
   get state(): State {
-    return this.store.state.context;
+    return this.clone(this.store.state.context);
   }
 
   subscribe(listener: (state: State) => void) {
-    this.store.subscribe((s) => listener(s.context));
+    return this.store.subscribe((s) => listener(this.clone(s.context))).unsubscribe;
+  }
+
+  private clone(state: State): State {
+    return JSON.parse(JSON.stringify(state));
+    // [!] FAILS -- return produce(state, draft => draft);
   }
 }
 
@@ -131,6 +133,50 @@ describe('[xstate] Subscribing to changes', async () => {
     store.dispatch(add('C'));
     
     expect(result).to.eql([ 'A', 'B', 'C' ]);
+  });
+
+  it("returns 'state' as clone", async () => {
+    const store = new Store();
+
+    store.dispatch(add('A'));
+
+    expect(store.state).to.not.equal(store.state);
+  });
+
+  it("returns cloned state to subscribers", async () => {
+    const store = new Store();
+
+    store.subscribe((state) => {
+      expect(state).to.not.equal(store.state);
+    });
+
+    store.dispatch(add('A'));
+  });
+
+  it("allows unsubscribe", async () => {
+    const store = new Store();
+
+    let result = [];
+
+    const unsubscribe = store.subscribe((state) => {
+      // [!] Ooh interesting -- `state` should be a copy here!
+      // Otherwise we still get the updates because `state` is a reference
+      result = state.items;
+    });
+
+    store.dispatch(add('A'));
+    store.dispatch(add('B'));
+    
+    expect(result).to.eql([ 'A', 'B' ]);
+
+    unsubscribe();
+
+    store.dispatch(add('C'));
+
+    // [!] This fails if we don't return cloned state to subscribers
+    expect(result).to.eql([ 'A', 'B' ]);
+
+    expect(store.state.items).to.eql([ 'A', 'B', 'C' ]);
   });
 
   it("allows delete", async () => {

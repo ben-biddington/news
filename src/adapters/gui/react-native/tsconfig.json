@@ -10,10 +10,10 @@
     "target": "es2015",
     "jsx": "preserve",
     "lib": [
-      "es2018",
-      "DOM",
-    ] 
+      "es2020",
+    ],
+    "esModuleInterop": true
   },
   "include": [ "." ],
-  "exclude": [ "./web-worker", "./gui/react-native" ]
+  "exclude": [ ]
 }

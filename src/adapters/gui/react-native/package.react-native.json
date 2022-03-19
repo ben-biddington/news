@@ -9,11 +9,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.17.8",
-    "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@ficusjs/renderers": "^4.3.0",
     "@reduxjs/toolkit": "^1.8.0",
     "@types/node": "^17.0.21",
     "@types/react-native": "^0.67.3",

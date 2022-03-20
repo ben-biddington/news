@@ -1,18 +1,17 @@
 #!/bin/bash
+set -eou pipefail
+
+npx tsc
 
 echo "Copying assets"
 
 cp "../../../adapters/web/gui/assets/dist/real.bundle.js" ./build/assets
 
-#echo "Compiling"
+echo "Compiling"
 
-#npx tsc -p ./tsconfig.json --listEmittedFiles
+npx webpack --config webpack.config
 
-#echo "Webpack"
-
-#npx webpack --config webpack.config
-
-#cp ./dist/core.bundle.js ./assets
+cp "./dist/adapters.web.solid.bundle.js" ./build/assets
 
 echo "Packing"
 

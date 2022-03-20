@@ -18,6 +18,6 @@ echo "Packing"
 
 cd build
 
-npx androidjs b
+npx androidjs b --release
 
 cd - 

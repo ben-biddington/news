@@ -1,7 +1,9 @@
 import { render } from "solid-js/web";
-import { createSignal, For, onMount } from "solid-js";
+import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import { NewsItem } from "../../../../../core/news-item";
 import { Application as Core } from "../../../../../core/application";
+import { NewsItemElement } from "./components/news-item-element";
+import { children } from "svelte/internal";
 
 export type Props = {
   application: Core;
@@ -9,52 +11,46 @@ export type Props = {
   log: (m: string) => void;
 };
 
-export const Application = (props: Props = null) => {
-  const [news, setNews] = createSignal<NewsItem[]>([]);
+export const Application = ({ application }: Props) => {
+  const [loading, setLoading] = createSignal<boolean>(false);
+  const [lobstersNews, setLobstersNews] = createSignal<NewsItem[]>([]);
+  const [hackerNews, setHackerNews] = createSignal<NewsItem[]>([]);
 
   const onReload = () => {
-    Promise.all([props.application.hackerNews.list()]);
+    return loadNews();
   };
 
   onMount(() => {
-    return props.application.hackerNews.list().then(setNews);
+    application.on(["lobsters-items-loaded"], (e) => setLobstersNews(e.items));
+    application.on(["hacker-news-items-loaded"], (e) => setHackerNews(e.items));
+    application.on(["lobsters-item-deleted"], (e) =>
+      setLobstersNews(lobstersNews().filter((it) => it.id != e.id))
+    );
+    application.on(["hacker-news-item-deleted"], (e) =>
+      setHackerNews(hackerNews().filter((it) => it.id != e.id))
+    );
+
+    return loadNews();
   });
 
-  const f = (newsItem: NewsItem, i) => (
-    <tr>
-      <td width="20" style="vertical-align: middle;text-align: center;">
-        {i() + 1}
-      </td>
-      <td width="20" style="vertical-align: middle;text-align: center;">
-        <a
-          href="javascript:void(0)"
-          onclick={() => props.onDelete(newsItem.id)}
-          title={`delete ${newsItem.title} (${newsItem.id})`}
-          class="icon"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            class="icon bi bi-trash"
-            viewBox="0 0 16 16"
-          >
-            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
-            <path
-              fill-rule="evenodd"
-              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
-            ></path>
-          </svg>
-        </a>
-      </td>
-      <td>
-        <div style="margin-bottom:10px">
-          <a href={newsItem.url}>
-            <span class="news-title">{newsItem.title}</span>
-          </a>
-        </div>
-      </td>
-    </tr>
-  );
+  const loadNews = async (): Promise<any> => {
+    setLoading(true);
+
+    await Promise.all([
+      application.lobsters.list(),
+      application.hackerNews.list(),
+    ]);
+
+    setLoading(false);
+  };
+
+  const newsItems = createMemo<NewsItem[]>(() => {
+    const result: NewsItem[] = lobstersNews().concat(hackerNews());
+
+    return result.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  });
 
   return (
     <>
@@ -63,7 +59,7 @@ export const Application = (props: Props = null) => {
           <thead>
             <tr>
               <td colspan="3">
-                <strong>News</strong> ({news().length})
+                <strong>News</strong> ({newsItems().length})
                 <span class="ml-2">
                   <a href="javascript:void(0)" onClick={onReload} class="icon">
                     <svg
@@ -79,11 +75,21 @@ export const Application = (props: Props = null) => {
                     </svg>
                   </a>
                 </span>
+
+                <span style="margin-left: 10px">
+                  <Show when={loading()} children={<>loading</>} />
+                </span>
               </td>
             </tr>
           </thead>
           <tbody>
-            <For each={news()} fallback={loading} children={f} />
+            <For
+              each={newsItems()}
+              fallback={loading}
+              children={(item, index) => (
+                <NewsItemElement newsItem={item} i={index()} />
+              )}
+            />
           </tbody>
           <tfoot>
             <tr>
@@ -104,5 +110,5 @@ const loading = (
   </>
 );
 
-export const mount = (el, application) =>
-  render(() => <Application log={console.log} application={application} />, el);
+export const mount = (el, application, log = () => {}) =>
+  render(() => <Application application={application} log={log} />, el);

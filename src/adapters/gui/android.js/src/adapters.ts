@@ -1,18 +1,21 @@
 import { list } from "../../../../adapters/hn";
+import { list as listLobsters } from "../../../../adapters/lobsters";
 import { FetchBasedInternet } from "../../../../adapters/web/fetch-based-internet";
 import { Application } from "../../../../core/application";
 import { Ports, PortsBuilder } from "../../../../core/ports";
 
 export type Settings = {
   hackerNewsBaseUrl?: string;
+  lobstersBaseUrl: string;
 };
 
 export const createApplication = (settings: Settings) => {
   console.log("[createApplication]", { settings });
+
   return new Application(createAdapters(settings));
 };
 
-const createAdapters = ({ hackerNewsBaseUrl }: Settings) => {
+const createAdapters = ({ hackerNewsBaseUrl, lobstersBaseUrl }: Settings) => {
   const internet = new FetchBasedInternet();
 
   return (
@@ -45,10 +48,14 @@ const createAdapters = ({ hackerNewsBaseUrl }: Settings) => {
       //       .then((reply) => JSON.stringify(reply.body));
       //   },
       // })
-      // .withLobsters({
-      //   list: () => list({ get: internet.get, trace: console.log }, { count: 20 }),
-      //   delete: (id) => Promise.resolve(),
-      // })
+      .withLobsters({
+        list: () =>
+          listLobsters(
+            { get: internet.get, trace: console.log },
+            { count: 20, url: lobstersBaseUrl }
+          ),
+        delete: (id) => Promise.resolve(),
+      })
       .withHackerNews({
         list: () =>
           list(

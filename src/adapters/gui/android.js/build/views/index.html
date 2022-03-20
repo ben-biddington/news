@@ -55,9 +55,15 @@
 
       var view = new real.UIEvents();
 
-      var application = init.createApplication({
-        hackerNewsBaseUrl: settings.get("hn-base-url"), // [i] http://locahost:8080/hn/frontpage
-      });
+      const opts =
+        toggles.get("use-local") === true
+          ? {
+              hackerNewsBaseUrl: "http://localhost:8080/hn",
+              lobstersBaseUrl: "http://localhost:8080/lobsters/hottest",
+            }
+          : {};
+
+      var application = init.createApplication(opts);
 
       application.pollEvery(
         parseInt(settings.get("polling-frequency", "600000"))

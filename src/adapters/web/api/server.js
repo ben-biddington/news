@@ -9,6 +9,7 @@ fs.mkdirSync(`${process.env.HOME}/news/databases`, { recursive: true });
 
 const port = 8080;
 const express = require('express');
+const cors = require('cors');
 
 const { StructuredLog, LogEntry } = require('../../dist/adapters/web/api/internal/structured-log');
 const { SocketNotifier } = require('./internal/sockets');
@@ -35,6 +36,7 @@ const io = new SocketNotifier(1080);
 app.use(express.static('src/adapters/web/gui'));
 app.use(express.json());
 app.use(fileUpload());
+app.use(cors());
 
 const deleted = new Deleted(`${process.env.HOME}/news/databases/news.db`);
 

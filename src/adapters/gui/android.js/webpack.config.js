@@ -1,12 +1,17 @@
 const path = require('path');
 
+// console.log(path.resolve(__dirname, 'dist'));
+
+const distPath = path.resolve(__dirname, 'dist'); 
+
 module.exports = {
   mode: 'development',
   entry: {
-    'solid' : './dist/ui/index.jsx',
+    'solid' : './dist/adapters/gui/android.js/src/ui/index.jsx',
+    'init' : './dist/adapters/gui/android.js/src/adapters.js',
   },
   output: {
-    path: path.resolve('./dist'),
+    path: distPath,
     filename: 'adapters.web.[name].bundle.js',
     libraryTarget: 'umd',
     globalObject: 'this',

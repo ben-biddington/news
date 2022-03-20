@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-npx tsc
+npx tsc -p ./tsconfig.json --listEmittedFiles
 
 echo "Copying assets"
 
@@ -11,6 +11,7 @@ echo "Compiling"
 
 npx webpack --config webpack.config
 
+cp "./dist/adapters.web.init.bundle.js" ./build/assets
 cp "./dist/adapters.web.solid.bundle.js" ./build/assets
 
 echo "Packing"

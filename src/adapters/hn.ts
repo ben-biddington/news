@@ -3,11 +3,15 @@ import { QueryStringSettings } from './web/query-string-settings';
 import { DevNullLog } from '../core/logging/log';
 import { NewsItem } from '../core/news-item';
 
+export type Options = {
+  count?: number;
+  url?: string;
+}
+
 // [i] https://github.com/lobsters/lobsters/blob/master/config/routes.rb
-export const list = (ports = {}, opts = {}) => {
+export const list = (ports = {}, opts: Options = {}) => {
   //@ts-ignore
   const { get, log = new DevNullLog() } = ports;
-  //@ts-ignore
   const { url = 'https://hnrss.org', count = 50 } = opts;
 
   const feedUrl = `${url}/frontpage`;

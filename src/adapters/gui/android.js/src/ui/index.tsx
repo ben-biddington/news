@@ -3,6 +3,7 @@ import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import { NewsItem } from "../../../../../core/news-item";
 import { Application as Core } from "../../../../../core/application";
 import { NewsPanel } from "../../../../web/gui/flavours/solid/components/NewsPanel";
+import { show } from "../android/toast";
 export type Props = {
   application: Core;
   onDelete?: (id: string) => void;
@@ -58,7 +59,9 @@ export const Application = ({ application }: Props) => {
     //   setBookmarks((old) => [...old, bookmark])
     // );
 
-    return loadNews();
+    return loadNews().then(() => {
+      show('A B C');
+    });
   });
 
   const loadNews = async (): Promise<any> => {

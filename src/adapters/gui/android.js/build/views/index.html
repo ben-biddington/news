@@ -99,6 +99,10 @@
       addScript({ src: "../node_modules/androidjs/lib/androidjs.js" }).then(
         () => {}
       );
+    } else {
+      window.app = {
+        message: 'Running outside phone so "app" is not available'
+      }
     }
 
     solid.mount(document.getElementById("application"), application);

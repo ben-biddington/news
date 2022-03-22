@@ -12,16 +12,10 @@ export class DeletedItemsSeive {
     const deleted = this.deletedItems;
 
     const isNotDeleted = (id: string) => {
-      console.log({
-        id,
-        notDeleted: deleted.find((it) => it.id === id) === undefined,
-      });
       return deleted.find((it) => it.id === id) === undefined;
     };
 
     const result = items.filter((it) => isNotDeleted(it.id)).map((it) => it.id);
-
-    console.log({ result });
 
     return Promise.resolve(result);
   };
@@ -48,8 +42,6 @@ export class DeletedItems {
       date: new Date(),
       id,
     });
-
-    console.log(`[deleted-items] Adding <${id}> to the deleted items list`);
 
     this.localStorage.setItem(this.KEY, JSON.stringify(currentValue));
 

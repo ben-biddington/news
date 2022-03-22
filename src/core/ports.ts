@@ -34,7 +34,7 @@ type DeletedItemsQuery = {
 }
 
 type Seive = { 
-  apply: (newsItem) => Promise<NewsItem[]>;
+  apply: (newsItem) => Promise<string[]>;
 }
 
 export class PortsBuilder {

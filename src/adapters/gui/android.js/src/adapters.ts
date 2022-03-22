@@ -3,8 +3,10 @@ import { list as listLobsters } from "../../../../adapters/lobsters";
 import { FetchBasedInternet } from "../../../../adapters/web/fetch-based-internet";
 import { Application } from "../../../../core/application";
 import { Ports, PortsBuilder } from "../../../../core/ports";
+import { DeletedItems, DeletedItemsSeive } from "./storage/deleted-items";
 
 export type Settings = {
+  window: Window;
   hackerNewsBaseUrl?: string;
   lobstersBaseUrl: string;
 };
@@ -15,8 +17,14 @@ export const createApplication = (settings: Settings) => {
   return new Application(createAdapters(settings));
 };
 
-const createAdapters = ({ hackerNewsBaseUrl, lobstersBaseUrl }: Settings) => {
+const createAdapters = ({
+  hackerNewsBaseUrl,
+  lobstersBaseUrl,
+  window,
+}: Settings) => {
   const internet = new FetchBasedInternet();
+  const deletedItems = new DeletedItems(window);
+  const deletedItemsSeive = new DeletedItemsSeive(window);
 
   return (
     PortsBuilder.new()
@@ -37,24 +45,16 @@ const createAdapters = ({ hackerNewsBaseUrl, lobstersBaseUrl }: Settings) => {
       //       id
       //     ),
       // })
-      // .withSeive({
-      //   apply: (newsItems) => {
-      //     return internet
-      //       .post(
-      //         `${baseUrl}/lobsters/deleted/sieve`,
-      //         { "Content-type": "application/json", Accept: "application/json" },
-      //         newsItems.map((it) => it.id)
-      //       )
-      //       .then((reply) => JSON.stringify(reply.body));
-      //   },
-      // })
+      .withSeive({
+        apply: (newsItems) => deletedItemsSeive.apply(newsItems),
+      })
       .withLobsters({
         list: () =>
           listLobsters(
             { get: internet.get, trace: console.log },
             { count: 20, url: lobstersBaseUrl }
           ),
-        delete: (id) => Promise.resolve(),
+        delete: (id) => deletedItems.add(id),
       })
       .withHackerNews({
         list: () =>
@@ -62,12 +62,12 @@ const createAdapters = ({ hackerNewsBaseUrl, lobstersBaseUrl }: Settings) => {
             { get: internet.get, trace: console.log },
             { url: hackerNewsBaseUrl, count: 20 }
           ),
-        delete: (id) => Promise.resolve(),
+        delete: (id) => deletedItems.add(id),
       })
       // .withBlockedHosts(new LocalStorageBlockedHosts(window))
-      // .withDeletedItems({
-      //   count: () => deletedCount({ internet }, { baseUrl: baseUrl }),
-      // })
+      .withDeletedItems({
+        count: deletedItems.count,
+      })
       .build()
   );
 };

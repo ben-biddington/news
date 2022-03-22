@@ -2,7 +2,6 @@ import { render } from "solid-js/web";
 import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import { NewsItem } from "../../../../../core/news-item";
 import { Application as Core } from "../../../../../core/application";
-import { NewsItemElement } from "./components/news-item-element";
 import { NewsPanel } from "../../../../web/gui/flavours/solid/components/NewsPanel";
 export type Props = {
   application: Core;
@@ -21,6 +20,11 @@ export const Application = ({ application }: Props) => {
   };
 
   onMount(() => {
+    application.on(["news-items-modified"], (e) => {
+      setLobstersNews(e.items.filter((item) => item.label === "lobsters"));
+      setHackerNews(e.items.filter((item) => item.label === "hn"));
+    });
+
     application.on(["lobsters-items-loaded"], (e) => setLobstersNews(e.items));
     application.on(["hacker-news-items-loaded"], (e) => setHackerNews(e.items));
     application.on(["lobsters-item-deleted"], (e) =>
@@ -29,19 +33,48 @@ export const Application = ({ application }: Props) => {
     application.on(["hacker-news-item-deleted"], (e) =>
       setHackerNews(hackerNews().filter((it) => it.id != e.id))
     );
+    // application.on(["stats"], (e) =>
+    //   setStats((old) => ({
+    //     ...old,
+    //     lastUpdateAt: new Date(e.lastUpdateAt),
+    //     intervals: e.intervals,
+    //   }))
+    // );
+    // application.on(
+    //   [
+    //     "hacker-news-item-deleted",
+    //     "lobsters-item-deleted",
+    //     "youtube-news-item-deleted",
+    //   ],
+    //   () => {
+    //     setItemDeleted(true);
+    //     application.deletedItems.count().then(setDeletedItemCount);
+    //   }
+    // );
+    // application.on(["bookmark-deleted"], (deleted) =>
+    //   setBookmarks((old) => old.filter((it) => it.id !== deleted.id))
+    // );
+    // application.on(["bookmark-added"], (bookmark) =>
+    //   setBookmarks((old) => [...old, bookmark])
+    // );
 
     return loadNews();
   });
 
   const loadNews = async (): Promise<any> => {
+    await withLoading(() =>
+      Promise.all([application.lobsters.list(), application.hackerNews.list()])
+    );
+  };
+
+  const withLoading = async (fn: () => Promise<any>) => {
     setLoading(true);
 
-    await Promise.all([
-      application.lobsters.list(),
-      application.hackerNews.list(),
-    ]);
-
-    setLoading(false);
+    try {
+      await fn();
+    } finally {
+      setLoading(false);
+    }
   };
 
   const newsItems = createMemo<NewsItem[]>(() => {
@@ -74,8 +107,7 @@ export const Application = ({ application }: Props) => {
                 <div class="row">
                   <div class="col-12">
                     <div class="row">
-                      <div class="col-12">
-                      </div>
+                      <div class="col-12"></div>
                     </div>
 
                     <div class="row">

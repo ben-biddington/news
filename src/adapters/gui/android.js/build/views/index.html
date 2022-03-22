@@ -52,8 +52,7 @@
     }
   </style>
 
-  <body>
-  </body>
+  <body></body>
 
   <script type="text/javascript">
     var toggles = new real.QueryStringToggles(document.location.search);
@@ -82,8 +81,9 @@
         ? {
             hackerNewsBaseUrl: "http://localhost:8080/hn",
             lobstersBaseUrl: "http://localhost:8080/lobsters/hottest",
+            window,
           }
-        : {};
+        : { window };
 
     var application = init.createApplication(opts);
 

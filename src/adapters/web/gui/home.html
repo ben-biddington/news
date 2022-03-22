@@ -1,192 +1,224 @@
 <html>
+  <head>
+    <!-- https://favicon.io/emoji-favicons/ -->
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/favicons/diamond/android-chrome-512x512.png"
+    />
+    <title>Vanilla</title>
+    <script src="/assets/dist/adapters.web.vanilla.bundle.js"></script>
+    <script src="/assets/dist/mock.application.bundle.js"></script>
+    <script src="/assets/dist/real.bundle.js"></script>
+    <!-- Adding bootstrap@4.6.0 dynamically dails check for jquery -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+      crossorigin="anonymous"
+    ></script>
 
-<head>
-  <!-- https://favicon.io/emoji-favicons/ -->
-  <link rel="shortcut icon" type="image/png" href="/favicons/diamond/android-chrome-512x512.png" />
-  <title>Vanilla</title>
-  <script src="/assets/dist/adapters.web.vanilla.bundle.js"></script>
-  <script src="/assets/dist/mock.application.bundle.js"></script>
-  <script src="/assets/dist/real.bundle.js"></script>
-  <!-- Adding bootstrap@4.6.0 dynamically dails check for jquery -->
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
 
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-</head>
+  <body></body>
 
-<body></body>
+  <script>
+    var toggles = new real.QueryStringToggles(document.location.search);
+    var settings = new real.QueryStringSettings(document.location.search);
 
-<script>
-  var toggles = new real.QueryStringToggles(document.location.search);
-  var settings = new real.QueryStringSettings(document.location.search);
+    var view = new real.UIEvents();
+    var application = toggles.get("unplug")
+      ? new mock.Application(toggles, settings)
+      : real.application(toggles, settings);
 
-  var view = new real.UIEvents();
-  var application = toggles.get('unplug') ? new mock.Application(toggles, settings) : real.application(toggles, settings);
+    application.pollEvery(
+      parseInt(settings.get("polling-frequency", "600000"))
+    );
 
-  application.pollEvery(parseInt(settings.get('polling-frequency', '600000')));
+    let title;
 
-  let title;
+    view.onRender((e) => console.log(`[render] ${JSON.stringify(e)}`));
 
-  view.onRender(e => console.log(`[render] ${JSON.stringify(e)}`));
+    const addScript = (attr, onLoadHandler = null) => {
+      const scriptTag = document.createElement("script");
 
-  const addScript = (attr, onLoadHandler = null) => {
-    const scriptTag = document.createElement('script');
-
-    Object.keys(attr).forEach(key => {
-      scriptTag.setAttribute(key, attr[key]);
-    });
-
-    if (onLoadHandler) {
-      scriptTag.onload = onLoadHandler;
-    }
-
-    document.body.appendChild(scriptTag);
-
-    return scriptTag;
-  }
-
-  const addCss = attributes => {
-    const linkTag = document.createElement('link');
-
-    const allAttributes = {
-      rel: 'stylesheet',
-      type: 'text/css',
-      ...attributes
-    }
-
-    Object.keys(allAttributes).forEach(key => {
-      linkTag.setAttribute(key, allAttributes[key]);
-    });
-
-    document.head.appendChild(linkTag);
-  }
-
-  var start = async () => {
-    const applicationNode = document.querySelector('#application');
-
-    console.log(`[start] node => <${document.querySelector('#application')}>`);
-
-    if (applicationNode) {
-      document.body.removeChild(applicationNode);
-    }
-
-    if (false === window.toggles.get('use-svelte-smui')) {
-      addCss({ href: '/assets/css/default.css' });
-    }
-
-    if (window.toggles.get('use-svelte')) {
-      addScript({ src: '/assets/dist/svelte.bundle.js' });
-      document.title += " -- Svelte";
-    }
-    else if (window.toggles.get('use-svelte-smui')) {
-      addCss({
-        href: "https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css",
-        integrity: "sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2",
-        crossorigin: "anonymous"
+      Object.keys(attr).forEach((key) => {
+        scriptTag.setAttribute(key, attr[key]);
       });
 
-      addScript({ src: '/assets/dist/adapters.web.svelte-smui.bundle.js' });
+      if (onLoadHandler) {
+        scriptTag.onload = onLoadHandler;
+      }
 
-      document.title += " -- Svelte SMUI";
-    }
-    else if (window.toggles.get('use-vue')) {
-      addScript({ src: '/assets/dist/adapters.web.vue.bundle.js' });
-      document.title += " -- Vue.js";
-    }
-    else if (window.toggles.get('use-react')) {
-      const div = document.createElement('div');
-      div.setAttribute('id', 'application');
-      document.body.appendChild(div);
-      addScript({ src: '/assets/dist/adapters.web.react.bundle.js' });
-      document.title += " -- React";
-    }
-    else if (window.toggles.get('use-mint')) {
-      const div = document.createElement('div');
-      div.setAttribute('id', 'application');
-      document.body.appendChild(div);
-      addScript({ src: '/assets/dist/adapters.web.mint.bundle.js' });
-      document.title += " -- Mint";
-    }
-    else if (window.toggles.get('use-ficus')) {
-      const div = document.createElement('ficus-application');
-      div.setAttribute('id', 'application');
-      document.body.appendChild(div);
+      document.body.appendChild(scriptTag);
 
-      // https://getbootstrap.com/docs/4.0/getting-started/download/
+      return scriptTag;
+    };
 
-      addCss({
-        href: 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css',
-        integrity: "sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l",
-        crossorigin: "anonymous"
+    const addCss = (attributes) => {
+      const linkTag = document.createElement("link");
+
+      const allAttributes = {
+        rel: "stylesheet",
+        type: "text/css",
+        ...attributes,
+      };
+
+      Object.keys(allAttributes).forEach((key) => {
+        linkTag.setAttribute(key, allAttributes[key]);
       });
 
-      addCss({ href: '/assets/css/ficus.css' });
-      addScript({ src: '/assets/dist/adapters.web.ficus.bundle.js' });
+      document.head.appendChild(linkTag);
+    };
 
-      document.title += " -- Ficus";
-    } else if (window.toggles.get('use-solid')) {
-      // https://getbootstrap.com/docs/4.0/getting-started/download/
+    var start = async () => {
+      const applicationNode = document.querySelector("#application");
 
-      addCss({
-        href: 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css',
-        integrity: "sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l",
-        crossorigin: "anonymous"
-      });
+      console.log(
+        `[start] node => <${document.querySelector("#application")}>`
+      );
 
-      addCss(   { href: '/assets/css/solid.css' });
-      addScript({ src: 'https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@latest/dist/hlsjs-playback.min.js' });
-      
-      const div = document.createElement('div');
-      div.setAttribute('id', 'application');
-      document.body.appendChild(div);
+      if (applicationNode) {
+        document.body.removeChild(applicationNode);
+      }
 
-      const diary = document.createElement('div');
-      diary.setAttribute('id', 'diary');
-      document.body.appendChild(diary);
+      if (false === window.toggles.get("use-svelte-smui")) {
+        addCss({ href: "/assets/css/default.css" });
+      }
 
-      addScript({ 
-        src: '/assets/dist/adapters.web.solid.bundle.js',
-      }, 
-      () => {
-        if (window.toggles.get('diary')) {
-          solid.mountDiary(document.getElementById("application"), real.diaryApplication());
-        } else {
-          solid.mount(document.getElementById("application"));
-        }
+      if (window.toggles.get("use-svelte")) {
+        addScript({ src: "/assets/dist/svelte.bundle.js" });
+        document.title += " -- Svelte";
+      } else if (window.toggles.get("use-svelte-smui")) {
+        addCss({
+          href: "https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css",
+          integrity:
+            "sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2",
+          crossorigin: "anonymous",
+        });
+
+        addScript({ src: "/assets/dist/adapters.web.svelte-smui.bundle.js" });
+
+        document.title += " -- Svelte SMUI";
+      } else if (window.toggles.get("use-vue")) {
+        addScript({ src: "/assets/dist/adapters.web.vue.bundle.js" });
+        document.title += " -- Vue.js";
+      } else if (window.toggles.get("use-react")) {
+        const div = document.createElement("div");
+        div.setAttribute("id", "application");
+        document.body.appendChild(div);
+        addScript({ src: "/assets/dist/adapters.web.react.bundle.js" });
+        document.title += " -- React";
+      } else if (window.toggles.get("use-mint")) {
+        const div = document.createElement("div");
+        div.setAttribute("id", "application");
+        document.body.appendChild(div);
+        addScript({ src: "/assets/dist/adapters.web.mint.bundle.js" });
+        document.title += " -- Mint";
+      } else if (window.toggles.get("use-ficus")) {
+        const div = document.createElement("ficus-application");
+        div.setAttribute("id", "application");
+        document.body.appendChild(div);
+
+        // https://getbootstrap.com/docs/4.0/getting-started/download/
+
+        addCss({
+          href: "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
+          integrity:
+            "sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l",
+          crossorigin: "anonymous",
+        });
+
+        addCss({ href: "/assets/css/ficus.css" });
+        addScript({ src: "/assets/dist/adapters.web.ficus.bundle.js" });
+
+        document.title += " -- Ficus";
+      } else if (window.toggles.get("use-solid")) {
+        // https://getbootstrap.com/docs/4.0/getting-started/download/
+
+        addCss({
+          href: "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css",
+          integrity:
+            "sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l",
+          crossorigin: "anonymous",
+        });
+
+        addCss({ href: "/assets/css/solid.css" });
+        addScript({
+          src: "https://cdn.jsdelivr.net/npm/@clappr/hlsjs-playback@latest/dist/hlsjs-playback.min.js",
+        });
+
+        const div = document.createElement("div");
+        div.setAttribute("id", "application");
+        document.body.appendChild(div);
+
+        const diary = document.createElement("div");
+        diary.setAttribute("id", "diary");
+        document.body.appendChild(diary);
+
+        addScript(
+          {
+            src: "/assets/dist/adapters.web.solid.bundle.js",
+          },
+          () => {
+            if (window.toggles.get("diary")) {
+              solid.mountDiary(
+                document.getElementById("application"),
+                real.diaryApplication()
+              );
+            } else {
+              solid.mount(document.getElementById("application"));
+            }
+          }
+        );
+      } else {
+        vanilla.render(document, application);
+      }
+      title = new real.Title(application, document);
+    };
+
+    if (!toggles.get("unplug")) {
+      const sync = new real.SocketSync(
+        `ws://${document.location.hostname}:1080`,
+        console.log
+      );
+      sync.connect(window.application);
+    }
+  </script>
+  <script>
+    if (!toggles.get("disallow-autostart")) {
+      start();
+    }
+
+    if ("serviceWorker" in navigator && toggles.get("allow-sw")) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/network-probe.js").then(
+          function (registration) {
+            console.log(
+              "Service worker registered with scope: ",
+              JSON.stringify(registration)
+            );
+            console.log(
+              "Service worker registered with scope: ",
+              registration.scope
+            );
+          },
+          function (err) {
+            console.log("ServiceWorker registration failed: ", err);
+          }
+        );
       });
     }
-    else {
-      vanilla.render(document, application);
-    }
-    title = new real.Title(application, document);
-  }
-
-  if (!toggles.get('unplug')) {
-    const sync = new real.SocketSync(`ws://${document.location.hostname}:1080`, console.log);
-    sync.connect(window.application);
-  }
-</script>
-<script>
-  if (!toggles.get('disallow-autostart')) {
-    start();
-  }
-
-  if ('serviceWorker' in navigator && toggles.get('allow-sw')) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/network-probe.js').then(function(registration) {
-        console.log('Service worker registered with scope: ', JSON.stringify(registration));
-        console.log('Service worker registered with scope: ', registration.scope);
-      }, function(err) {
-        console.log('ServiceWorker registration failed: ', err);
-      });
-    });
-  }
-</script>
-
+  </script>
 </html>

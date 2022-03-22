@@ -13,7 +13,13 @@ Copy to Google Drive and install manually.
 ## Server
 
 ```bash
-npx ts-node-dev ./src/server.ts
+cd server && npx ts-node-dev ./src/server.ts
+```
+
+### Run in browser
+
+```
+localhost:3000/views/index.html?use-local=true
 ```
 
 ## Basic idea

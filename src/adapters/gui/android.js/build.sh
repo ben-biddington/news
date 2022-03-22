@@ -6,6 +6,7 @@ npx tsc -p ./tsconfig.json --listEmittedFiles
 echo "Copying assets"
 
 cp "../../../adapters/web/gui/assets/dist/real.bundle.js" ./build/assets
+cp "../../../adapters/web/gui/assets/css/solid.css" ./build/assets
 
 echo "Compiling"
 

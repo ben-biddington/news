@@ -7,6 +7,7 @@ import { NewsSource } from './news-source';
 import { Bookmark } from './bookmark';
 import { NewsItem } from './news-item';
 import { DevNullLog, Log } from './logging/log';
+import { ReadLaterList } from './ports/read-later-list';
 
 export interface Clock {
   now: () => Date;
@@ -101,6 +102,10 @@ export class PortsBuilder {
     return new PortsBuilder({ ...this.ports, weather });
   }
 
+  withReadLaterList(readlaterList: ReadLaterList): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, readlaterList });
+  }
+
   build() {
     return this.ports;
   }
@@ -119,4 +124,5 @@ export type Ports = {
   readonly blockedHosts?: BlockedHosts;
   readonly youtube?: NewsSource;
   readonly clock?: Clock;
+  readonly readlaterList?: ReadLaterList;
 }

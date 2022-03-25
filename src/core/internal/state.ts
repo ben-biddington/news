@@ -5,4 +5,5 @@ export interface State {
   hackerNews: NewsItem[];
   lobsters: NewsItem[];
   youtube: NewsItem[];
+  readLater?: NewsItem[];
 }

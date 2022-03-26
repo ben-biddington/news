@@ -1,6 +1,6 @@
 import { NewsItem } from "../../../../src/core/news-item";
 import { Log } from "../../../../src/core/logging/log";
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 
 // [i] https://pouchdb.com/adapters.html#pouchdb_in_the_browser
 //

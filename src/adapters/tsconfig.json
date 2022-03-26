@@ -13,8 +13,9 @@
       "es2018",
       "DOM",
     ], 
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": [ "." ],
-  "exclude": [ "./web-worker", "./gui/react-native", "./database/internal/pouchdb" ]
+  "exclude": [ "./web-worker", "./gui/react-native", "./database/pouchdb" ]
 }

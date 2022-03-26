@@ -4,6 +4,8 @@ import { FetchBasedInternet } from "../../../../adapters/web/fetch-based-interne
 import { Application } from "../../../../core/application";
 import { Ports, PortsBuilder } from "../../../../core/ports";
 import { DeletedItems, DeletedItemsSeive } from "./storage/deleted-items";
+import { ReadLaterDatabase } from "../../../../adapters/database/pouchdb/read-later-database";
+import { DevNullLog } from "../../../../core/logging/log";
 
 export type Settings = {
   window: Window;
@@ -68,6 +70,7 @@ const createAdapters = ({
       .withDeletedItems({
         count: deletedItems.count,
       })
+      .withReadLaterList(new ReadLaterDatabase(new DevNullLog(), "read-later"))
       .build()
   );
 };

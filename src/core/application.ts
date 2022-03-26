@@ -8,7 +8,7 @@ import { Toggles } from "./toggles";
 import { ToggleSource } from "./toggle-source";
 import { WeatherUseCases } from "./internal/use-cases/weather-use-cases";
 import { NewsUseCases } from "./internal/use-cases/news-use-cases";
-import { Action } from "./actions";
+import { Action, setReadLaterList } from "./actions";
 
 export type Intervals = {
   statisticsEmitInSeconds: number;
@@ -84,6 +84,10 @@ export class Application {
       this._stats.lastUpdateAt = state.lastUpdatedDate;
       this._events.emit("stats", this._stats);
     });
+
+    this._ports.readlaterList
+      ?.list()
+      .then((result) => this.dispatch(setReadLaterList(result)));
   }
 
   pollEvery(milliseconds) {
@@ -101,6 +105,7 @@ export class Application {
   }
 
   subscribe(fn: (state: State) => void): () => void {
+    fn(this.state);
     return this._store.subscribe(fn);
   }
 

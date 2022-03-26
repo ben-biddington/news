@@ -11,7 +11,9 @@
     "jsx": "preserve",
     "lib": [
       "es2020",
-    ]
+    ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
   "include": [ "." ],
   "exclude": [ ]

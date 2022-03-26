@@ -3,7 +3,12 @@ import { EventEmitter } from "events";
 import { NewsItem } from "../news-item";
 import { State } from "./state";
 import { Clock, Ports } from "../ports";
-import { Action, addReadLater } from "../actions";
+import {
+  Action,
+  addReadLater,
+  deleteReadLater,
+  setReadLaterList,
+} from "../actions";
 import { produce } from "immer";
 
 export class Store {
@@ -89,7 +94,7 @@ export class Store {
 
   subscribe = (listener: (state: State) => void) =>
     autorun(() => {
-      listener(this.state);
+      listener(toJS(this.state));
     });
 
   async dispatch(action: Action): Promise<any> {
@@ -103,6 +108,34 @@ export class Store {
 
         this.state = produce(toJS(/*(1)*/ this.state), (draft) => {
           draft.readLater.push(action.payload);
+        });
+      });
+    }
+
+    if (deleteReadLater.match(action)) {
+      await this.ports.readlaterList.delete(action.payload);
+
+      runInAction(() => {
+        // (1) Error: [MobX] Observable arrays cannot be frozen.
+        // If you're passing observables to 3rd party component/function that calls Object.freeze,
+        // pass copy instead: toJS(observable)
+
+        this.state = produce(toJS(/*(1)*/ this.state), (draft) => {
+          draft.readLater = draft.readLater.filter(
+            (it) => it.id !== action.payload
+          );
+        });
+      });
+    }
+
+    if (setReadLaterList.match(action)) {
+      runInAction(() => {
+        // (1) Error: [MobX] Observable arrays cannot be frozen.
+        // If you're passing observables to 3rd party component/function that calls Object.freeze,
+        // pass copy instead: toJS(observable)
+
+        this.state = produce(toJS(/*(1)*/ this.state), (draft) => {
+          draft.readLater = action.payload;
         });
       });
     }

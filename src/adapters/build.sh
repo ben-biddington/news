@@ -35,13 +35,20 @@ echo -e "Building at <$PWD>\n"
 
 echo -e "Compiling typescript\n"
 
+echo -e "[ts] core\n"
 npx tsc -p src/core/tsconfig.json --listEmittedFiles
+
+echo -e "\n[ts] pouchdb\n"
+npx tsc -p src/adapters/database/pouchdb/tsconfig.json --listEmittedFiles
+
+echo -e "\n[ts] adapters\n"
 npx tsc -p src/adapters/tsconfig.json --listEmittedFiles
 # npx tsc -p src/adapters/web-worker/tsconfig.json --listEmittedFiles
-npx tsc -p src/adapters/database/pouchdb/tsconfig.json --listEmittedFiles
+
+echo -e "\n[ts] test\n"
 npx tsc -p test/tsconfig.json --listEmittedFiles
 
-cp ./src/adapters/web-worker/dist/network-probe.js ./src/adapters/web/gui/
+#cp ./src/adapters/web-worker/dist/network-probe.js ./src/adapters/web/gui/
 
 # Can't build rxjs with typescript@3.9.9
 #

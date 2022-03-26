@@ -8,16 +8,15 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
-    "lib": [
-      "es2018",
-      "DOM"
-    ],
+    "lib": ["es2018", "DOM"],
     "baseUrl": ".",
     "paths": {
-      "@test/*": [ "./*" ],
-      "@core/*": [ "../src/core/*" ]
-    }
+      "@test/*": ["./*"],
+      "@core/*": ["../src/core/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
-  "include": [ "." ],
-  "exclude": [ ]
+  "include": ["."],
+  "exclude": []
 }

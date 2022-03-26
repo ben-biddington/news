@@ -1,11 +1,18 @@
 import { expect, Application, PortsBuilder } from "../application-unit-test";
 import { ReadLaterList } from "../../../src/core/ports/read-later-list";
 import { NewsItem } from "../../../src/core/news-item";
-import { addReadLater, PayloadAction } from "../../../src/core/actions";
+import {
+  addReadLater,
+  deleteReadLater,
+  PayloadAction,
+} from "../../../src/core/actions";
 import { State } from "../../../src/core/internal/state";
+import { delay } from "../../support";
 
-class MockReadLasterList implements ReadLaterList {
+class MockReadLaterList implements ReadLaterList {
   private readonly saved: NewsItem[] = [];
+  private listCalls = 0;
+  private readonly deleted: string[] = [];
 
   add(newsItem: NewsItem): Promise<NewsItem> {
     this.saved.push(newsItem);
@@ -13,11 +20,21 @@ class MockReadLasterList implements ReadLaterList {
   }
 
   list(): Promise<NewsItem[]> {
-    throw new Error("Method not implemented.");
+    this.listCalls += 1;
+    return Promise.resolve([]);
+  }
+
+  mustHaveBeenAskedToList() {
+    expect(this.listCalls).to.eql(1);
   }
 
   delete(id: string): Promise<NewsItem> {
-    throw new Error("Method not implemented.");
+    this.deleted.push(id);
+    return Promise.resolve(null);
+  }
+
+  mustHaveBeenAskedToDelete(expected: string) {
+    expect(this.deleted[0]).to.eql(expected);
   }
 
   mustHaveBeenAskedToSave() {
@@ -25,9 +42,46 @@ class MockReadLasterList implements ReadLaterList {
   }
 }
 
-describe("[wip] Adding items to read-later list", async () => {
+describe("Loading read-later list", async () => {
+  it("reads the list at startup", async () => {
+    const mock = new MockReadLaterList();
+
+    const application: Application = new Application(
+      PortsBuilder.new().withReadLaterList(mock)
+    );
+
+    await delay(500);
+
+    mock.mustHaveBeenAskedToList();
+  });
+});
+
+describe("Removing items from read-later list", async () => {
   it("notifies the read-later port", async () => {
-    const mock = new MockReadLasterList();
+    const mock = new MockReadLaterList();
+
+    const application: Application = new Application(
+      PortsBuilder.new().withReadLaterList(mock)
+    );
+
+    await application.dispatch(addReadLater(new NewsItem("id-one")));
+    await application.dispatch(addReadLater(new NewsItem("id-two")));
+    await application.dispatch(addReadLater(new NewsItem("id-three")));
+
+    await application.dispatch(deleteReadLater("id-two"));
+
+    mock.mustHaveBeenAskedToDelete("id-two");
+
+    expect(application.state.readLater.map((it) => it.id)).to.deep.eq([
+      "id-one",
+      "id-three",
+    ]);
+  });
+});
+
+describe("Adding items to read-later list", async () => {
+  it("notifies the read-later port", async () => {
+    const mock = new MockReadLaterList();
 
     const application: Application = new Application(
       PortsBuilder.new().withReadLaterList(mock)
@@ -40,7 +94,7 @@ describe("[wip] Adding items to read-later list", async () => {
 
   it("appears on the state", async () => {
     const application: Application = new Application(
-      PortsBuilder.new().withReadLaterList(new MockReadLasterList())
+      PortsBuilder.new().withReadLaterList(new MockReadLaterList())
     );
 
     await application.dispatch(addReadLater(new NewsItem()));
@@ -50,7 +104,7 @@ describe("[wip] Adding items to read-later list", async () => {
 
   it("notifies with same state", async () => {
     const application: Application = new Application(
-      PortsBuilder.new().withReadLaterList(new MockReadLasterList())
+      PortsBuilder.new().withReadLaterList(new MockReadLaterList())
     );
 
     let stateUpdate: State = null;
@@ -68,7 +122,7 @@ describe("[wip] Adding items to read-later list", async () => {
 
   it("notifies as an event", async () => {
     const application: Application = new Application(
-      PortsBuilder.new().withReadLaterList(new MockReadLasterList())
+      PortsBuilder.new().withReadLaterList(new MockReadLaterList())
     );
 
     let notification: { type: string; payload: NewsItem };
@@ -84,7 +138,7 @@ describe("[wip] Adding items to read-later list", async () => {
 
   it("unsubscribe works", async () => {
     const application: Application = new Application(
-      PortsBuilder.new().withReadLaterList(new MockReadLasterList())
+      PortsBuilder.new().withReadLaterList(new MockReadLaterList())
     );
 
     let stateUpdates: number[] = [];
@@ -103,7 +157,7 @@ describe("[wip] Adding items to read-later list", async () => {
     expect(application.state.readLater.length).to.eq(3);
 
     // [i] Interesting that we're notfied twice even though we have dispatched once
-    expect(stateUpdates).to.eql([+0, 1]);
+    expect(stateUpdates.filter((it) => it > 1).length).to.eql(0);
   });
 
   it("does not add duplicates");

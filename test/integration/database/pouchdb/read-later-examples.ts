@@ -23,11 +23,11 @@ describe("[pouchdb] Can store news items", () => {
     return database.drop();
   });
 
-  it("can add entries and it sets id", async () => {
+  it("can add entries and it does not set id", async () => {
     const n: NewsItem = new NewsItem(undefined, "title", "url", new Date());
     const newEntry = await database.add(n);
 
-    expect(newEntry.id).to.not.be.undefined;
+    expect(newEntry.id).to.be.undefined;
     expect(newEntry.title).to.eql(n.title);
   });
 
@@ -46,12 +46,12 @@ describe("[pouchdb] Can store news items", () => {
 
   it("can delete entries", async () => {
     const newEntry = await database.add(
-      new NewsItem(undefined, "title", "url", new Date())
+      new NewsItem('id-a', "title", "url", new Date())
     );
 
     const deleted = await database.delete(newEntry.id);
 
-    expect(deleted.id).to.eql(newEntry.id);
+    expect((await database.list()).length).to.eql(0);
   });
 
   it("deleting unknow entry does nothing", async () => {

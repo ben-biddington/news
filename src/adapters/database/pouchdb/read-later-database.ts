@@ -1,36 +1,34 @@
 import { NewsItem } from "../../../../src/core/news-item";
 import { Log } from "../../../../src/core/logging/log";
-import PouchDB from 'pouchdb';
-
+import PouchDB from "pouchdb";
+import { ReadLaterList } from "../../../core/ports/read-later-list";
 // [i] https://pouchdb.com/adapters.html#pouchdb_in_the_browser
 //
 //  PouchDB is not a self-contained database; it is a CouchDB-style abstraction layer over other databases.
 //  By default, PouchDB ships with the IndexedDB adapter for the browser,
 //  and a LevelDB adapter in Node.js.
 //
-export class ReadLaterDatabase {
-  private readonly db: PouchDB.Database<NewsItem>;
+export class ReadLaterDatabase implements ReadLaterList {
+  private readonly db: PouchDB.Database<PouchDBNewsItem>;
+  private readonly log: Log;
+
   constructor(log: Log, fileName: string) {
+    this.log = log;
     this.db = new PouchDB(fileName);
   }
 
-  async add(newsItem: NewsItem): Promise<NewsItem> {
+  async add(newsItem: PouchDBNewsItem): Promise<NewsItem> {
     // [i] https://pouchdb.com/api.html
-    const result = await this.db.post(newsItem, {});
-
-    newsItem.id = result.id;
-
-    return newsItem;
+    newsItem._id = newsItem.id;
+    return this.db.post(newsItem, {}).then(() => newsItem);
   }
 
   async delete(id: string): Promise<NewsItem> {
-    const toDelete = await this.find(id);
+    const toDelete = await this.db
+      .get<PouchDBNewsItem>(id, {})
+      .catch(() => undefined);
 
-    if (!toDelete) return;
-
-    toDelete.id = toDelete._id;
-
-    await this.db.remove(toDelete);
+    toDelete && (await this.db.remove(toDelete));
 
     return toDelete;
   }
@@ -44,12 +42,6 @@ export class ReadLaterDatabase {
   async drop() {
     return this.db.destroy();
   }
-
-  private async find(id: string) {
-    try {
-      return await this.db.get(id);
-    } catch {
-      return undefined;
-    }
-  }
 }
+
+type PouchDBNewsItem = NewsItem & { _id?: string, _rev?: string };

@@ -104,8 +104,9 @@ export class Application {
     return this._store.subscribe(fn);
   }
 
-  dispatch(action: Action): Promise<void> {
-    return this._store.dispatch(action);
+  async dispatch(action: Action): Promise<void> {
+    await this._store.dispatch(action);
+    this._events.emit(action.type, action);
   }
 
   get state(): State {
@@ -311,6 +312,7 @@ export class Application {
   onAny(handler) {
     this._events.on("*", handler);
   }
+
   on(name, handler) {
     const names = Array.isArray(name) ? name : [name];
 

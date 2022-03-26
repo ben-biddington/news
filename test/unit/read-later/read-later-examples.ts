@@ -1,7 +1,7 @@
 import { expect, Application, PortsBuilder } from "../application-unit-test";
 import { ReadLaterList } from "../../../src/core/ports/read-later-list";
 import { NewsItem } from "../../../src/core/news-item";
-import { addReadLater } from "../../../src/core/actions";
+import { addReadLater, PayloadAction } from "../../../src/core/actions";
 import { State } from "../../../src/core/internal/state";
 
 class MockReadLasterList implements ReadLaterList {
@@ -66,6 +66,22 @@ describe("[wip] Adding items to read-later list", async () => {
     );
   });
 
+  it("notifies as an event", async () => {
+    const application: Application = new Application(
+      PortsBuilder.new().withReadLaterList(new MockReadLasterList())
+    );
+
+    let notification: { type: string; payload: NewsItem };
+
+    application.on(addReadLater.type, (e) => (notification = e));
+
+    // application.onAny((e) => console.log({ e }));
+
+    await application.dispatch(addReadLater(new NewsItem("id-one")));
+
+    expect(notification.payload.id).to.eql("id-one");
+  });
+
   it("unsubscribe works", async () => {
     const application: Application = new Application(
       PortsBuilder.new().withReadLaterList(new MockReadLasterList())
@@ -85,7 +101,7 @@ describe("[wip] Adding items to read-later list", async () => {
     await application.dispatch(addReadLater(new NewsItem("id-three")));
 
     expect(application.state.readLater.length).to.eq(3);
-    
+
     // [i] Interesting that we're notfied twice even though we have dispatched once
     expect(stateUpdates).to.eql([+0, 1]);
   });

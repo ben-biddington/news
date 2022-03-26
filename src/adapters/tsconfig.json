@@ -16,5 +16,5 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [ "." ],
-  "exclude": [ "./web-worker", "./gui/react-native" ]
+  "exclude": [ "./web-worker", "./gui/react-native", "./database/internal/pouchdb" ]
 }

@@ -3,6 +3,7 @@
 // [i] about:debugging#/runtime/this-firefox
 /// <reference no-default-lib="true"/>
 /// <reference lib="WebWorker" />
+//@ts-ignore
 const sw = self;
 sw.addEventListener('fetch', (event) => {
     console.log('[service-worker]', event);

@@ -16,6 +16,7 @@ import { show } from "../android/toast";
 import { State } from "../../../../../core/internal/state";
 import { Header } from "./components/header";
 import { LogEntry, LogPanel } from "./components/log-panel";
+import { MobileNewsPanel } from "./components/mobile-news-panel";
 
 export type Props = {
   application: Core;
@@ -26,6 +27,7 @@ export type Props = {
 export enum View {
   News,
   Logs,
+  ReadLater,
 }
 
 export const Application = ({ application }: Props) => {
@@ -36,6 +38,7 @@ export const Application = ({ application }: Props) => {
   const [hackerNews, setHackerNews] = createSignal<NewsItem[]>([]);
   const [state, setState] = createSignal<State>();
   const now = createMemo(() => application.now());
+  const [useMobileView, setUseMobileView] = createSignal<boolean>(true);
 
   const info = (m: string) =>
     setLogs((v) => {
@@ -82,6 +85,10 @@ export const Application = ({ application }: Props) => {
       });
     });
 
+    // application.toggles.get("use-mobile-view").then((toggle) => {
+    //   setUseMobileView(toggle);
+    // });
+
     return loadNews().then(() => {
       info("Loaded");
       show("Loaded");
@@ -123,8 +130,11 @@ export const Application = ({ application }: Props) => {
       <Header
         view={view()}
         logsCount={logs().length}
+        newsCount={newsItems().length}
+        readLaterCount={readLaterItems().length}
         viewChanged={(v) => setView(v)}
         onClearLogs={() => setLogs([])}
+        onReload={loadNews}
       />
 
       <div class="container-fluid">
@@ -153,28 +163,66 @@ export const Application = ({ application }: Props) => {
                                 }
                               />
                               <Match
-                                when={view() == View.News}
+                                when={
+                                  view() == View.News ||
+                                  view() == View.ReadLater
+                                }
                                 children={
                                   <>
-                                    <NewsPanel
-                                      allowReadLater={true}
-                                      allowLoading={true}
-                                      loading={loading()}
-                                      news={newsItems()}
-                                      readLater={readLaterItems()}
-                                      now={now()}
-                                      onDelete={application.hackerNews.delete}
-                                      onBlock={application.news.block}
-                                      onUnblock={application.news.unblock}
-                                      onBookmark={application.bookmarks.add}
-                                      onReload={loadNews}
-                                      onReadLater={(item) =>
-                                        application.dispatch(addReadLater(item))
+                                    <Show
+                                      when={useMobileView()}
+                                      children={
+                                        <>
+                                          <MobileNewsPanel
+                                            now={now()}
+                                            items={
+                                              view() == View.News
+                                                ? newsItems()
+                                                : readLaterItems()
+                                            }
+                                            onDelete={
+                                              application.hackerNews.delete
+                                            }
+                                            onBookmark={
+                                              application.bookmarks.add
+                                            }
+                                            onReadLater={(item) =>
+                                              application.dispatch(
+                                                addReadLater(item)
+                                              )
+                                            }
+                                          />
+                                        </>
                                       }
-                                      onDeleteReadLater={(id) =>
-                                        application.dispatch(
-                                          deleteReadLater(id)
-                                        )
+                                    />
+
+                                    <Show
+                                      when={false === useMobileView()}
+                                      children={
+                                        <>
+                                          <NewsPanel
+                                            allowReadLater={true}
+                                            allowLoading={true}
+                                            loading={loading()}
+                                            news={newsItems()}
+                                            readLater={readLaterItems()}
+                                            now={now()}
+                                            onDelete={
+                                              application.hackerNews.delete
+                                            }
+                                            onBlock={application.news.block}
+                                            onUnblock={application.news.unblock}
+                                            onBookmark={
+                                              application.bookmarks.add
+                                            }
+                                            onReload={loadNews}
+                                            onReadLater={(item) =>
+                                              application.dispatch(
+                                                addReadLater(item)
+                                              )
+                                            }
+                                          />
+                                        </>
                                       }
                                     />
                                   </>

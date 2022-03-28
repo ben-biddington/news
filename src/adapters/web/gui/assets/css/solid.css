@@ -21,7 +21,7 @@ span.youtube { color: red }
 
 /* body table {font-size: 20px !important;} */
 #news { border: 0px solid silver; padding:1px; font-size: 20px; }
-#news tr.news-item-row { 
+.news-item-row { 
   transition: all 1s;
 
   background-color: rgb(218, 224, 229, 0.2); 
@@ -39,7 +39,7 @@ span.youtube { color: red }
   background: linear-gradient(to bottom, rgb(218, 224, 229, 0.2), rgba(117, 67, 67, 0.0));
 }
 
-#news tr.news-item-row:hover { 
+.news-item-row:hover { 
   /* background-color: rgb(218, 224, 229, 0.2); transition: visibility 2s linear 0.7s, opacity 0.7s ease-in-out; */
 
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */

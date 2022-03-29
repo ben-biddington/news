@@ -5,7 +5,6 @@ export type Props = {
   items?: NewsItem[];
   now: Date;
   onDelete?: (id: string) => void;
-  onDeleteReadLater?: (id: string) => void;
   onBookmark?: (id: string) => void;
   onReadLater?: (item: NewsItem) => void;
 };

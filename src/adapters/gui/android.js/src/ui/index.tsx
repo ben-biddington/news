@@ -180,9 +180,15 @@ export const Application = ({ application }: Props) => {
                                                 ? newsItems()
                                                 : readLaterItems()
                                             }
-                                            onDelete={
-                                              application.hackerNews.delete
-                                            }
+                                            onDelete={(id: string) => {
+                                              view() == View.News
+                                                ? application.hackerNews.delete(
+                                                    id
+                                                  )
+                                                : application.dispatch(
+                                                    deleteReadLater(id)
+                                                  );
+                                            }}
                                             onBookmark={
                                               application.bookmarks.add
                                             }

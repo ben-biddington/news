@@ -152,13 +152,18 @@ export class Store {
 
     if (getPreview.match(action)) {
       const preview = await this.ports?.newsItemPreviewSource.get(
-        action.payload
+        action.payload.url
       );
 
       this.publish((draft) => {
-        const newsItem = draft.lobsters.find((it) => it.id === action.payload);
+        const newsItem = draft.lobsters.find(
+          (it) => it.id === action.payload.id
+        );
         if (newsItem) {
           newsItem.preview = preview;
+          console.log(`Fetched preview for <${action.payload.url}>`, {
+            preview,
+          });
         }
       });
     }

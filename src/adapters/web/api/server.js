@@ -27,6 +27,9 @@ const { apply: useWeather }
   = require('../../dist/adapters/web/api/internal/resources/weather-resources');
 const { init: initialiseMarineWeather, apply: useMarineWeather } 
   = require('../../dist/adapters/web/api/internal/resources/marine-weather-resources');
+  const { apply: usePreview } 
+  = require('../../dist/adapters/web/api/internal/resources/preview-resources');
+
 
 const fileUpload = require('express-fileupload');
 
@@ -65,6 +68,7 @@ const initialise = async () => {
   useDiary(app);
   useWeather(app);
   useMarineWeather(app)
+  usePreview(app)
   
   const { init: initDeleted } = require('./internal/resources/deleted-items-resource');
 

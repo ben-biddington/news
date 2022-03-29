@@ -31,9 +31,9 @@ describe("Previewing a news item", async () => {
       PortsBuilder.new().withPreviewSource(mock)
     );
 
-    await application.dispatch(getPreview("id-abc"));
+    await application.dispatch(getPreview(new NewsItem("id-abc", "", "http://abc")));
 
-    mock.mustHaveBeenAskedToPreview("id-abc");
+    mock.mustHaveBeenAskedToPreview("http://abc");
   });
 
   it("initial state", async () => {
@@ -50,7 +50,7 @@ describe("Previewing a news item", async () => {
     expect(application.state.lobsters.length).to.eql(2);
   });
 
-  it("assigns a preview", async () => {
+  it("assigns a preview to just the desired item", async () => {
     const mock = new MockPreviewSource({ summary: "A B C" });
 
     const application: Application = new Application(
@@ -63,7 +63,7 @@ describe("Previewing a news item", async () => {
       }
     );
 
-    await application.dispatch(getPreview("id-a"));
+    await application.dispatch(getPreview(new NewsItem("id-a")));
 
     expect(
       application.state.lobsters.find((it) => it.id === "id-a").preview.summary

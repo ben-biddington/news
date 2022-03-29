@@ -10,7 +10,7 @@ import {
 } from "solid-js";
 import { NewsItem } from "../../../../../core/news-item";
 import { Application as Core } from "../../../../../core/application";
-import { addReadLater, deleteReadLater } from "../../../../../core/actions";
+import { addReadLater, deleteReadLater, getPreview } from "../../../../../core/actions";
 import { NewsPanel } from "../../../../web/gui/flavours/solid/components/NewsPanel";
 import { show } from "../android/toast";
 import { State } from "../../../../../core/internal/state";
@@ -195,6 +195,11 @@ export const Application = ({ application }: Props) => {
                                             onReadLater={(item) =>
                                               application.dispatch(
                                                 addReadLater(item)
+                                              )
+                                            }
+                                            onPreview={(item) =>
+                                              application.dispatch(
+                                                getPreview(item)
                                               )
                                             }
                                           />

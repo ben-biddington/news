@@ -6,11 +6,13 @@ import { Ports, PortsBuilder } from "../../../../core/ports";
 import { DeletedItems, DeletedItemsSeive } from "./storage/deleted-items";
 import { ReadLaterDatabase } from "../../../../adapters/database/pouchdb/read-later-database";
 import { DevNullLog } from "../../../../core/logging/log";
+import { InternetPreviewSource } from "./internet-preview-source";
 
 export type Settings = {
   window: Window;
   hackerNewsBaseUrl?: string;
   lobstersBaseUrl: string;
+  previewServiceUrl: string;
 };
 
 export const createApplication = (settings: Settings) => {
@@ -22,6 +24,7 @@ export const createApplication = (settings: Settings) => {
 const createAdapters = ({
   hackerNewsBaseUrl,
   lobstersBaseUrl,
+  previewServiceUrl,
   window,
 }: Settings) => {
   const internet = new FetchBasedInternet();
@@ -71,6 +74,7 @@ const createAdapters = ({
         count: deletedItems.count,
       })
       .withReadLaterList(new ReadLaterDatabase(new DevNullLog(), "read-later"))
+      .withPreviewSource(new InternetPreviewSource({ previewServiceUrl }))
       .build()
   );
 };

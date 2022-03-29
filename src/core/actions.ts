@@ -5,3 +5,4 @@ export { Action, PayloadAction } from "@reduxjs/toolkit";
 export const addReadLater = createAction<NewsItem>("read-later/add");
 export const deleteReadLater = createAction<string>("read-later/delete");
 export const setReadLaterList = createAction<NewsItem[]>("read-later/set");
+export const getPreview = createAction<string>("preview/get");

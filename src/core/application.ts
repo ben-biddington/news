@@ -21,7 +21,8 @@ export interface Statistics {
 }
 
 export interface Options {
-  allowStats: boolean;
+  allowStats?: boolean;
+  initialState?: State;
 }
 
 export class Application {
@@ -55,7 +56,12 @@ export class Application {
     this._events = new CustomEventEmitter();
     this._log = this._ports.log?.info;
     this._settings = settings;
-    this._store = new Store(this._ports, this._events, this._ports.clock);
+    this._store = new Store(
+      this._ports,
+      this._events,
+      this._ports.clock,
+      opts.initialState
+    );
     this._stats = {
       intervals: {
         statisticsEmitInSeconds: 30,

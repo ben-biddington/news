@@ -7,6 +7,7 @@ import {
   Action,
   addReadLater,
   deleteReadLater,
+  getPreview,
   setReadLaterList,
 } from "../actions";
 import { produce } from "immer";
@@ -23,8 +24,17 @@ export class Store {
     readLater: [],
   };
 
-  constructor(ports: Ports, events: EventEmitter, clock: Clock) {
+  constructor(
+    ports: Ports,
+    events: EventEmitter,
+    clock: Clock,
+    initialState?: State
+  ) {
     this.ports = ports;
+
+    if (initialState) {
+      this.state = initialState;
+    }
 
     makeAutoObservable(this);
 
@@ -140,11 +150,32 @@ export class Store {
       });
     }
 
+    if (getPreview.match(action)) {
+      const preview = await this.ports?.newsItemPreviewSource.get(
+        action.payload
+      );
+
+      this.publish((draft) => {
+        const newsItem = draft.lobsters.find((it) => it.id === action.payload);
+        if (newsItem) {
+          newsItem.preview = preview;
+        }
+      });
+    }
+
     return Promise.resolve();
   }
 
+  private publish = (fn: (state: State) => void) =>
+    runInAction(() => {
+      this.state = produce(this.getState(), fn);
+    });
+
   getState() {
-    return this.state;
+    // (1) Error: [MobX] Observable arrays cannot be frozen.
+    // If you're passing observables to 3rd party component/function that calls Object.freeze,
+    // pass copy instead: toJS(observable)
+    return toJS(/*(1)*/ this.state);
   }
 
   get lobsters(): NewsItem[] {

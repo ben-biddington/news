@@ -1,13 +1,14 @@
-import { WeatherQuery } from './weather';
-import { ToggleSource, DevNullToggleSource } from './toggle-source';
-import { BlockedHosts } from './blocked-hosts';
-import { DevNullSeive } from './dev-null-seive';
-import { DevNullBlockedHosts } from './dev-null-blocked-hosts';
-import { NewsSource } from './news-source';
-import { Bookmark } from './bookmark';
-import { NewsItem } from './news-item';
-import { DevNullLog, Log } from './logging/log';
-import { ReadLaterList } from './ports/read-later-list';
+import { WeatherQuery } from "./weather";
+import { ToggleSource, DevNullToggleSource } from "./toggle-source";
+import { BlockedHosts } from "./blocked-hosts";
+import { DevNullSeive } from "./dev-null-seive";
+import { DevNullBlockedHosts } from "./dev-null-blocked-hosts";
+import { NewsSource } from "./news-source";
+import { Bookmark } from "./bookmark";
+import { NewsItem } from "./news-item";
+import { DevNullLog, Log } from "./logging/log";
+import { ReadLaterList } from "./ports/read-later-list";
+import { NewsItemPreviewSource } from "./ports/news-item-preview-source";
 
 export interface Clock {
   now: () => Date;
@@ -19,24 +20,24 @@ export class SystemClock implements Clock {
   }
 }
 
-type BookmarksPort = { 
+type BookmarksPort = {
   add: (Bookmark: Bookmark) => void;
   list: () => Promise<Bookmark[]>;
   del: (id: string) => Promise<void>;
-}
+};
 
-type NewsSourcePort = { 
+type NewsSourcePort = {
   list: () => Promise<NewsItem[]>;
   delete: (id: string) => Promise<void>;
-}
+};
 
-type DeletedItemsQuery = { 
+type DeletedItemsQuery = {
   count: () => Promise<number>;
-}
+};
 
-type Seive = { 
+type Seive = {
   apply: (newsItem) => Promise<string[]>;
-}
+};
 
 export class PortsBuilder {
   private ports: Ports;
@@ -50,17 +51,17 @@ export class PortsBuilder {
   }
 
   static new(): PortsBuilder {
-    return new PortsBuilder().
-      withLog(new DevNullLog()).
-      withToggles(new DevNullToggleSource()).
-      withSeive(new DevNullSeive()).
-      withBlockedHosts(new DevNullBlockedHosts()).
-      withClock(new SystemClock());
+    return new PortsBuilder()
+      .withLog(new DevNullLog())
+      .withToggles(new DevNullToggleSource())
+      .withSeive(new DevNullSeive())
+      .withBlockedHosts(new DevNullBlockedHosts())
+      .withClock(new SystemClock());
   }
 
   withLog(log: Log): PortsBuilder {
     return new PortsBuilder({ ...this.ports, log });
-  } 
+  }
 
   withToggles(toggles: ToggleSource): PortsBuilder {
     return new PortsBuilder({ ...this.ports, toggles });
@@ -68,7 +69,7 @@ export class PortsBuilder {
 
   withClock(clock: Clock): PortsBuilder {
     return new PortsBuilder({ ...this.ports, clock });
-  } 
+  }
 
   withBookmarks(bookmarks: BookmarksPort) {
     return new PortsBuilder({ ...this.ports, bookmarks });
@@ -106,6 +107,12 @@ export class PortsBuilder {
     return new PortsBuilder({ ...this.ports, readlaterList });
   }
 
+  withPreviewSource(
+    newsItemPreviewSource: NewsItemPreviewSource
+  ): PortsBuilder {
+    return new PortsBuilder({ ...this.ports, newsItemPreviewSource });
+  }
+
   build() {
     return this.ports;
   }
@@ -125,4 +132,5 @@ export type Ports = {
   readonly youtube?: NewsSource;
   readonly clock?: Clock;
   readonly readlaterList?: ReadLaterList;
-}
+  readonly newsItemPreviewSource?: NewsItemPreviewSource;
+};

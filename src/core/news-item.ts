@@ -1,4 +1,5 @@
 import { Cloneable } from './cloneable';
+import { NewsItemPreview } from './news-item-preview';
 
 export const ageSince = (item: NewsItem, when: Date) => {
   const moment = require('moment');
@@ -17,6 +18,7 @@ export class NewsItem extends Cloneable {
   new: boolean = false;
   hostIsBlocked: boolean = false;
   label: string = '';
+  preview?: NewsItemPreview;
 
   static blank(): NewsItem {
     return new NewsItem('', '', '', new Date());

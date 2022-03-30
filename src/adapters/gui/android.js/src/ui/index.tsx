@@ -1,5 +1,6 @@
 import { render } from "solid-js/web";
 import {
+  createEffect,
   createMemo,
   createSignal,
   For,
@@ -10,7 +11,12 @@ import {
 } from "solid-js";
 import { NewsItem } from "../../../../../core/news-item";
 import { Application as Core } from "../../../../../core/application";
-import { addReadLater, deleteReadLater, getPreview } from "../../../../../core/actions";
+import {
+  addReadLater,
+  deleteReadLater,
+  getPreview,
+  hidePreview,
+} from "../../../../../core/actions";
 import { NewsPanel } from "../../../../web/gui/flavours/solid/components/NewsPanel";
 import { show } from "../android/toast";
 import { State } from "../../../../../core/internal/state";
@@ -61,12 +67,7 @@ export const Application = ({ application }: Props) => {
 
     application.on(["lobsters-items-loaded"], (e) => setLobstersNews(e.items));
     application.on(["hacker-news-items-loaded"], (e) => setHackerNews(e.items));
-    application.on(["lobsters-item-deleted"], (e) =>
-      setLobstersNews(lobstersNews().filter((it) => it.id != e.id))
-    );
-    application.on(["hacker-news-item-deleted"], (e) =>
-      setHackerNews(hackerNews().filter((it) => it.id != e.id))
-    );
+   
     application.on(addReadLater.type, () => {
       info("Added item to read later");
       show("Added to read later");
@@ -112,7 +113,11 @@ export const Application = ({ application }: Props) => {
   };
 
   const newsItems = createMemo<NewsItem[]>(() => {
-    const result: NewsItem[] = lobstersNews().concat(hackerNews());
+    const result: NewsItem[] = lobstersNews()
+      .concat(hackerNews())
+      .filter((it) => it.deleted === false);
+
+    console.log("updating", result.length);
 
     return result.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -125,6 +130,8 @@ export const Application = ({ application }: Props) => {
     );
   });
 
+  createEffect(() => console.log(loading()));
+
   return (
     <>
       <Header
@@ -135,6 +142,7 @@ export const Application = ({ application }: Props) => {
         viewChanged={(v) => setView(v)}
         onClearLogs={() => setLogs([])}
         onReload={loadNews}
+        loading={loading()}
       />
 
       <div class="container-fluid">
@@ -200,6 +208,11 @@ export const Application = ({ application }: Props) => {
                                             onPreview={(item) =>
                                               application.dispatch(
                                                 getPreview(item)
+                                              )
+                                            }
+                                            onHidePreview={(item) =>
+                                              application.dispatch(
+                                                hidePreview(item)
                                               )
                                             }
                                           />

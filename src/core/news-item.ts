@@ -18,7 +18,7 @@ export class NewsItem extends Cloneable {
   new: boolean = false;
   hostIsBlocked: boolean = false;
   label: string = '';
-  preview?: NewsItemPreview;
+  preview: NewsItemPreview;
 
   static blank(): NewsItem {
     return new NewsItem('', '', '', new Date());
@@ -36,7 +36,7 @@ export class NewsItem extends Cloneable {
     this.url = url;
     this.date = date;
     this.deleted = false;
-    this.new = false
+    this.new = false;
   }
 
   get host() { return require('url').parse(this.url || '').hostname || ''; }

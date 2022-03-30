@@ -8,6 +8,7 @@ import {
   addReadLater,
   deleteReadLater,
   getPreview,
+  hidePreview,
   setReadLaterList,
 } from "../actions";
 import { produce } from "immer";
@@ -156,14 +157,62 @@ export class Store {
       );
 
       this.publish((draft) => {
-        const newsItem = draft.lobsters.find(
+        const newsItem = (draft.lobsters.concat(draft.hackerNews)).find(
           (it) => it.id === action.payload.id
         );
         if (newsItem) {
+          preview.visible = true;
           newsItem.preview = preview;
-          console.log(`Fetched preview for <${action.payload.url}>`, {
-            preview,
-          });
+
+          draft.lobsters = draft.lobsters.filter(
+            (it) => it.id !== action.payload.id
+          );
+
+          draft.hackerNews = draft.hackerNews.filter(
+            (it) => it.id !== action.payload.id
+          );
+
+          const newValue = new NewsItem(
+            newsItem.id,
+            newsItem.title,
+            newsItem.url,
+            newsItem.date
+          )
+            .withUrl(newsItem.url)
+            .labelled(newsItem.label);
+
+          newValue.preview = preview;
+
+          draft.lobsters.push(newValue);
+        }
+      });
+    }
+
+    if (hidePreview.match(action)) {
+      this.publish((draft) => {
+        const newsItem = (draft.lobsters.concat(draft.hackerNews)).find(
+          (it) => it.id === action.payload.id
+        );
+
+        if (newsItem?.preview) {
+          newsItem.preview.visible = false;
+
+          draft.lobsters = draft.lobsters.filter(
+            (it) => it.id !== action.payload.id
+          );
+
+          const newValue = new NewsItem(
+            newsItem.id,
+            newsItem.title,
+            newsItem.url,
+            newsItem.date
+          )
+            .withUrl(newsItem.url)
+            .labelled(newsItem.label);
+
+          newValue.preview = newsItem.preview;
+
+          draft.lobsters.push(newValue);
         }
       });
     }

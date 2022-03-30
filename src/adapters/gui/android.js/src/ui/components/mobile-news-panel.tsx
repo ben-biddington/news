@@ -1,4 +1,11 @@
-import { For } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  mergeProps,
+  For,
+  Index,
+  Show,
+} from "solid-js";
 import { ageSince, NewsItem } from "../../../../../../core/news-item";
 
 export type Props = {
@@ -8,12 +15,13 @@ export type Props = {
   onBookmark?: (id: string) => void;
   onReadLater?: (item: NewsItem) => void;
   onPreview?: (item: NewsItem) => void;
+  onHidePreview?: (item: NewsItem) => void;
 };
 
 export const MobileNewsPanel = (props: Props) => {
   return (
     <>
-      <For
+      <Index
         each={props.items}
         children={(item) => (
           <>
@@ -25,12 +33,60 @@ export const MobileNewsPanel = (props: Props) => {
                 <div class="d-flex justify-content-between bg-white align-items-center">
                   <div class="p-1">
                     <div class="p-1" style="padding-top:0.750rem">
-                      <a href={item.url}>{item.title}</a>
+                      <a href={item().url}>{item().title}</a>
                     </div>
-                    <p style="font-size:0.5em">{item.preview?.summary}</p>
+                    <Show
+                      when={item().preview && item().preview.visible}
+                      children={
+                        <>
+                          <div class="card" style="width: 18rem;">
+                            <div class="card-header p-0 d-flex justify-content-end">
+                              {/* Hide preview */}
+                              <button type="button" class="btn btn-light" onClick={() => props.onHidePreview(item())}>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  fill="currentColor"
+                                  class="bi bi-x-square"
+                                  viewBox="0 0 16 16"
+                                >
+                                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                </svg>
+                              </button>
+                            </div>
+                            <Show
+                              when={item().preview?.image}
+                              children={
+                                <>
+                                  <img
+                                    class="card-img-top"
+                                    src={item().preview?.image}
+                                    alt="Card image cap"
+                                  />
+                                </>
+                              }
+                            />
+
+                            <div class="card-body">
+                              <h5 class="card-title">{item().title}</h5>
+                              <p class="card-text">{item().preview?.summary}</p>
+                              <a
+                                href={item().url}
+                                class="btn btn-primary"
+                                target="_blank"
+                              >
+                                Read
+                              </a>
+                            </div>
+                          </div>
+                        </>
+                      }
+                    />
                   </div>
                   <div class="p-1">
-                    <DeleteButton onDelete={() => props.onDelete(item.id)} />
+                    <DeleteButton onDelete={() => props.onDelete(item().id)} />
                   </div>
                 </div>
 
@@ -39,22 +95,27 @@ export const MobileNewsPanel = (props: Props) => {
                     <div class="d-flex flex-row">
                       <div class="ml-0 pl-0 p-1">
                         {/* Source */}
-                        <span class={`source ${item.label}`}>
-                          <img src={sourceIcon(item)} width={16} height={16} />
+                        <span class={`source ${item().label}`}>
+                          <img
+                            src={sourceIcon(item())}
+                            width={16}
+                            height={16}
+                          />
                         </span>
                       </div>
                       <div class="p-1">
                         {/* Host */}
-                        <span class="badge badge-secondary">{item.host}</span>
+                        <span class="badge badge-secondary">{item().host}</span>
                       </div>
                       <div class="p-1">
                         {/* Age */}
-                        <span>{ageSince(item, props.now)}</span>
+                        <span>{ageSince(item(), props.now)}</span>
                       </div>
                     </div>
                   </div>
                   <div class="p-1">
-                    <button type="button" class="btn btn-light">
+                    {/* Block host */}
+                    {/* <button type="button" class="btn btn-light">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -65,13 +126,14 @@ export const MobileNewsPanel = (props: Props) => {
                       >
                         <path d="M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098L9.05.435zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                       </svg>
-                    </button>
+                    </button> */}
 
                     {/* Preview */}
                     <button
                       type="button"
                       class="btn btn-light"
-                      onclick={() => props.onPreview(item)}
+                      onclick={() => props.onPreview(item())}
+                      title="Preview"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +152,7 @@ export const MobileNewsPanel = (props: Props) => {
                     <button
                       type="button"
                       class="btn btn-light"
-                      onclick={() => props.onReadLater(item)}
+                      onclick={() => props.onReadLater(item())}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -105,10 +167,10 @@ export const MobileNewsPanel = (props: Props) => {
                     </button>
 
                     {/* Bookmark */}
-                    <button
+                    {/* <button
                       type="button"
                       class="btn btn-light"
-                      onclick={() => props.onBookmark(item.id)}
+                      onclick={() => props.onBookmark(item().id)}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +183,7 @@ export const MobileNewsPanel = (props: Props) => {
                           d="M4 0a2 2 0 0 0-2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4zm4 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"
                         ></path>
                       </svg>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
@@ -156,7 +218,7 @@ const DeleteButton = (props: { onDelete: (id: string) => void }) => (
   </>
 );
 
-const sourceIcon = (item) => {
+const sourceIcon = (item: NewsItem) => {
   const labels = {
     lobsters: "https://lobste.rs/apple-touch-icon-144.png",
     hn: "https://news.ycombinator.com/favicon.ico",

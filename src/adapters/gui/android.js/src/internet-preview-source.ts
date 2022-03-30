@@ -1,5 +1,6 @@
 import { NewsItemPreview } from "../../../../core/news-item-preview";
 import { NewsItemPreviewSource } from "../../../../core/ports/news-item-preview-source";
+import { hostName } from "../../../../core/url";
 
 export type Options = {
   previewServiceUrl?: string;
@@ -37,20 +38,24 @@ export class InternetPreviewSource implements NewsItemPreviewSource {
       request.addEventListener("error", reject);
     });
 
-    const preview: NewsItemPreview = this.parse(request.responseText);
+    const preview: NewsItemPreview = this.parse(url, request.responseText);
 
     return Promise.resolve(preview);
   };
 
-  private parse = (html: string) => {
+  private parse = (url: string, html: string) => {
     //@ts-ignore
     const preview = document.implementation.createHTMLDocument(html);
     preview.write(html);
     preview.close();
 
     const title = preview.querySelector("p")?.textContent;
-    const firstImage = preview.querySelectorAll("img")[0];
+    let firstImage = preview.querySelectorAll("img")[0]?.src;
 
-    return { summary: title, image: firstImage?.src };
+    if (firstImage && firstImage.startsWith("/")) {
+      firstImage = hostName(url) + firstImage;
+    }
+
+    return { summary: title, image: firstImage };
   };
 }

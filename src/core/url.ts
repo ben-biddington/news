@@ -1,0 +1,1 @@
+export const hostName = (url:string) => new URL(url).hostname;

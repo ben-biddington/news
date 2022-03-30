@@ -1,6 +1,5 @@
 import { View } from "../index";
 import { Show } from "solid-js";
-import { Button } from "selenium-webdriver";
 
 export type Props = {
   view: View;
@@ -10,6 +9,7 @@ export type Props = {
   readLaterCount?: number;
   onClearLogs: () => void;
   onReload?: () => void;
+  loading: boolean;
 };
 
 export const Header = (props: Props) => {
@@ -37,6 +37,16 @@ export const Header = (props: Props) => {
               <path d="M6.641 11.671V8.843h1.57l1.498 2.828h1.314L9.377 8.665c.897-.3 1.427-1.106 1.427-2.1 0-1.37-.943-2.246-2.456-2.246H5.5v7.352h1.141zm0-3.75V5.277h1.57c.881 0 1.416.499 1.416 1.32 0 .84-.504 1.324-1.386 1.324h-1.6z" />
             </svg>
           </button>
+          <Show
+            when={props.loading === true}
+            children={
+              <>
+                <span class="badge badge-success ml-1" role="alert">
+                  loading
+                </span>
+              </>
+            }
+          />
         </div>
 
         <button

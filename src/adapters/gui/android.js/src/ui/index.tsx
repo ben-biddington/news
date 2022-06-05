@@ -67,7 +67,7 @@ export const Application = ({ application }: Props) => {
 
     application.on(["lobsters-items-loaded"], (e) => setLobstersNews(e.items));
     application.on(["hacker-news-items-loaded"], (e) => setHackerNews(e.items));
-   
+
     application.on(addReadLater.type, () => {
       info("Added item to read later");
       show("Added to read later");
@@ -166,6 +166,19 @@ export const Application = ({ application }: Props) => {
                                 when={view() == View.Logs}
                                 children={
                                   <>
+                                    <div
+                                      class="btn-group"
+                                      role="group"
+                                      aria-label="Basic example"
+                                    >
+                                      <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        onClick={() => setLogs([])}
+                                      >
+                                        Clear
+                                      </button>
+                                    </div>
                                     <LogPanel logs={logs()} />
                                   </>
                                 }
@@ -200,6 +213,15 @@ export const Application = ({ application }: Props) => {
                                             onBookmark={
                                               application.bookmarks.add
                                             }
+                                            isOnReadLaterList={(
+                                              item: NewsItem
+                                            ) => {
+                                              return (
+                                                readLaterItems().find(
+                                                  (it) => it.id === item.id
+                                                ) !== undefined
+                                              );
+                                            }}
                                             onReadLater={(item) =>
                                               application.dispatch(
                                                 addReadLater(item)

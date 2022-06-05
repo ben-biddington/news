@@ -17,6 +17,7 @@ export class NewsItem extends Cloneable {
   deleted: boolean = false;
   new: boolean = false;
   hostIsBlocked: boolean = false;
+  readLater: boolean = false;
   label: string = '';
   preview: NewsItemPreview;
 

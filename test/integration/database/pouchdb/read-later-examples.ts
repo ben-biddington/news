@@ -31,6 +31,16 @@ describe("[pouchdb] Can store news items", () => {
     expect(newEntry.title).to.eql(n.title);
   });
 
+  it("returns true when entry exists", async () => {
+    await database.add(new NewsItem("id-1"));
+
+    expect(await database.contains("id-1")).to.be.true;
+  });
+
+  it("returns false when entry does not exist", async () => {
+    expect(await database.contains("xxx")).to.be.false;
+  });
+
   it("can list all entries", async () => {
     await database.add(new NewsItem(undefined, "A", "url", new Date()));
     await database.add(new NewsItem(undefined, "B", "url", new Date()));
@@ -46,7 +56,7 @@ describe("[pouchdb] Can store news items", () => {
 
   it("can delete entries", async () => {
     const newEntry = await database.add(
-      new NewsItem('id-a', "title", "url", new Date())
+      new NewsItem("id-a", "title", "url", new Date())
     );
 
     const deleted = await database.delete(newEntry.id);

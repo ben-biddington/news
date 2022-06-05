@@ -23,6 +23,10 @@ export class ReadLaterDatabase implements ReadLaterList {
     return this.db.post(newsItem, {}).then(() => newsItem);
   }
 
+  async contains(id: string): Promise<boolean> {
+    return (await this.db.get(id).catch(() => undefined))?.id === id;
+  }
+
   async delete(id: string): Promise<NewsItem> {
     const toDelete = await this.db
       .get<PouchDBNewsItem>(id, {})

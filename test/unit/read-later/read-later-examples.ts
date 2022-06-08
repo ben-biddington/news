@@ -10,6 +10,9 @@ import { State } from "../../../src/core/internal/state";
 import { delay } from "../../support";
 
 class MockReadLaterList implements ReadLaterList {
+  contains(id: string): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
   private readonly saved: NewsItem[] = [];
   private listCalls = 0;
   private readonly deleted: string[] = [];

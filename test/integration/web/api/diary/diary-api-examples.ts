@@ -76,7 +76,7 @@ describe('Can delete diary entries', async () => {
   });
 });
 
-describe('Can add attachments', async () => {
+describe.only('Can add attachments', async () => {
   let entryId = 0;
 
   before(async () => {

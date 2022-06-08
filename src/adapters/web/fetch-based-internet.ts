@@ -29,28 +29,27 @@ export class FetchBasedInternet implements Internet {
       then(async reply => ({ statusCode: reply.status, headers, body: (await reply.text()) }));
   }
 
-  private async postMultipart(url, headers, body) : Promise<Response> {
+  private async postMultipart(url, headers, body /* Blob -- https://developer.mozilla.org/en-US/docs/Web/API/Blob  */) : Promise<Response> {
     this.log.info(`[FetchBasedInternet] Sending file to <${url}>`);
-    this.log.info(`[FetchBasedInternet] Sending body <${JSON.stringify(body, null, 2)}>`);
+    this.log.info(`[FetchBasedInternet] Sending file size='${body.size}', type='${body.type}' `);
 
-    const formData = new FormData();
+    const custom = new CustomFormData();
+    await custom.appendFile("attachment", "image.png", body);
 
-    formData.append("attachment", body);
+    const newBlob = custom.toBlob(); 
+    this.log.info(`[FetchBasedInternet] Blob size='${newBlob.size}', type='${newBlob.type}' `);
 
-    // [i] Let headers be auto-generated so that we get
-    //
-    //  multipart/form-data; boundary=--------------------------710326324172122735427581
-    //
-
-    //@ts-ignore
-    const reply = await fetch(url, { headers: {}, method: 'post', body: formData }).
+    return await fetch(
+      url, 
+      { 
+        headers: { 'Content-Type': `multipart/form-data; boundary=${custom.boundary}` }, 
+        method: 'post', 
+        body: newBlob 
+      }).
       then(async reply => ({ statusCode: reply.status, headers, body: (await reply.text()) }));
-
-    return reply;
   }
 
   async put(url, headers, body) {
-    //@ts-ignore
     return fetch(url, { headers, method: 'put', body: JSON.stringify(body) }).
       then(async reply => {
         const body = await reply.text();
@@ -71,4 +70,48 @@ export class FetchBasedInternet implements Internet {
       body 
     };
   };
+}
+
+//
+// 5-Jun-2022 -- Present for Timmy.
+// 
+// Represents sending a single file by "multipart/form-data". 
+// This means you could send additional headers along with the file. 
+//
+// Usage:
+//
+//  const custom = new CustomFormData();
+//  await custom.appendFile("attachment", "image.png", body);
+//
+//  const reply = await fetch(
+//    url, 
+//    { 
+//      headers: { 'Content-Type': `multipart/form-data; boundary=${custom.boundary}` }, 
+//      method: 'post', 
+//      body: newBlob 
+//    });
+//
+class CustomFormData {
+  private readonly data: Array<BlobPart> = [];
+
+  async appendFile(name: string, fileName: string, blob: Blob) {
+    var enc = new TextEncoder();
+    
+    this.data.push(
+      enc.encode(
+      `--${this.boundary}\r\n` + 
+      `Content-Disposition: form-data; name="${name}"; filename="${fileName}"\r\n` + 
+      `Content-Type: ${blob.type}\r\n\r\n`
+      ),
+      new Uint8Array(await blob.arrayBuffer()),
+      enc.encode(`\r\n--${this.boundary}--\r\n`))
+  }
+
+  toBlob() {
+    return new Blob(this.data)
+  }
+
+  get boundary() {
+    return `---------------------------17803515373095409092864358501`; //@todo: how do you decide what value to give this?
+  }
 }

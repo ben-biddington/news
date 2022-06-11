@@ -1,4 +1,4 @@
-import { MockListener, Application, PortsBuilder, NewsItem, MockSettings, MockLobsters } from '../application-unit-test';
+import { MockListener, Application, PortsBuilder, NewsItem, MockSettings, MockLobsters, expect } from '../application-unit-test';
 import { MockBlockedHosts } from '../../support/mock-blocked-hosts';
 
 describe('Blocking a host', async () => {
@@ -28,22 +28,26 @@ describe('Blocking a host', async () => {
       type: "news-items-modified",
       items: [
         {
-          "id": "id",
-          "title": "title",
-          "url": "https://bbc.co.uk/example",
-          "deleted": false,
-          "new": false,
-          "hostIsBlocked": true,
-          "label": "lobsters"
+          date: undefined,
+          id: "id",
+          title: "title",
+          url: "https://bbc.co.uk/example",
+          deleted: false,
+          new: false,
+          hostIsBlocked: true,
+          readLater: false,
+          label: "lobsters",
         },
         {
-          "id": "id-1",
-          "title": "title-1",
-          "url": "https://rnz.co.nz/news",
-          "deleted": false,
-          "new": false,
-          "hostIsBlocked": false,
-          "label": "lobsters"
+          date: undefined,
+          id: "id-1",
+          title: "title-1",
+          url: "https://rnz.co.nz/news",
+          deleted: false,
+          new: false,
+          hostIsBlocked: false,
+          readLater: false,
+          label: "lobsters"
         }
       ]
     });
@@ -96,13 +100,15 @@ describe('Unblocking a host', async () => {
       type: "news-items-modified",
       items: [
         {
-          "id": "id",
-          "title": "title",
-          "url": "https://bbc.co.uk/example",
-          "deleted": false,
-          "new": false,
-          "hostIsBlocked": false,
-          "label": "lobsters"
+          date: undefined,
+          readLater: false,
+          id: "id",
+          title: "title",
+          url: "https://bbc.co.uk/example",
+          deleted: false,
+          new: false,
+          hostIsBlocked: false,
+          label: "lobsters"
         }
       ]  
     });

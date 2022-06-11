@@ -43,10 +43,10 @@ describe('Viewing weather', async () => {
       weather:
       [
         {
-          date:"2021-04-05T20:53:46.142Z",
+          date: new Date("2021-04-05T20:53:46.142Z"),
           condition:"Windy",
-          sunrise:"2021-04-05T20:53:46.142Z",
-          sunset:"2021-04-05T20:53:46.142Z",
+          sunrise:new Date("2021-04-05T20:53:46.142Z"),
+          sunset:new Date("2021-04-05T20:53:46.142Z"),
           text:"a",
           temperature:
           {

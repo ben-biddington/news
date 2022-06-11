@@ -19,6 +19,9 @@ describe('Viewing hacker news', async () => {
         "type": "hacker-news-items-loaded",
         "items": [
           {
+            date: undefined,
+            url: undefined,
+            readLater: false,
             "id": "",
             "title": "One",
             "deleted": false,
@@ -27,6 +30,9 @@ describe('Viewing hacker news', async () => {
             "label": "hn"
           },
           {
+            date: undefined,
+            url: undefined,
+            readLater: false,
             "id": "",
             "title": "Two",
             "deleted": false,

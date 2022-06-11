@@ -164,11 +164,11 @@ export class Store {
           preview.visible = true;
           newsItem.preview = preview;
 
-          draft.lobsters = draft.lobsters.filter(
+          draft.lobsters = draft.lobsters?.filter(
             (it) => it.id !== action.payload.id
           );
 
-          draft.hackerNews = draft.hackerNews.filter(
+          draft.hackerNews = draft.hackerNews?.filter(
             (it) => it.id !== action.payload.id
           );
 

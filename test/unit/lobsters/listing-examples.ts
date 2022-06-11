@@ -56,7 +56,7 @@ describe('Listing lobsters news', async () => {
           "statisticsEmitInSeconds": 30,
           "updateIntervalInSeconds": null
         },
-        lastUpdateAt: "2021-03-31T11:00:00.000Z"
+        lastUpdateAt: new Date("2021-03-31T11:00:00.000Z")
       }
     );
 
@@ -65,6 +65,8 @@ describe('Listing lobsters news', async () => {
         "type": "lobsters-items-loaded",
         "items": [
           {
+            date: undefined,
+            readLater: false,
             "id": "id-1",
             "title": "Title 1",
             "url": "http://xyz",

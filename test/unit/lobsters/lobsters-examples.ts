@@ -51,14 +51,17 @@ describe('Deleting lobsters news items', () => {
     });
 
     notifications.mustHave({
-      type: 'news-items-modified',
-      items: [
+      "type": "news-items-modified",
+      "items": [
         {
+          date: undefined,
+          url: undefined,
           "id": "b",
           "title": "B",
           "deleted": false,
           "new": false,
           "hostIsBlocked": false,
+          "readLater": false,
           "label": "lobsters"
         }
       ]
@@ -124,6 +127,9 @@ describe('Removing lobsters news items', () => {
       type: "news-items-modified",
       items: [
         {
+          date: undefined,
+          url: undefined,
+          readLater: false,
           "id": "item-b",
           "title": "B",
           "deleted": false,

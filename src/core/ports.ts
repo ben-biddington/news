@@ -113,6 +113,10 @@ export class PortsBuilder {
     return new PortsBuilder({ ...this.ports, newsItemPreviewSource });
   }
 
+  with(ports: Partial<Ports>) {
+    return new PortsBuilder({ ...this.ports, ...ports })
+  }
+
   build() {
     return this.ports;
   }

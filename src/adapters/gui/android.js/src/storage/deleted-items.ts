@@ -27,19 +27,29 @@ export class DeletedItemsSeive {
   }
 }
 
+export interface Clock {
+  now: () => Date;
+}
+
+class SystemClock implements Clock {
+  now = () => new Date();
+}
+
 export class DeletedItems {
   private readonly localStorage: Storage;
+  private readonly clock: Clock;
   private KEY = "news/deleted-items";
 
-  constructor(window: Window) {
-    this.localStorage = window.localStorage;
+  constructor(localStorage: Storage, clock: Clock = new SystemClock()) {
+    this.localStorage = localStorage;
+    this.clock = clock;
   }
 
   add = (id: string) => {
     const currentValue = this.items;
 
     currentValue.push({
-      date: new Date(),
+      date: this.clock.now(),
       id,
     });
 
@@ -50,7 +60,7 @@ export class DeletedItems {
 
   count = () => Promise.resolve(this.items.length);
 
-  private get items(): DeletedItem[] {
+  get items(): DeletedItem[] {
     return (
       (JSON.parse(this.localStorage.getItem(this.KEY)) as DeletedItem[]) || []
     );

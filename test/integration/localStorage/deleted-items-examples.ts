@@ -12,7 +12,6 @@ class MockStorage implements Storage {
   }
   
   getItem(key: string): string {
-    console.log('getting item', key, { item: this.map[key]});
     return this.map[key] || null;
   }
 
@@ -25,7 +24,6 @@ class MockStorage implements Storage {
   }
 
   setItem(key: string, value: string): void {
-    console.log('adding item', value);
     this.map[key] = value;
   }
 }
@@ -41,21 +39,31 @@ describe.only('Deleted items clears old entries', () => {
   it('clears items older than one week each time you add a new entry', () => {
     const today = new Date("16-June-2022");
     const yesterday = addDays(today, -1);
-    const oneWeekAgo = addDays(today, -7);
+    const twoDaysAgo = addDays(today, -2);
+    const sevenDaysAgo = addDays(today, -7);
+    const eightDaysAgo = addDays(today, -8);
 
     const storage = new MockStorage();
     const clock = new MockClock();
 
     const deletedItems = new DeletedItems(storage, clock);
 
-    clock.nowIs(oneWeekAgo);
+    clock.nowIs(eightDaysAgo);
 
     deletedItems.add('A');
     
-    clock.nowIs(yesterday);
+    clock.nowIs(sevenDaysAgo);
 
     deletedItems.add('B');
 
-    expect(deletedItems.items.map(it => it.id)).to.eql(['B']);
+    clock.nowIs(twoDaysAgo);
+
+    deletedItems.add('C');
+
+    clock.nowIs(yesterday);
+
+    deletedItems.add('D');
+
+    expect(deletedItems.items.map(it => it.id)).to.eql(['B', 'C', 'D']);
   });
 })

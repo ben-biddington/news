@@ -1,4 +1,5 @@
 import { NewsItem } from "../../../../../core/news-item";
+import { addDays, isAfter } from 'date-fns';
 
 export class DeletedItemsSeive {
   private readonly localStorage: Storage;
@@ -46,6 +47,8 @@ export class DeletedItems {
   }
 
   add = (id: string) => {
+    this.prune();
+
     const currentValue = this.items;
 
     currentValue.push({
@@ -57,6 +60,13 @@ export class DeletedItems {
 
     return Promise.resolve();
   };
+
+  private prune = () => {
+    const sevenDaysAgo = addDays(this.clock.now(), -7);
+    const filtered = this.items.filter(it => isAfter(new Date(it.date), sevenDaysAgo));
+
+    this.localStorage.setItem(this.KEY, JSON.stringify(filtered));
+  }
 
   count = () => Promise.resolve(this.items.length);
 

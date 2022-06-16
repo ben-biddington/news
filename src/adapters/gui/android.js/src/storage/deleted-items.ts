@@ -1,5 +1,6 @@
 import { NewsItem } from "../../../../../core/news-item";
 import { addDays, isAfter } from 'date-fns';
+import { Log } from "../../../../../core/logging/log";
 
 export class DeletedItemsSeive {
   private readonly localStorage: Storage;
@@ -37,11 +38,13 @@ class SystemClock implements Clock {
 }
 
 export class DeletedItems {
+  private readonly log: Log;
   private readonly localStorage: Storage;
   private readonly clock: Clock;
   private KEY = "news/deleted-items";
 
-  constructor(localStorage: Storage, clock: Clock = new SystemClock()) {
+  constructor(log: Log, localStorage: Storage, clock: Clock = new SystemClock()) {
+    this.log = log;
     this.localStorage = localStorage;
     this.clock = clock;
   }
@@ -57,6 +60,8 @@ export class DeletedItems {
     });
 
     this.localStorage.setItem(this.KEY, JSON.stringify(currentValue));
+
+    this.log.info(`[DeletedItems] There are now <${currentValue.length}> deleted items`);
 
     return Promise.resolve();
   };

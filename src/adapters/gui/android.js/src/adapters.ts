@@ -5,7 +5,7 @@ import { Application } from "../../../../core/application";
 import { Ports, PortsBuilder } from "../../../../core/ports";
 import { DeletedItems, DeletedItemsSeive } from "./storage/deleted-items";
 import { ReadLaterDatabase } from "../../../../adapters/database/pouchdb/read-later-database";
-import { DevNullLog } from "../../../../core/logging/log";
+import { DevNullLog, Log } from "../../../../core/logging/log";
 import { InternetPreviewSource } from "./internet-preview-source";
 
 export type Settings = {
@@ -13,11 +13,11 @@ export type Settings = {
   hackerNewsBaseUrl?: string;
   lobstersBaseUrl: string;
   previewServiceUrl: string;
+  log: Log;
 };
 
 export const createApplication = (settings: Settings) => {
   console.log("[createApplication]", { settings });
-
   return new Application(createAdapters(settings));
 };
 
@@ -26,9 +26,10 @@ const createAdapters = ({
   lobstersBaseUrl,
   previewServiceUrl,
   window,
+  log = new DevNullLog()
 }: Settings) => {
   const internet = new FetchBasedInternet();
-  const deletedItems = new DeletedItems(window.localStorage);
+  const deletedItems = new DeletedItems(log, window.localStorage);
   const deletedItemsSeive = new DeletedItemsSeive(window);
 
   return (
@@ -51,6 +52,7 @@ const createAdapters = ({
       //     ),
       // })
       .with({
+        log,
         seive: {
           apply: (newsItems) => deletedItemsSeive.apply(newsItems),
         },

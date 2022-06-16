@@ -58,6 +58,7 @@
     var toggles = new real.QueryStringToggles(document.location.search);
     var settings = new real.QueryStringSettings(document.location.search);
     var view = new real.UIEvents();
+    const log = solid.createLog();
 
     const isRunningOnPhone = toggles.get("use-local") !== true;
 
@@ -83,8 +84,9 @@
             lobstersBaseUrl: "http://localhost:8080/lobsters/hottest",
             previewServiceUrl: "http://localhost:8080/preview",
             window,
+            log
           }
-        : { window };
+        : { window, log };
 
     var application = init.createApplication(opts);
 
@@ -106,6 +108,6 @@
       }
     }
 
-    solid.mount(document.getElementById("application"), application);
+    solid.mount(document.getElementById("application"), application, log);
   </script>
 </html>

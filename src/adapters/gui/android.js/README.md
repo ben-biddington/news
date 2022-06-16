@@ -19,7 +19,13 @@ cd server && npx ts-node-dev ./src/server.ts
 ### Run in browser
 
 ```
-localhost:3000/views/index.html?use-local=true
+http://localhost:3000/views/index.html?use-local=true
+```
+
+You'll also need the new server running on 8080
+
+```
+COCKROACH_CONNECTION_STRING=`cat ~/.cockroachdb` ./run.sh 
 ```
 
 ## Basic idea

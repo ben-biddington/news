@@ -23,11 +23,14 @@ import { State } from "../../../../../core/internal/state";
 import { Header } from "./components/header";
 import { LogEntry, LogPanel } from "./components/log-panel";
 import { MobileNewsPanel } from "./components/mobile-news-panel";
+import { LogNotifier, NotifyingLog } from "./NotifiyingLog";
+import { Log } from "../../../../../core/logging/log";
+export { NotifyingLog } from "./NotifiyingLog";
 
 export type Props = {
   application: Core;
   onDelete?: (id: string) => void;
-  log: (m: string) => void;
+  log?: LogNotifier
 };
 
 export enum View {
@@ -36,7 +39,10 @@ export enum View {
   ReadLater,
 }
 
-export const Application = ({ application }: Props) => {
+// [i] Log is specific to the view because we want to surface the messages in the UI. 
+export const createLog = () => new NotifyingLog();
+
+export const Application = ({ application, log }: Props) => {
   const [view, setView] = createSignal<View>(View.News);
   const [logs, setLogs] = createSignal<LogEntry[]>([]);
   const [loading, setLoading] = createSignal<boolean>(false);
@@ -59,6 +65,7 @@ export const Application = ({ application }: Props) => {
     });
 
   onMount(() => {
+    log?.on('info', info);
     application.subscribe((s) => setState(s));
     application.on(["news-items-modified"], (e) => {
       setLobstersNews(e.items.filter((item) => item.label === "lobsters"));
@@ -290,5 +297,5 @@ export const Application = ({ application }: Props) => {
   );
 };
 
-export const mount = (el, application, log = () => {}) =>
+export const mount = (el, application, log: LogNotifier) =>
   render(() => <Application application={application} log={log} />, el);

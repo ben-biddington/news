@@ -336,7 +336,7 @@ export class Application {
 }
 
 // https://stackoverflow.com/questions/5178869/listen-to-all-emitted-events-in-node-js
-class CustomEventEmitter extends EventEmitter {
+export class CustomEventEmitter extends EventEmitter {
   public emit = (type, ...args) => {
     const n = { type: type, ...args[0] };
 

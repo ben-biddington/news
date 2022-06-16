@@ -1,3 +1,4 @@
+import { DevNullLog } from '@test/../src/core/logging/log';
 import { expect } from 'chai';
 import { addDays } from 'date-fns';
 import { DeletedItems, Clock } from "../../../src/adapters/gui/android.js/src/storage/deleted-items"
@@ -35,7 +36,7 @@ class MockClock implements Clock {
   nowIs = (date: Date) => this._now = date;
 }
 
-describe.only('Deleted items clears old entries', () => {
+describe('Deleted items clears old entries', () => {
   it('clears items older than one week each time you add a new entry', () => {
     const today = new Date("16-June-2022");
     const yesterday = addDays(today, -1);
@@ -46,7 +47,7 @@ describe.only('Deleted items clears old entries', () => {
     const storage = new MockStorage();
     const clock = new MockClock();
 
-    const deletedItems = new DeletedItems(storage, clock);
+    const deletedItems = new DeletedItems(new DevNullLog(), storage, clock);
 
     clock.nowIs(eightDaysAgo);
 

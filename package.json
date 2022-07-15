@@ -100,7 +100,7 @@
     "selenium-webdriver": "^4.0.0-beta.4",
     "solid-js": "^1.0.0",
     "sqlite3": "^5.0.2",
-    "svelte": "^3.31.0",
+    "svelte": "^3.49.0",
     "uuid": "^8.3.2",
     "ws": "^7.4.1",
     "xml2js": "^0.4.23"

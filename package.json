@@ -34,7 +34,7 @@
     "chai": "^4.2.0",
     "css-loader": "^3.6.0",
     "cssnano": "^4.1.10",
-    "deep-object-diff": "^1.1.7",
+    "deep-object-diff": "^1.1.9",
     "esbuild": "^0.12.8",
     "ficusjs": "^3.2.1",
     "ficusjs-renderers": "^1.0.1",
